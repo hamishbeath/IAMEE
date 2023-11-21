@@ -48,6 +48,7 @@ class Utils:
     # - region
     # - variable(s)
 
+
     def simple_stats(self, db, region, variables, categories):
         
         if db == 'AR6':
@@ -189,3 +190,15 @@ class Utils:
         datasheet.to_csv('stats_datasheet.csv')
 
     
+    # def filter_data_sheet_variable_prevelance(self, db, categories, region, threshold):
+
+    #     """"
+    #     Function that takes a datasheet from the create_variable_sheet function and filters it to only 
+    #     include variables that are reported by a certain percentage of scenarios for a given region and
+    #     temperature category.
+    #     Inputs: 
+        
+        
+    #     """
+        
+

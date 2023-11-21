@@ -46,7 +46,7 @@ class EnvSus:
     violin_colours = ['#8CCFF4','#7FCACC','#006B7F']
     
     run_mode = 'cat'
-    regions = ['Pacific OECD', 'World']
+    regions = ['World','Asian countries except Japan']
     checked_variables = pd.read_csv('variable_list_checked.csv')['variables'].tolist()
 
 def main() -> None:
@@ -58,7 +58,8 @@ def main() -> None:
     # Utils.simple_stats(Utils, 'AR6', EnvSus.regions, EnvSus.emissions, EnvSus.categories)
     # joel_data_download()
     # Utils.export_variable_list(Utils, 'AR6', ['C1', 'C2'])
-    Utils.create_variable_sheet(Utils, 'AR6', ['C1', 'C2'], regions=EnvSus.regions, variables=EnvSus.checked_variables) 
+    Utils.create_variable_sheet(Utils, 'AR6', ['C1'], regions=EnvSus.regions, variables=EnvSus.checked_variables) 
+
 
 def joel_data_download():
     df = EnvSus.connAr6.query(model='IMAGE 3.2', scenario='SSP_28I_LI',

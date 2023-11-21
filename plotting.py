@@ -20,4 +20,11 @@ This page contains plotting functions that can be called either stand alone or f
 
 class Plotting:
 
-    pass
+    
+    # # Create a detailed polar bar plot that categorises 
+    # def polar_bar_plot_variables():
+    #     pass
+
+
+
+
