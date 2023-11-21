@@ -1,0 +1,10 @@
+# Ignore all
+*
+
+# Except
+!.gitignore
+!env_sus.py
+!utils.py
+!econ_feas.py
+!plotting.py
+
