@@ -73,6 +73,7 @@ def joel_data_download():
     print(df)
     df.to_csv('joel_test.csv')
 
+
 def data_download():
     # Main query of AR6 data, returns a IamDataFrame object
     df = EnvSus.connAr6.query(model='*', scenario='*',
@@ -249,6 +250,7 @@ def plot_outputs():
     plt.show()
 
     # print(df)
+
 
 # Plot seaborn violin plots with snapshots of the data at 2050 and 2100, across each variable and each category
 def violin_plots():
