@@ -10,19 +10,19 @@ rcParams['font.sans-serif'] = ['Arial']
 
 
 """
-
 Title: Plotting for IAM scenario anaylsis
 Author: Hamish Beath
 Date: November 2023
 Description:
-This page contains plotting functions that can be called either stand alone or from the main dimension specific scripts
+This page contains plotting functions that can be called either stand alone or 
+from the main dimension specific scripts. 
 
 """
 
 def main() -> None:
     
-    Plotting.polar_bar_plot_variables(Plotting, 'stats_datasheet.csv', Plotting.dimensions, 'C1')
-
+    # Plotting.polar_bar_plot_variables(Plotting, 'stats_datasheet.csv', Plotting.dimensions, 'C1')
+    Plotting.box_plot_variables(Plotting, 'stats_datasheet.csv', 'resource', 'C1', [2050, 2100])
 
 class Plotting:
 
@@ -106,7 +106,82 @@ class Plotting:
                 fig.savefig('figures/' + dimension + '_polar_bar.png', dpi=300, bbox_inches='tight')
 
 
-    # Create
+    # Create a box plot showing the levels of each variable for each dimension in 
+    # 2020 and 2050. The box plot contains boxes for all the variables for the 
+    # dimension of interest, with 2050 and 2100 values plotted in adjacent boxes. 
+
+    def box_plot_variables(self, file_name, dimension, category, years):
+        
+        # import the data
+        variable_data = pd.read_csv(file_name)
+        
+        # Filter the data to only include the dimension of interest, whether it is found in category_1 or category_2
+        dimension_data = variable_data[(variable_data['category_1'] == dimension) | (variable_data['category_2'] == dimension)]
+
+        variables = dimension_data['variable']
+        variables = variables.unique()
+        variables = variables.tolist()
+
+        # import util for getting the data 
+        from utils import Utils
+
+        df = Utils.connAr6.query(model='*', scenario='*',
+            variable=variables, year=[2050,2100], region='World'
+            )
+        
+        print(df)
+
+        df_category = df.filter(Category=category)
+
+        # set up subplots for the number of variables
+        fig, axs = plt.subplots(1, len(variables), figsize=(30,10))
+        axs = axs.flatten()
+
+        # add space between subplots
+        fig.subplots_adjust(wspace=0.7)
+
+        # loop through each variable
+        for i, variable in enumerate(variables):
+            
+            # make a subplot for the variable
+            ax = axs[i]
+
+            # filter the data to only include the variable of interest
+            df_variable = df_category.filter(variable=variable)
+
+            # get units
+            units = df_variable['unit'].unique().tolist()
+            units = units[0]
+
+
+            data = pd.DataFrame()
+            for year in range(2050, 2150, 50):
+                
+                print(year)
+                # get the values for the variable in the year of interest
+                df_values = df_variable.filter(year=year)
+                
+                data[year] = df_values['value']
+
+                # set the box plot in seaborn
+            sns.boxplot(data=data, ax=ax, palette="Set3")
+            sns.stripplot(data=data, ax=ax, 
+            color=".3") # get the values for the variable in the year of interest
+
+            # set the title of the plot
+            ax.set_title(variable, fontsize=10,fontweight='bold')
+            
+            # set the units of the y axis
+            ax.set_ylabel(units)
+
+            # Add ticks on the right hand y axis as well as left
+            ax.yaxis.set_ticks_position('both')
+            
+        # set the title of the plot
+        title = 'Box Plot of ' + dimension + ' Variables in 2050 and 2100'
+        plt.show()
+
+
 
 
 if __name__ == "__main__":
