@@ -3,6 +3,8 @@ import pyam
 import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
+import country_converter as coco
+cc = coco.CountryConverter()
 from matplotlib import rcParams
 rcParams['font.family'] = 'sans-serif'
 rcParams['font.sans-serif'] = ['Arial']
@@ -201,4 +203,6 @@ class Utils:
         
     #     """
         
+    def test_coco():
 
+        print(cc.R10)
