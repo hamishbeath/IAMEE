@@ -22,7 +22,7 @@ from the main dimension specific scripts.
 def main() -> None:
     
     # Plotting.polar_bar_plot_variables(Plotting, 'stats_datasheet.csv', Plotting.dimensions, 'C1')
-    Plotting.box_plot_variables(Plotting, 'stats_datasheet.csv', 'resource', 'C1', [2050, 2100])
+    Plotting.box_plot_variables(Plotting, 'stats_datasheet.csv', 'resource', 'C1a_NZGHGs', [2050, 2100])
 
 class Plotting:
 
@@ -131,7 +131,9 @@ class Plotting:
         
         print(df)
 
-        df_category = df.filter(Category=category)
+        df_category = df.filter(Category_subset=category)
+
+        
 
         # set up subplots for the number of variables
         fig, axs = plt.subplots(1, len(variables), figsize=(30,10))

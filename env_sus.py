@@ -36,16 +36,13 @@ class EnvSus:
     #           'Ecotoxicity|Marine|Electricity', 'Material recycling|Plastics']
     variables=['Water Consumption', 'Land Cover|Pasture', 'Land Cover|Forest', 
                'Land Cover|Cropland', 'Land Cover|Cropland|Energy Crops']
-
     plotting_variables = ['Water Consumption', 'Land Cover|Pasture', 'Land Cover|Forest',
-                          'Land Cover|Cropland', 'Land Cover|Cropland|Energy Crops']
-                            
+                          'Land Cover|Cropland', 'Land Cover|Cropland|Energy Crops']            
     emissions = ['Emissions|CO2']
     plotting_categories = ['C1', 'C3', 'C5']
     # plotting_categories = ['C3']
     plotting_category_colours = {'C1':'#f57200', 'C3':'#6302d9', 'C5':'#1b9e77'}
     violin_colours = ['#8CCFF4','#7FCACC','#006B7F']
-    
     run_mode = 'cat'
     regions = ['World','Asian countries except Japan']
     checked_variables = pd.read_csv('variable_list_checked.csv')['variables'].tolist()
