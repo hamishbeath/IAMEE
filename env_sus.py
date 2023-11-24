@@ -29,7 +29,7 @@ class EnvSus:
                                     auth_url='https://api.manager.ece.iiasa.ac.at')
 
     categories = ['C1', 'C2', 'C3', 'C4', 'C5']
-    category_subset_paris = 'C1a_NZGHGs'
+    category_subset_paris = ['C1a_NZGHGs']
     categories = ['C1']
     # variable=['Water Consumption', 'Land Cover|Pasture', 'Land Cover|Forest', 
     #           'Land Cover', 'Land Cover|Cropland', 'Land Cover|Cropland', 
@@ -44,8 +44,8 @@ class EnvSus:
     plotting_category_colours = {'C1':'#f57200', 'C3':'#6302d9', 'C5':'#1b9e77'}
     violin_colours = ['#8CCFF4','#7FCACC','#006B7F']
     run_mode = 'cat'
-    regions = ['World','Asian countries except Japan']
-    checked_variables = pd.read_csv('variable_list_checked.csv')['variables'].tolist()
+    regions = ['World','Countries of Sub-Saharan Africa', 'Eastern and Western Europe (i.e., the EU28)','Countries of centrally-planned Asia; primarily China']
+    checked_variables = pd.read_csv('variable_categories.csv')
 
 def main() -> None:
 
@@ -56,8 +56,13 @@ def main() -> None:
     # Utils.simple_stats(Utils, 'AR6', EnvSus.regions, EnvSus.emissions, EnvSus.categories)
     # joel_data_download()
     # Utils.export_variable_list(Utils, 'AR6', ['C1', 'C2'])
-    # Utils.create_variable_sheet(Utils, 'AR6', ['C1'], regions=EnvSus.regions, variables=EnvSus.checked_variables) 
-    Utils.test_coco()
+    Utils.create_variable_sheet(Utils,
+                                 'AR6',
+                                 EnvSus.category_subset_paris,
+                                   regions=EnvSus.regions, 
+                                   variables=EnvSus.checked_variables['variable'].tolist(), 
+                                   variable_sheet=EnvSus.checked_variables)
+    # Utils.test_coco()
 
 def joel_data_download():
     df = EnvSus.connAr6.query(model='IMAGE 3.2', scenario='SSP_28I_LI',

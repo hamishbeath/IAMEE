@@ -115,7 +115,7 @@ class Utils:
         return variable_list
     
     
-    def create_variable_sheet(self, db, categories, regions, variables):
+    def create_variable_sheet(self, db, categories, regions, variables, variable_sheet):
 
         """
         Creates a datasheet with stats for each variable, against the regions and categories provided
@@ -149,8 +149,8 @@ class Utils:
         
         # loop through each temperature category
         for category in categories:
-            df_category = df.filter(Category=category)
-
+            df_category = df.filter(Category_subset=category)
+            
 
             # Get the number of scenarios reporting emissions for CO2 in 2100 for World as a basis for %
             emissions_scenarios = 0
@@ -188,6 +188,9 @@ class Utils:
                 datasheet[str(region),str(category), 'count'] = pd.Series(variables_count_list)
                 datasheet[str(region),str(category), 'percentage'] = pd.Series(variables_percentage_list)
 
+        datasheet['category_1'] = variable_sheet['category_1']
+        datasheet['category_2'] = variable_sheet['category_2']
+        
         # Export datasheet to csv
         datasheet.to_csv('stats_datasheet.csv')
 
