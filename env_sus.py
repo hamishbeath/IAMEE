@@ -44,7 +44,7 @@ class EnvSus:
     plotting_category_colours = {'C1':'#f57200', 'C3':'#6302d9', 'C5':'#1b9e77'}
     violin_colours = ['#8CCFF4','#7FCACC','#006B7F']
     run_mode = 'cat'
-    regions = ['World','Countries of Sub-Saharan Africa', 'Eastern and Western Europe (i.e., the EU28)','Countries of centrally-planned Asia; primarily China']
+    regions = ['World','Countries of Sub-Saharan Africa', 'Asian countries except Japan']
     checked_variables = pd.read_csv('variable_categories.csv')
 
 def main() -> None:

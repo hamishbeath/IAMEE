@@ -21,8 +21,8 @@ from the main dimension specific scripts.
 
 def main() -> None:
     
-    # Plotting.polar_bar_plot_variables(Plotting, 'stats_datasheet.csv', Plotting.dimensions, 'C1')
-    Plotting.box_plot_variables(Plotting, 'stats_datasheet.csv', 'resource', 'C1a_NZGHGs', [2050, 2100])
+    # Plotting.polar_bar_plot_variables(Plotting, 'stats_datasheet.csv', Plotting.dimensions, 'C1a_NZGHGs')
+    Plotting.box_plot_variables(Plotting, 'variable_categories.csv', 'resilience', 'C1a_NZGHGs', [2050, 2100])
 
 class Plotting:
 
@@ -48,10 +48,7 @@ class Plotting:
             # Rank the variables largest to smallest on the column of world value
             dimension_data = dimension_data.sort_values(by=["('World', '" + category +"', 'percentage')"], ascending=False)
             
-            # print(dimension_data)
-
-
-            with plt.style.context('cyberpunk'):
+            with plt.style.context('fivethirtyeight'):
                 fig, ax = plt.subplots(subplot_kw={'projection': 'polar'}, figsize=(10,10))
 
                 angles = np.linspace(0, 2*np.pi, len(dimension_data), endpoint=False)
@@ -60,17 +57,20 @@ class Plotting:
                 angles = [element * width for element in indexes]
 
                 label_loc = np.linspace(start=0, stop=2 * np.pi, num=len(dimension_data))
-                bars_bg = ax.bar(x = angles, height=100, width=width, color='lightgrey',
-                        edgecolor='white', zorder=1, alpha=0.05)
+                bars_bg = ax.bar(x = angles, height=100, width=width, color='grey',
+                        edgecolor='black', zorder=1, alpha=0.1)
 
                 rankings = dimension_data["('World', '" + category +"', 'percentage')"].tolist()    
                 rankings_r5 = dimension_data["('Asian countries except Japan', '" + category +"', 'percentage')"].tolist()                
+                rankings_r10 = dimension_data["('Countries of Sub-Saharan Africa', '" + category +"', 'percentage')"].tolist()
 
                 variables = dimension_data['variable']
                 bars = ax.bar(x = angles, height=rankings, width=width, color=self.dimension_colours[dimension],
                         edgecolor='white', zorder=2, alpha=0.5)
                 bars_r5 = ax.bar(x = angles, height=rankings_r5, width=width, color='black',
                         edgecolor='white', zorder=3, alpha=0.3)
+                bars_r10 = ax.bar(x = angles, height=rankings_r10, width=width, color='gray',
+                        edgecolor='white', zorder=4, alpha=0.3)
 
                 for angle, height, variables in zip(angles, rankings, variables):
                     rotation_angle = np.degrees(angle)
@@ -94,16 +94,13 @@ class Plotting:
                 # add title at the top of the plot in bold
                 ax.set_title(title, fontsize=13, y=1.07, fontweight='bold')
                 
-
                 # add a legend for the different regions R5 and World
-                ax.legend([bars, bars_r5], ['World', 'R5'], loc='upper right', bbox_to_anchor=(1.1, 1.1))
-
-                
+                ax.legend([bars, bars_r5, bars_r10], ['World', 'R5', 'R10'], loc='upper right', bbox_to_anchor=(1.1, 1.1))
 
                 plt.show()
 
                 # Save the figure
-                fig.savefig('figures/' + dimension + '_polar_bar.png', dpi=300, bbox_inches='tight')
+                fig.savefig('figures/' + dimension + '_polar_bar_r10.png', dpi=300, bbox_inches='tight')
 
 
     # Create a box plot showing the levels of each variable for each dimension in 
@@ -114,6 +111,9 @@ class Plotting:
         
         # import the data
         variable_data = pd.read_csv(file_name)
+        
+        # filter out all variables with low R10
+        variable_data = variable_data[variable_data["sufficientR10"] > 0]
         
         # Filter the data to only include the dimension of interest, whether it is found in category_1 or category_2
         dimension_data = variable_data[(variable_data['category_1'] == dimension) | (variable_data['category_2'] == dimension)]
@@ -126,7 +126,7 @@ class Plotting:
         from utils import Utils
 
         df = Utils.connAr6.query(model='*', scenario='*',
-            variable=variables, year=[2050,2100], region='World'
+            variable=variables, year=[2050,2100], region='Countries of Sub-Saharan Africa'
             )
         
         print(df)
@@ -166,7 +166,7 @@ class Plotting:
                 data[year] = df_values['value']
 
                 # set the box plot in seaborn
-            sns.boxplot(data=data, ax=ax, palette="Set3")
+            sns.boxplot(data=data, ax=ax, palette="Set3",showfliers=False)
             sns.stripplot(data=data, ax=ax, 
             color=".3") # get the values for the variable in the year of interest
 
