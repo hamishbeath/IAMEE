@@ -4,6 +4,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
 import country_converter as coco
+from sklearn.cluster import KMeans
 cc = coco.CountryConverter()
 from matplotlib import rcParams
 rcParams['font.family'] = 'sans-serif'
@@ -16,17 +17,27 @@ regardless of the variables, database or dimensions being explored.
 
 """
 
+class Data:
+
+    c1aR10_scenarios = ['EN_NPi2020_300f', 'SSP1-DACCS-1p9-3pctHR', 'SSP1-noDACCS-1p9-3pctHR', 'SSP4-noDACCS-1p9-3pctHR', 
+                    'SSP1_SPA1_19I_D_LB', 'SSP1_SPA1_19I_LIRE_LB', 'SSP1_SPA1_19I_RE_LB', 'SSP2_SPA2_19I_LI', 
+                    'CEMICS_GDPgrowth_1p5', 'CEMICS_HotellingConst_1p5', 'CEMICS_Linear_1p5', 
+                    'LeastTotalCost_LTC_brkLR15_SSP1_P50', 'R2p1_SSP1-PkBudg900', 'R2p1_SSP5-PkBudg900', 
+                    'CD-LINKS_NPi2020_400', 'PEP_1p5C_full_eff', 'PEP_1p5C_red_eff', 'CEMICS_SSP1-1p5C-fullCDR',
+                        'EN_NPi2020_200f', 'EN_NPi2020_400f', 'SusDev_SDP-PkBudg1000', 'SusDev_SSP1-PkBudg900', 
+                        'DeepElec_SSP2_def_Budg900', 'DISCRATE_cb400_cdrno_dr5p', 'EN_NPi2020_450f', 'EN_NPi2020_500f']
+
+    R10 = ['Countries of Latin America and the Caribbean','Countries of South Asia; primarily India',
+        'Countries of Sub-Saharan Africa', 'Countries of centrally-planned Asia; primarily China',
+        'Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc.',
+        'Eastern and Western Europe (i.e., the EU28)',
+        'Other countries of Asia',
+        'Pacific OECD', 'Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia',
+        'World']
+
 class Utils:
 
     
-    R10 = ['Countries of Latin America and the Caribbean','Countries of South Asia; primarily India',
-           'Countries of Sub-Saharan Africa', 'Countries of centrally-planned Asia; primarily China',
-           'Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc.',
-           'Eastern and Western Europe (i.e., the EU28)',
-           'Other countries of Asia',
-           'Pacific OECD', 'Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia',
-           'World']
-
     test_variables = ['Water Consumption', 'Land Cover|Pasture', 'Land Cover|Forest',
                             'Land Cover', 'Land Cover|Cropland',
                             'Land Cover|Cropland|Energy Crops']
@@ -204,8 +215,41 @@ class Utils:
     #     Inputs: 
         
         
-    #     """
-        
-    def test_coco():
+    # Function that performs cluster analysis for a set of input variables, a set region and a set of predetermined scenarios. 
+    # The cluster analysis is performed using the k-means algorithm but implements time as feature. 
+    # The function returns a dataframe with the cluster labels for each scenario and the cluster centroids.
 
-        print(cc.R10)
+
+
+    # Cluster analysis for a set of input variables, a set region and a set of predetermined scenarios. This function performs 
+    # cluster analysis using the k-means algorithm for a snapshot in time (2100) and for the entire time series.
+    def snapshot_cluster_analysis(self, region, scenarios, variables, category, n_clusters, snapshot_year):
+        
+        # query data
+        df = Utils.connAr6.query(model='*', scenario=scenarios,
+            variable=variables, region=region, year=snapshot_year
+            )
+        # filter by temperature category
+        df_category = df.filter(Category_subset=category)
+
+        # export IAMdataframe to pandas dataframe
+        df_category = df_category.as_pandas()
+        print(df_category)
+        # arrange data in a way that is suitable for clustering so that each scenario is a row and each variable is a column
+        df_category = df_category.pivot_table(index=['model', 'scenario'], columns=variables, values='value').reset_index()
+        
+        kmeans = KMeans(n_clusters=n_clusters, random_state=0).fit(df_category[variables])
+
+        # Get cluster assignments
+        labels = kmeans.labels_
+
+        # Get cluster centroids
+        centroids = kmeans.cluster_centers_
+
+        # visualise
+        plt.scatter(df_category[variables[0]], df_category[variables[1]], c=labels, s=50, cmap='viridis')
+        plt.scatter(centroids[:, 0], centroids[:, 1], c='black', s=200, alpha=0.5)
+        plt.xlabel(variables[0])
+        plt.ylabel(variables[1])
+        plt.show()
+

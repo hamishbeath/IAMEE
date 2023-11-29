@@ -2,9 +2,11 @@ import numpy as np
 import pyam
 import seaborn as sns
 import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
 import pandas as pd
 import mplcyberpunk
 from matplotlib import rcParams
+from utils import Data
 rcParams['font.family'] = 'sans-serif'
 rcParams['font.sans-serif'] = ['Arial']
 
@@ -22,14 +24,16 @@ from the main dimension specific scripts.
 def main() -> None:
     
     # Plotting.polar_bar_plot_variables(Plotting, 'stats_datasheet.csv', Plotting.dimensions, 'C1a_NZGHGs')
-    Plotting.box_plot_variables(Plotting, 'variable_categories.csv', 'resilience', 'C1a_NZGHGs', [2050, 2100])
+    # Plotting.box_plot_variables(Plotting, 'variable_categories.csv', 'economic', 'C1a_NZGHGs', [2050, 2100])
+    Plotting.single_variable_box_line(Plotting, Data.c1aR10_scenarios, 'Land Cover|Forest', 'C1a_NZGHGs', 'World',years=range(2020, 2101))
 
 class Plotting:
 
     dimensions = ['economic', 'environment', 'resilience', 'resource']
     dimension_colours = {'economic': 'red', 'environment': 'green', 'resilience': 'blue', 'resource': 'orange'}
     dimension_titles = {'economic': 'Economic Feasibility', 'environment': 'Non-climate Environmental Sustainability', 'resilience': 'Societal Resilience', 'resource': 'Resource Availability'}
-    
+    dimention_cmaps = {'economic': 'Reds', 'environment': 'Greens', 'resilience': 'Blues', 'resource': 'Oranges'}
+
     # Create a detailed polar bar plot that categorises 
     def polar_bar_plot_variables(self, file_name, dimensions, category):
         
@@ -126,14 +130,24 @@ class Plotting:
         from utils import Utils
 
         df = Utils.connAr6.query(model='*', scenario='*',
-            variable=variables, year=[2050,2100], region='Countries of Sub-Saharan Africa'
+            variable=variables, year=[2050,2100], region=['Countries of Sub-Saharan Africa','World']
             )
         
-        print(df)
-
         df_category = df.filter(Category_subset=category)
-
         
+        
+        # Find R10 scenarios
+        df_R10_scenarios = df_category.filter(region='Countries of Sub-Saharan Africa')
+        df_R10_scenarios = df_R10_scenarios.filter(year=2050)
+        R10_scenarios = df_R10_scenarios['scenario'].unique().tolist()
+        print(R10_scenarios)
+
+
+        # Filter for just R10 scenarios
+        df_category = df_category.filter(scenario=R10_scenarios)
+
+        # Filter for the world
+        df_category = df_category.filter(region='World')
 
         # set up subplots for the number of variables
         fig, axs = plt.subplots(1, len(variables), figsize=(30,10))
@@ -145,13 +159,16 @@ class Plotting:
         # loop through each variable
         for i, variable in enumerate(variables):
             
-            # make a subplot for the variable
-            ax = axs[i]
 
             # filter the data to only include the variable of interest
             df_variable = df_category.filter(variable=variable)
+            if df_variable.empty:
+                continue
+            
+            # make a subplot for the variable
+            ax = axs[i]
 
-            # get units
+
             units = df_variable['unit'].unique().tolist()
             units = units[0]
 
@@ -166,7 +183,7 @@ class Plotting:
                 data[year] = df_values['value']
 
                 # set the box plot in seaborn
-            sns.boxplot(data=data, ax=ax, palette="Set3",showfliers=False)
+            sns.boxplot(data=data, ax=ax, palette=Plotting.dimention_cmaps[dimension],showfliers=False)
             sns.stripplot(data=data, ax=ax, 
             color=".3") # get the values for the variable in the year of interest
 
@@ -180,11 +197,70 @@ class Plotting:
             ax.yaxis.set_ticks_position('both')
             
         # set the title of the plot
-        title = 'Box Plot of ' + dimension + ' Variables in 2050 and 2100'
+        title = 'Box plots of ' + dimension + ' variable values for '+ category + ' scenarios in 2050 and 2100'
+        fig.suptitle(title, fontsize=20)
+        
+        
         plt.show()
 
 
+    def single_variable_box_line(self, scenarios, variable, category,region, years):
+        
+        # import util for getting the data 
+        from utils import Utils
 
+        df = Utils.connAr6.query(model='*', scenario=scenarios,
+            variable=variable, year=years, region=region
+            )
+        
+        df_category = df.filter(Category_subset=category)
+        
+        # set up subplots for the box plot and line plot.
+        fig = plt.figsize=(10,15)
+
+        gs = gridspec.GridSpec(1, 2, width_ratios=[1, 3]) 
+
+        ax1 = plt.subplot(gs[0])
+        ax2 = plt.subplot(gs[1])
+
+
+        # set the box plot in seaborn
+
+        units = df_category['unit'].unique().tolist()
+        units = units[0]
+        data = pd.DataFrame()
+        for year in range(2050, 2150, 50):
+            
+            # get the values for the variable in the year of interest
+            df_values = df_category.filter(year=year)
+            
+            data[year] = df_values['value']
+
+        sns.boxplot(data=data, ax=ax1, palette='cool',showfliers=False)
+        sns.stripplot(data=data, ax=ax1,color=".3")     
+
+        # set the units of the y axis
+        ax1.set_ylabel(units)
+        
+        # Add ticks on the right hand y axis as well as left
+        ax1.yaxis.set_ticks_position('both')
+        ax1.xaxis.set_ticks_position('both')
+        ax1.set_xlabel('Year')
+        # set up the line plot showing all scenarios for the variable
+        # sns.lineplot(data=df_category,x='year', y='value', hue='scenario', ax=axs[1]) #'PuBuGn'
+        pyam.plotting.line(df_category, x='year', y='value', legend=None, color='scenario', ax=ax2, 
+                           cmap='winter', title=False)
+        
+        ax2.set_xlim(2020, 2100)
+
+        ax2.yaxis.set_ticks_position('both')
+        ax2.xaxis.set_ticks_position('both')
+
+        # set the title of the plot
+
+        # fig.title = 'Distribution of values for ' + variable + '2020-2100'
+
+        plt.show()
 
 if __name__ == "__main__":
     main()
