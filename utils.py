@@ -4,7 +4,13 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
 import country_converter as coco
+import pickle as pkl
 from sklearn.cluster import KMeans
+# import logging
+
+# # Set up logging
+# logging.basicConfig(level=logging.DEBUG)
+
 cc = coco.CountryConverter()
 from matplotlib import rcParams
 rcParams['font.family'] = 'sans-serif'
@@ -48,9 +54,9 @@ class Utils:
                                 creds=None, 
                                 auth_url='https://api.manager.ece.iiasa.ac.at')
     
-    connSR15 = pyam.iiasa.Connection(name='iamc15', 
-                                creds=None, 
-                                auth_url='https://api.manager.ece.iiasa.ac.at')
+    # connSR15 = pyam.iiasa.Connection(name='iamc15', 
+    #                             creds=None, 
+    #                             auth_url='https://api.manager.ece.iiasa.ac.at')
     
     selected_variables = pd.read_csv('variables_filtered.csv')['variables'].tolist()
     
@@ -225,20 +231,40 @@ class Utils:
     # cluster analysis using the k-means algorithm for a snapshot in time (2100) and for the entire time series.
     def snapshot_cluster_analysis(self, region, scenarios, variables, category, n_clusters, snapshot_year):
         
-        # query data
-        df = Utils.connAr6.query(model='*', scenario=scenarios,
-            variable=variables, region=region, year=snapshot_year
-            )
-        # filter by temperature category
-        df_category = df.filter(Category_subset=category)
+        # # query data
+        # df = Utils.connAr6.query(model='*', scenario=scenarios,
+        #     variable=variables, region=region, year=snapshot_year
+        #     )
 
-        # export IAMdataframe to pandas dataframe
-        df_category = df_category.as_pandas()
-        print(df_category)
-        # arrange data in a way that is suitable for clustering so that each scenario is a row and each variable is a column
-        df_category = df_category.pivot_table(index=['model', 'scenario'], columns=variables, values='value').reset_index()
+        # read in data
+
+
+        # # filter by temperature category
+        # df_category = df.filter(Category_subset=category)
+
+        # # save df as a csv
+        # df_category.to_csv('snapshot_data.csv')
+
+        df_category = pyam.IamDataFrame(data='snapshot_data.csv')
         
-        kmeans = KMeans(n_clusters=n_clusters, random_state=0).fit(df_category[variables])
+        k_means_data = pd.DataFrame()
+        for variable in variables:
+            df_variable = df_category.filter(variable=variable)
+            df_variable = df_variable.filter(year=snapshot_year)
+            df_variable = df_variable.as_pandas()
+            print(df_variable)
+            # set index to scenario and model
+            df_variable = df_variable.set_index(['model', 'scenario'])
+            k_means_data[variable] = df_variable['value']
+            
+        
+        print(k_means_data)
+
+
+        # # arrange data in a way that is suitable for clustering so that each scenario is a row and each variable is a column
+        # df_category = df_category.pivot_table(index=['model', 'scenario'], columns=variables, values='value').reset_index()
+        
+        kmeans = KMeans(n_clusters=n_clusters, random_state=0).fit(k_means_data[variables])
 
         # Get cluster assignments
         labels = kmeans.labels_
@@ -247,9 +273,78 @@ class Utils:
         centroids = kmeans.cluster_centers_
 
         # visualise
-        plt.scatter(df_category[variables[0]], df_category[variables[1]], c=labels, s=50, cmap='viridis')
+        plt.scatter(k_means_data[variables[0]], k_means_data[variables[1]], c=labels, s=50, cmap='viridis')
         plt.scatter(centroids[:, 0], centroids[:, 1], c='black', s=200, alpha=0.5)
         plt.xlabel(variables[0])
         plt.ylabel(variables[1])
         plt.show()
 
+
+    # function that performs cluster analysis for a set of n variables, 
+    # but for each year in the time series including time as a feature
+    def time_series_cluster_analysis(self, region, scenarios, variables, category, n_clusters):
+        
+        # # query data
+        # df = Utils.connAr6.query(model='*', scenario=scenarios,
+        #     variable=variables, region=region
+        #     )
+
+        df_category = pyam.IamDataFrame(data='snapshot_data.csv')
+
+        # filter by temperature category
+        df_category = df_category.filter(year=range(2020, 2101))
+
+        k_means_data = pd.DataFrame()
+        for variable in variables:
+            df_variable = df_category.filter(variable=variable)
+            df_variable = df_variable.as_pandas()
+            print(df_variable)
+            # set index to scenario and model
+            df_variable = df_variable.set_index(['model', 'scenario', 'year'])
+            k_means_data[variable] = df_variable['value']
+        
+        
+        
+        
+        # # arrange data in a way that is suitable for clustering so that each scenario is a row and each variable is a column
+        # df_category = df_category.pivot_table(index=['model', 'scenario', 'year'], columns=variables, values='value').reset_index()
+        
+        print(k_means_data)
+            # Elbow Method
+        sse = []
+        list_k = list(range(1, 10))
+
+        for k in list_k:
+            km = KMeans(n_clusters=k)
+            km.fit(k_means_data[variables])
+            sse.append(km.inertia_)
+
+        # Plot sse against k
+        plt.figure(figsize=(6, 6))
+        plt.plot(list_k, sse, '-o')
+        plt.xlabel(r'Number of clusters *k*')
+        plt.ylabel('Sum of squared distance')
+        plt.show()
+
+        kmeans = KMeans(n_clusters=n_clusters, random_state=0).fit(k_means_data[variables])
+
+        # # Get cluster assignments
+        labels = kmeans.labels_
+
+        # # Get cluster centroids
+        centroids = kmeans.cluster_centers_
+
+        # visualise
+        plt.scatter(k_means_data[variables[0]], k_means_data[variables[1]], c=labels, s=50, cmap='viridis')
+        plt.scatter(centroids[:, 0], centroids[:, 1], c='black', s=200, alpha=0.5)
+        plt.xlabel(variables[0])
+        plt.ylabel(variables[1])
+        plt.show()
+
+        # # add cluster labels to dataframe
+        k_means_data['cluster'] = labels
+
+        # save dataframe as csv
+        k_means_data.to_csv('cluster_data_timeseries.csv')
+
+        return df_category

@@ -25,9 +25,9 @@ class EnvSus:
 
 # import the scenario data for C1, C2, C3 and C4
 
-    connAr6 = pyam.iiasa.Connection(name='ar6-public', 
-                                    creds=None, 
-                                    auth_url='https://api.manager.ece.iiasa.ac.at')
+    # connAr6 = pyam.iiasa.Connection(name='ar6-public', 
+    #                                 creds=None, 
+    #                                 auth_url='https://api.manager.ece.iiasa.ac.at')
 
     categories = ['C1', 'C2', 'C3', 'C4', 'C5']
     category_subset_paris = ['C1a_NZGHGs']
@@ -64,7 +64,8 @@ def main() -> None:
     #                                variables=EnvSus.checked_variables['variable'].tolist(), 
     #                                variable_sheet=EnvSus.checked_variables)
     # Utils.test_coco()
-    Utils.snapshot_cluster_analysis(Utils, 'World', Data.c1aR10_scenarios,['Land Cover|Forest', 'Land Cover|Cropland'],'C1a_NZGHGs' , 3, 2100)
+    # Utils.snapshot_cluster_analysis(Utils, 'World', Data.c1aR10_scenarios,['Land Cover|Forest', 'Land Cover|Cropland'],'C1a_NZGHGs' , 3, 2100)
+    Utils.time_series_cluster_analysis(Utils, 'World', Data.c1aR10_scenarios,['Land Cover|Forest', 'Land Cover|Cropland'],'C1a_NZGHGs' , 4)
 
 def joel_data_download():
     df = EnvSus.connAr6.query(model='IMAGE 3.2', scenario='SSP_28I_LI',
