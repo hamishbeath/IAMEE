@@ -25,9 +25,9 @@ class EnvSus:
 
 # import the scenario data for C1, C2, C3 and C4
 
-    # connAr6 = pyam.iiasa.Connection(name='ar6-public', 
-    #                                 creds=None, 
-    #                                 auth_url='https://api.manager.ece.iiasa.ac.at')
+    connAr6 = pyam.iiasa.Connection(name='ar6-public', 
+                                    creds=None, 
+                                    auth_url='https://api.manager.ece.iiasa.ac.at')
 
     categories = ['C1', 'C2', 'C3', 'C4', 'C5']
     category_subset_paris = ['C1a_NZGHGs']
@@ -65,19 +65,52 @@ def main() -> None:
     #                                variable_sheet=EnvSus.checked_variables)
     # Utils.test_coco()
     # Utils.snapshot_cluster_analysis(Utils, 'World', Data.c1aR10_scenarios,['Land Cover|Forest', 'Land Cover|Cropland'],'C1a_NZGHGs' , 3, 2100)
-    Utils.time_series_cluster_analysis(Utils, 'World', Data.c1aR10_scenarios,['Land Cover|Forest', 'Land Cover|Cropland'],'C1a_NZGHGs' , 4)
+    # Utils.time_series_cluster_analysis(Utils, 'World', Data.c1aR10_scenarios,['Land Cover|Forest', 'Land Cover|Cropland'],'C1a_NZGHGs' , 4)
+    # joel_data_download()
+    make_scenario_project_list()
 
 def joel_data_download():
-    df = EnvSus.connAr6.query(model='IMAGE 3.2', scenario='SSP_28I_LI',
-                variable=['Land Cover|Pasture', 'Land Cover|Forest',
-                          'Land Cover', 'Land Cover|Cropland', 'Land Cover|Built-up Area'
-                          ], region=Utils.R10,
+   
+    variable_data = pd.read_csv('variable_categories.csv')
+    
+    # filter out all variables with low R10
+    variable_data = variable_data[variable_data["sufficientR10"] > 0]
 
-                )
-    df = df.filter(Category='C2')
-    df = df.filter(year=range(2020, 2101))
+    # make a list of the variables
+    variables = variable_data['variable'].unique().tolist()
+
+
+    df = EnvSus.connAr6.query(model='*', scenario=Data.c1aR10_scenarios,
+                variable=variables, region=Data.R10)
+
     print(df)
     df.to_csv('joel_test.csv')
+
+def make_scenario_project_list():
+   
+
+
+    # get data
+    df = EnvSus.connAr6.query(model='*', scenario='*',
+                variable='Emissions|CO2', region='World', year=2010)
+
+    df_pd = df.as_pandas(meta_cols=True)
+
+    df_pd = df_pd[['scenario', 'model', 'Project_study']]    
+    
+    # # new dataframe
+    # list_df = pd.DataFrame()
+    # list_df['scenario'], list_df['model'], list_df['Project_study'] = df['scenario'], df['model'], df['Project_study']
+    
+    # remove identical rows
+    df_pd = df_pd.drop_duplicates()
+    
+    print(df_pd)
+
+    # export to csv
+    df_pd.to_csv('scenario_project_list.csv')
+    
+    
 
 
 def data_download():

@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import country_converter as coco
 import pickle as pkl
+import plotly.express as px
+import plotly.graph_objects as go
 from sklearn.cluster import KMeans
 # import logging
 
@@ -40,6 +42,8 @@ class Data:
         'Other countries of Asia',
         'Pacific OECD', 'Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia',
         'World']
+
+    dollar_2022_2010 = 0.25 # reduction in value of 2022 dollars to 2010 dollars
 
 class Utils:
 
@@ -324,7 +328,7 @@ class Utils:
         plt.plot(list_k, sse, '-o')
         plt.xlabel(r'Number of clusters *k*')
         plt.ylabel('Sum of squared distance')
-        plt.show()
+        # plt.show()
 
         kmeans = KMeans(n_clusters=n_clusters, random_state=0).fit(k_means_data[variables])
 
@@ -339,12 +343,36 @@ class Utils:
         plt.scatter(centroids[:, 0], centroids[:, 1], c='black', s=200, alpha=0.5)
         plt.xlabel(variables[0])
         plt.ylabel(variables[1])
-        plt.show()
+        # plt.show()
 
         # # add cluster labels to dataframe
         k_means_data['cluster'] = labels
 
-        # save dataframe as csv
-        k_means_data.to_csv('cluster_data_timeseries.csv')
+
+        print(k_means_data)
+        k_means_data_reset = k_means_data.reset_index()
+                # make a column combining scenario and model values for each row 
+        k_means_data_reset['scenario_model'] = k_means_data_reset['scenario'] + ' ' + k_means_data_reset['model']
+        # create a plotly figure where scenarios can be toggled on and off and the cluster is indicated by colour
+        fig = px.scatter(k_means_data_reset, x=variables[0], y=variables[1], color='cluster', hover_data=k_means_data_reset.columns)
+
+        for scenario in  k_means_data_reset['scenario_model'].unique():
+
+            # Filter the data for the scenario
+            df_scenario = k_means_data_reset[k_means_data_reset['scenario_model'] == scenario]
+
+            # Sort the data by year
+            df_scenario = df_scenario.sort_values('year')
+
+            # Add a line trace for the scenario with the same colour as the points being overlaid
+            fig.add_trace(go.Scatter(x=df_scenario[variables[0]], y=df_scenario[variables[1]], mode='lines', name=scenario))
+
+        
+
+        # Show the plot
+        fig.show()
+        
+        # # save dataframe as csv
+        # k_means_data.to_csv('cluster_data_timeseries.csv')
 
         return df_category

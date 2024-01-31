@@ -4,6 +4,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
 from matplotlib import rcParams
+from utils import Data
 rcParams['font.family'] = 'sans-serif'
 rcParams['font.sans-serif'] = ['Arial']
 
@@ -326,6 +327,35 @@ def violin_plots():
         
     
     plt.show()
+
+
+# takes as an input a Pyam dataframe object with n number of scenarios in it. For each scenario it calculates both a binary 
+def energy_supply_investment_score(pyam_df, threshold_value, investment_data, dollar_conversion_rate):
+
+    """
+    This function takes an inputted Pyam dataframe and performs two assessments on it, one is a binary assessment of whether a given
+    scenario breaches the determined threshold for energy supply investment in a given year (gives also single binary score based on
+    a single breach) In addition, the function calculates a score that is based on the degree to which a scenario breaches the threshold.
+
+    Inputs: Pyam dataframe object, threshold value, 
+    Outputs: Pyam dataframe object with two additional columns, one for binary score, one for degree of breach score, separate dataframe
+    with each score plus the scenario name
+
+    """
+
+    # First deal with the input data, put into 2010 USD and calculate what the value would be at 10 year intervals up to 2100 based on
+    # historical growth rates.
+    investment_df = pd.read_csv(investment_data)
+    
+    # first convert all values to 2010 USD
+    for year in range(2015, 2024):
+        investment_df[str(year) + '2010 USD'] = investment_df[str(year)] / dollar_conversion_rate
+    
+
+
+
+    pass
+
 
 
 if __name__ == "__main__":
