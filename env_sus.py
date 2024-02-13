@@ -54,15 +54,15 @@ def main() -> None:
     # plot_outputs()
     # plot_using_pyam()
     # violin_plots()
-    # Utils.simple_stats(Utils, 'AR6', EnvSus.regions, EnvSus.emissions, EnvSus.categories)
+    Utils.simple_stats(Utils, 'AR6', EnvSus.regions, EnvSus.emissions, EnvSus.categories)
     # joel_data_download()
     # Utils.export_variable_list(Utils, 'AR6', ['C1', 'C2'])
-    # Utils.create_variable_sheet(Utils,
-    #                              'AR6',
-    #                              EnvSus.category_subset_paris,
-    #                                regions=EnvSus.regions, 
-    #                                variables=EnvSus.checked_variables['variable'].tolist(), 
-    #                                variable_sheet=EnvSus.checked_variables)
+    Utils.create_variable_sheet(Utils,
+                                 'AR6',
+                                 EnvSus.category_subset_paris,
+                                   regions=EnvSus.regions, 
+                                   variables=EnvSus.checked_variables['variable'].tolist(), 
+                                   variable_sheet=EnvSus.checked_variables)
     # Utils.test_coco()
     # Utils.snapshot_cluster_analysis(Utils, 'World', Data.c1aR10_scenarios,['Land Cover|Forest', 'Land Cover|Cropland'],'C1a_NZGHGs' , 3, 2100)
     # Utils.time_series_cluster_analysis(Utils, 'World', Data.c1aR10_scenarios,['Land Cover|Forest', 'Land Cover|Cropland'],'C1a_NZGHGs' , 4)
@@ -111,8 +111,6 @@ def make_scenario_project_list():
     df_pd.to_csv('scenario_project_list.csv')
     
     
-
-
 def data_download():
     # Main query of AR6 data, returns a IamDataFrame object
     df = EnvSus.connAr6.query(model='*', scenario='*',

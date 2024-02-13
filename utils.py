@@ -72,6 +72,11 @@ class Utils:
     # - variable(s)
 
 
+
+
+
+
+
     def simple_stats(self, db, region, variables, categories):
         
         if db == 'AR6':
@@ -90,6 +95,10 @@ class Utils:
 
         # filter by SSP
         #df = df.filter(SSP=SSPs)
+        region = []
+        category = []
+        variable = []
+
 
         for region in region:
             df_region = df.filter(region=region)
@@ -109,6 +118,10 @@ class Utils:
                     variable, 'in the region of', region, 'is: ', total_scenario_count)
     
     
+    
+
+
+
     def export_variable_list(self, db, categories):
 
         if db == 'AR6':
@@ -213,7 +226,7 @@ class Utils:
         datasheet['category_2'] = variable_sheet['category_2']
         
         # Export datasheet to csv
-        datasheet.to_csv('stats_datasheet.csv')
+        datasheet.to_csv('stats_datasheet_CDR.csv')
 
     
     # def filter_data_sheet_variable_prevelance(self, db, categories, region, threshold):
