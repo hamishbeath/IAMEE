@@ -25,9 +25,9 @@ class EnvSus:
 
 # import the scenario data for C1, C2, C3 and C4
 
-    connAr6 = pyam.iiasa.Connection(name='ar6-public', 
-                                    creds=None, 
-                                    auth_url='https://api.manager.ece.iiasa.ac.at')
+    # connAr6 = pyam.iiasa.Connection(name='ar6-public', 
+    #                                 creds=None, 
+    #                                 auth_url='https://api.manager.ece.iiasa.ac.at')
 
     categories = ['C1', 'C2', 'C3', 'C4', 'C5']
     category_subset_paris = ['C1a_NZGHGs']
@@ -48,26 +48,101 @@ class EnvSus:
     regions = ['World','Countries of Sub-Saharan Africa', 'Asian countries except Japan']
     checked_variables = pd.read_csv('variable_categories.csv')
 
+    # beccs_threshold = 20500 # in mtCO2 / year
+    beccs_threshold = 13000 # in mtCO2 / year
+
 def main() -> None:
 
     # data_download()
     # plot_outputs()
     # plot_using_pyam()
     # violin_plots()
-    Utils.simple_stats(Utils, 'AR6', EnvSus.regions, EnvSus.emissions, EnvSus.categories)
+    # Utils.simple_stats(Utils, 'AR6', EnvSus.regions, EnvSus.emissions, EnvSus.categories)
     # joel_data_download()
     # Utils.export_variable_list(Utils, 'AR6', ['C1', 'C2'])
-    Utils.create_variable_sheet(Utils,
-                                 'AR6',
-                                 EnvSus.category_subset_paris,
-                                   regions=EnvSus.regions, 
-                                   variables=EnvSus.checked_variables['variable'].tolist(), 
-                                   variable_sheet=EnvSus.checked_variables)
+    # Utils.create_variable_sheet(Utils,
+    #                              'AR6',
+    #                              EnvSus.category_subset_paris,
+    #                                regions=EnvSus.regions, 
+    #                                variables=EnvSus.checked_variables['variable'].tolist(), 
+    #                                variable_sheet=EnvSus.checked_variables)
     # Utils.test_coco()
     # Utils.snapshot_cluster_analysis(Utils, 'World', Data.c1aR10_scenarios,['Land Cover|Forest', 'Land Cover|Cropland'],'C1a_NZGHGs' , 3, 2100)
     # Utils.time_series_cluster_analysis(Utils, 'World', Data.c1aR10_scenarios,['Land Cover|Forest', 'Land Cover|Cropland'],'C1a_NZGHGs' , 4)
     # joel_data_download()
-    make_scenario_project_list()
+    # make_scenario_project_list()
+    # Utils.manadory_variables_scenarios(Utils, 'AR6', 'C1a_NZGHGs', EnvSus.regions, Data.mandatory_variables)
+    forest_cover_change(Data.dimensions_pyamdf, 2100, Data.model_scenarios, EnvSus.beccs_threshold)    
+
+def forest_cover_change(pyam_df, end_year, scenario_model_list, beccs_threshold):
+
+    # filter for the variables needed
+    df = pyam_df.filter(variable=['Land Cover|Forest','Land Cover','Carbon Sequestration|CCS|Biomass'],region='World',
+                        year=range(2020, end_year+1),
+                        scenario=scenario_model_list['scenario'], 
+                        model=scenario_model_list['model'])
+
+    year_list = list(range(2020, end_year+1, 10))
+
+    beccs_threshold_breached = []
+    forest_change_2050 = []
+    forest_change_2100 = []
+    
+    for scenario, model in zip(scenario_model_list['scenario'], scenario_model_list['model']):
+        
+        # Filter out the data for the required scenario
+        scenario_df = df.filter(scenario=scenario)
+        scenario__model_df = scenario_df.filter(model=model)
+
+        base_value = 0
+        forest_cover_values = []
+        beccs_seq_values = []
+        
+        # Iterate through the years
+        for year in year_list:    
+
+            # Filter out the data for the required year
+            year_df = scenario__model_df.filter(year=year)
+            year_df = year_df.as_pandas()
+
+            # extract necessary values 
+            land_cover = year_df['value'][year_df['variable'] == 'Land Cover'].values
+            forest_cover = year_df['value'][year_df['variable'] == 'Land Cover|Forest'].values
+            beccs_seq = year_df['value'][year_df['variable'] == 'Carbon Sequestration|CCS|Biomass'].values
+            share_of_forest = forest_cover[0] / land_cover[0]
+
+            # if 2020 store as 'base' year for given scenario 
+            if year == 2020:
+                base_value = share_of_forest
+            # for all other 
+            else:
+                forest_cover_values.append(share_of_forest - base_value)
+
+            beccs_seq_values.append(beccs_seq[0])   
+
+        # Check if the beccs threshold is breached
+        if any(i > beccs_threshold for i in beccs_seq_values):
+            beccs_threshold_breached.append(1)
+        else:
+            beccs_threshold_breached.append(0)
+        
+        # Append the forest cover change values to the list
+        forest_change_2050.append(forest_cover_values[2])
+        forest_change_2100.append(forest_cover_values[-1])
+
+
+    # Create a dataframe with the mean value and mean value up to 2050
+    output_df = pd.DataFrame()
+    output_df['scenario'] = scenario_model_list['scenario']
+    output_df['model'] = scenario_model_list['model']
+    output_df['forest_change_2050'] = forest_change_2050
+    output_df['forest_change_2100'] = forest_change_2100
+    output_df['beccs_threshold_breached'] = beccs_threshold_breached
+    output_df.to_csv('outputs/environmental_metrics.csv')
+
+
+        
+                
 
 def joel_data_download():
    
@@ -89,7 +164,6 @@ def joel_data_download():
 def make_scenario_project_list():
    
 
-
     # get data
     df = EnvSus.connAr6.query(model='*', scenario='*',
                 variable='Emissions|CO2', region='World', year=2010)
@@ -109,8 +183,7 @@ def make_scenario_project_list():
 
     # export to csv
     df_pd.to_csv('scenario_project_list.csv')
-    
-    
+      
 def data_download():
     # Main query of AR6 data, returns a IamDataFrame object
     df = EnvSus.connAr6.query(model='*', scenario='*',
@@ -168,7 +241,6 @@ def data_download():
     print(pddf)
     pddf.to_csv('ar6_test_scenarios.csv')
 
-
 def plot_using_pyam():
 
     # df = pyam.IamDataFrame(data='ar6_test_scenarios.csv')
@@ -216,7 +288,6 @@ def plot_using_pyam():
     
     fig.delaxes(axs[5])
     plt.show()
-
 
 # Plot the data showing warming categories and different variables
 def plot_outputs():
@@ -287,7 +358,6 @@ def plot_outputs():
     plt.show()
 
     # print(df)
-
 
 # Plot seaborn violin plots with snapshots of the data at 2050 and 2100, across each variable and each category
 def violin_plots():

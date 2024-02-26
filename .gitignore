@@ -7,6 +7,7 @@
 !utils.py
 !econ_feas.py
 !plotting.py
+!resources.py
 
 !model_classification.csv
 !variable_list_checked.csv

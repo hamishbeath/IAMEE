@@ -14,9 +14,9 @@ class EconFeas:
     
 # import the scenario data for C1, C2, C3 and C4
 
-    connAr6 = pyam.iiasa.Connection(name='ar6-public', 
-                                    creds=None, 
-                                    auth_url='https://api.manager.ece.iiasa.ac.at')
+    # connAr6 = pyam.iiasa.Connection(name='ar6-public', 
+    #                                 creds=None, 
+    #                                 auth_url='https://api.manager.ece.iiasa.ac.at')
 
     categories = ['C1', 'C2', 'C3', 'C4', 'C5']
     # variable=['Water Consumption', 'Land Cover|Pasture', 'Land Cover|Forest', 
@@ -39,9 +39,9 @@ def main() -> None:
     # data_download()
     # plot_outputs()
     # plot_using_pyam()
-    violin_plots()
+    # violin_plots()
     # assess_variable_data()
-
+    energy_supply_investment_score(Data.dimensions_pyamdf, 0.023, 2100, Data.model_scenarios)
 
 def assess_variable_data():
 
@@ -78,8 +78,7 @@ def assess_variable_data():
     # model_classification = pd.read_csv('model_classification.csv')
     # model_type = model_classification['Model Type'].unique().tolist()
 
-
-       
+   
 def data_download():
     # Main query of AR6 data, returns a IamDataFrame object
     df = EconFeas.connAr6.query(model='*', scenario='*',
@@ -136,7 +135,6 @@ def data_download():
     pddf.to_csv('ar6_econfeas.csv')
 
 
-
 def plot_using_pyam():
 
     # df = pyam.IamDataFrame(data='ar6_test_scenarios.csv')
@@ -184,8 +182,6 @@ def plot_using_pyam():
     
     fig.delaxes(axs[5])
     plt.show()
-
-
 
 
 # Plot the data showing warming categories and different variables
@@ -328,33 +324,108 @@ def violin_plots():
     
     plt.show()
 
-
 # takes as an input a Pyam dataframe object with n number of scenarios in it. For each scenario it calculates both a binary 
-def energy_supply_investment_score(pyam_df, threshold_value, investment_data, dollar_conversion_rate):
+def energy_supply_investment_score(pyam_df, base_value, end_year, scenario_model_list):
 
     """
-    This function takes an inputted Pyam dataframe and performs two assessments on it, one is a binary assessment of whether a given
-    scenario breaches the determined threshold for energy supply investment in a given year (gives also single binary score based on
-    a single breach) In addition, the function calculates a score that is based on the degree to which a scenario breaches the threshold.
+    This function takes an inputted Pyam dataframe and calculates to what extent the determined threshold for energy supply investment 
+    in a given year, also giving the mean value over the whole time period. 
 
-    Inputs: Pyam dataframe object, threshold value, 
-    Outputs: Pyam dataframe object with two additional columns, one for binary score, one for degree of breach score, separate dataframe
-    with each score plus the scenario name
+    The metric is the share of GDP that is invested in energy supply. The required variable from Pyam is 'Investment|Energy Supply' and
+    'GDP|MER'.
 
+    Inputs: Pyam dataframe object, base value for the threshold
+
+    Outputs: TBC 1) Pyam dataframe object with additional columns for the score and mean value of the investment in energy supply
+                2) .csv file with the results in standardised format for the rest of the analysis
+
+    Base value is calculated based on historical shares of energy supply investment as a share of GDP from 2015 to 2023. Data from IMF
+    and IEA
     """
-
-    # First deal with the input data, put into 2010 USD and calculate what the value would be at 10 year intervals up to 2100 based on
-    # historical growth rates.
-    investment_df = pd.read_csv(investment_data)
     
-    # first convert all values to 2010 USD
-    for year in range(2015, 2024):
-        investment_df[str(year) + '2010 USD'] = investment_df[str(year)] / dollar_conversion_rate
+    # Filter out the data for the required variables
+    df = pyam_df.filter(variable=['Investment|Energy Supply', 'GDP|MER'])
+    
+    # Filter for the region
+    df = df.filter(region='World')
+
+    # Filter out the data for the required years
+    df = df.filter(year=range(2020, end_year+1))
+
+    df = df.filter(scenario=scenario_model_list['scenario'], model=scenario_model_list['model'])
+    # print(scenario_model_list)
+    # get list of years between 2020 and 2100 at decedal intervals
+    year_list = list(range(2020, end_year+1, 10))
+    
+    mean_value_list = []
+    mean_value_2050_list = []
+
+    for scenario, model in zip(scenario_model_list['scenario'], scenario_model_list['model']):
+        
+        # Filter out the data for the required scenario
+        scenario_df = df.filter(scenario=scenario)
+        scenario__model_df = scenario_df.filter(model=model)
+        
+        # make lists to calculate the results from
+        share_of_gdp = []
+        model_year_list = []
+        proportion_of_base = []
+        
+        # Iterate through the years
+        for year in year_list:    
+ 
+            # Filter out the data for the required year
+            year_df = scenario__model_df.filter(year=year)
+            year_df = year_df.as_pandas()
+            
+            investment = year_df['value'][year_df['variable'] == 'Investment|Energy Supply'].values
+            gdp = year_df['value'][year_df['variable'] == 'GDP|MER'].values
+
+            # Calculate the share of GDP that is invested in energy supply
+            year_share = investment[0] / gdp[0]
+            share_of_gdp.append(year_share)
+            model_year_list.append(year)
+            proportion_of_base.append((year_share / base_value))
+        
+
+        # Calculate the mean value of the share of GDP that is invested in energy supply
+        mean_value = np.mean(proportion_of_base)
+
+        # Calculate the mean value up to 2050
+        mean_value_2050 = np.mean(proportion_of_base[:4])
+        
+        mean_value_list.append(mean_value)
+        mean_value_2050_list.append(mean_value_2050)
+
+    # Create a dataframe with the mean value and mean value up to 2050
+    output_df = pd.DataFrame()
+    output_df['scenario'] = scenario_model_list['scenario']
+    output_df['model'] = scenario_model_list['model']
+    output_df['mean_value'] = mean_value_list
+    output_df['mean_value_2050'] = mean_value_2050_list
+
+    output_df.to_csv('outputs/energy_supply_investment_score.csv')
+
+
+        
+
+
+        # # calculate the ratio of the mean value to the base value
+        # ratio = mean_value / base_value
+        # print(ratio)
+        
+        # # Export the results to a .csv file
+        # df.to_csv('investment_score.csv')
+        
+        #     return df
+
+
+
+
     
 
 
 
-    pass
 
 
 

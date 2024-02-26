@@ -43,7 +43,21 @@ class Data:
         'Pacific OECD', 'Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia',
         'World']
 
+    mandatory_variables = ['Emissions|CO2', 'Investment|Energy Supply','Capacity|Electricity|Wind',
+                           'Capacity|Electricity|Solar|PV', 'Final Energy',
+                           'Primary Energy|Coal', 'Primary Energy|Oil', 'Primary Energy|Gas', 'Primary Energy|Nuclear',
+                           'Primary Energy|Biomass', 'Primary Energy|Non-Biomass Renewables','Carbon Sequestration|CCS|Biomass',
+                            'Carbon Sequestration|CCS|Fossil', 'GDP|MER', 'Land Cover|Forest','Land Cover']
+
+    mandatory_CDR_variables = ['Carbon Sequestration|Enhanced Weathering', 'Carbon Sequestration|Direct Air Capture', 
+                               'Carbon Sequestration|Land Use','Carbon Sequestration|CCS|Biomass', 'Carbon Utilization|CCS|Industry']
+
+
     dollar_2022_2010 = 0.25 # reduction in value of 2022 dollars to 2010 dollars
+    
+    model_scenarios = pd.read_csv('Countries of Sub-Saharan Africa_mandatory_variables_scenarios.csv')
+    dimensions_pyamdf = cat_df = pyam.IamDataFrame(data='cat_df.csv')
+    
 
 class Utils:
 
@@ -54,9 +68,9 @@ class Utils:
     
     categories = ['C1', 'C2', 'C3', 'C4', 'C5']
     
-    connAr6 = pyam.iiasa.Connection(name='ar6-public', 
-                                creds=None, 
-                                auth_url='https://api.manager.ece.iiasa.ac.at')
+    # connAr6 = pyam.iiasa.Connection(name='ar6-public', 
+    #                             creds=None, 
+    #                             auth_url='https://api.manager.ece.iiasa.ac.at')
     
     # connSR15 = pyam.iiasa.Connection(name='iamc15', 
     #                             creds=None, 
@@ -64,17 +78,14 @@ class Utils:
     
     selected_variables = pd.read_csv('variables_filtered.csv')['variables'].tolist()
     
+    
+                           
     # Function that provides simple statistics for a given set of inputs for Pyam
     # Inputs:
     # - database (AR6 or SR15)
     # - temperature scenarios OR SSPs
     # - region
     # - variable(s)
-
-
-
-
-
 
 
     def simple_stats(self, db, region, variables, categories):
@@ -118,10 +129,6 @@ class Utils:
                     variable, 'in the region of', region, 'is: ', total_scenario_count)
     
     
-    
-
-
-
     def export_variable_list(self, db, categories):
 
         if db == 'AR6':
@@ -227,6 +234,72 @@ class Utils:
         
         # Export datasheet to csv
         datasheet.to_csv('stats_datasheet_CDR.csv')
+
+
+    # function that takes as an input a list of mandatory variables and regional coverage and 
+    # provides a list of scenarios that report on all of the mandatory variables for the given region
+    def manadory_variables_scenarios(self, db, categories, regions, variables):
+
+        """
+        Function that takes as an input a list of mandatory variables and regional coverage and 
+        provides a list of scenarios that report on all of the mandatory variables for the given region
+
+        Inputs:
+        - database (AR6 or SR15)
+        - temperature scenarios
+        - regions
+        - variables
+
+        Outputs:
+        - list of scenarios that report on all of the mandatory variables for the given region
+
+        """
+            
+        if db == 'AR6':
+
+            df = Utils.connAr6.query(model='*', scenario='*',
+                variable=variables, region=regions, year=2100
+                )
+        if db == 'SR15':
+
+            df = Utils.connSR15.query(model='*', scenario='*',
+                variable=variables, region=regions, year=2100
+                    )
+        
+        # Filter by temperature category
+        cat_df = df.filter(Category_subset=categories)
+        cat_df.to_csv('cat_df.csv')
+
+        # cat_df = pyam.IamDataFrame(data='cat_df.csv')
+
+        # Get the list of model scenario pairs reporting on all of the mandatory variables
+        for region in regions:
+            output_df = pd.DataFrame()
+            model_list = []
+            scenario_list = []
+            region_df = cat_df.filter(region=region)
+            for model in region_df['model'].unique().tolist():
+                model_df = region_df.filter(model=model)
+                print(model_df)
+                # make list of available scenarios
+                model_scenarios = model_df['scenario'].unique().tolist()
+                for scenario in model_scenarios:
+                    scenario_df = model_df.filter(scenario=scenario)
+                    if scenario_df['variable'].nunique() == len(variables):
+                        model_list.append(model)
+                        scenario_list.append(scenario)
+                print(model_list)
+                print(scenario_list)
+            output_df['model'] = model_list
+            output_df['scenario'] = scenario_list
+        
+            print(output_df)
+            output_df.to_csv(region + '_mandatory_variables_scenarios.csv')
+
+        
+
+
+
 
     
     # def filter_data_sheet_variable_prevelance(self, db, categories, region, threshold):
