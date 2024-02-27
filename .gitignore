@@ -8,6 +8,7 @@
 !econ_feas.py
 !plotting.py
 !resources.py
+!resilience.py
 !data_sources.md
 !model_classification.csv
 !variable_list_checked.csv

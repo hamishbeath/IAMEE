@@ -90,9 +90,9 @@ def forest_cover_change(pyam_df, end_year, scenario_model_list, beccs_threshold)
     
     for scenario, model in zip(scenario_model_list['scenario'], scenario_model_list['model']):
         
-        # Filter out the data for the required scenario
-        scenario_df = df.filter(scenario=scenario)
-        scenario__model_df = scenario_df.filter(model=model)
+            # Filter out the data for the required scenario
+            scenario_df = df.filter(scenario=scenario)
+            scenario__model_df = scenario_df.filter(model=model)
 
         base_value = 0
         forest_cover_values = []
