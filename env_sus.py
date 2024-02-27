@@ -69,10 +69,10 @@ def main() -> None:
     # Utils.test_coco()
     # Utils.snapshot_cluster_analysis(Utils, 'World', Data.c1aR10_scenarios,['Land Cover|Forest', 'Land Cover|Cropland'],'C1a_NZGHGs' , 3, 2100)
     # Utils.time_series_cluster_analysis(Utils, 'World', Data.c1aR10_scenarios,['Land Cover|Forest', 'Land Cover|Cropland'],'C1a_NZGHGs' , 4)
-    # joel_data_download()
+
     # make_scenario_project_list()
-    # Utils.manadory_variables_scenarios(Utils, 'AR6', 'C1a_NZGHGs', EnvSus.regions, Data.mandatory_variables)
-    forest_cover_change(Data.dimensions_pyamdf, 2100, Data.model_scenarios, EnvSus.beccs_threshold)    
+    Utils.manadory_variables_scenarios(Utils, 'AR6', 'C1a_NZGHGs', EnvSus.regions, Data.mandatory_variables)
+    # forest_cover_change(Data.dimensions_pyamdf, 2100, Data.model_scenarios, EnvSus.beccs_threshold)    
 
 def forest_cover_change(pyam_df, end_year, scenario_model_list, beccs_threshold):
 
@@ -90,9 +90,9 @@ def forest_cover_change(pyam_df, end_year, scenario_model_list, beccs_threshold)
     
     for scenario, model in zip(scenario_model_list['scenario'], scenario_model_list['model']):
         
-            # Filter out the data for the required scenario
-            scenario_df = df.filter(scenario=scenario)
-            scenario__model_df = scenario_df.filter(model=model)
+        # Filter out the data for the required scenario
+        scenario_df = df.filter(scenario=scenario)
+        scenario__model_df = scenario_df.filter(model=model)
 
         base_value = 0
         forest_cover_values = []

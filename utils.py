@@ -57,7 +57,7 @@ class Data:
     
     model_scenarios = pd.read_csv('Countries of Sub-Saharan Africa_mandatory_variables_scenarios.csv')
     dimensions_pyamdf = cat_df = pyam.IamDataFrame(data='cat_df.csv')
-    
+    meta_df = pd.read_csv('cat_meta.csv') 
 
 class Utils:
 
@@ -268,33 +268,35 @@ class Utils:
         
         # Filter by temperature category
         cat_df = df.filter(Category_subset=categories)
-        cat_df.to_csv('cat_df.csv')
+        # cat_df.to_csv('cat_df.csv')
+        cat_meta = cat_df.as_pandas(meta_cols=True)
+        cat_meta.to_csv('cat_meta.csv')
 
         # cat_df = pyam.IamDataFrame(data='cat_df.csv')
 
-        # Get the list of model scenario pairs reporting on all of the mandatory variables
-        for region in regions:
-            output_df = pd.DataFrame()
-            model_list = []
-            scenario_list = []
-            region_df = cat_df.filter(region=region)
-            for model in region_df['model'].unique().tolist():
-                model_df = region_df.filter(model=model)
-                print(model_df)
-                # make list of available scenarios
-                model_scenarios = model_df['scenario'].unique().tolist()
-                for scenario in model_scenarios:
-                    scenario_df = model_df.filter(scenario=scenario)
-                    if scenario_df['variable'].nunique() == len(variables):
-                        model_list.append(model)
-                        scenario_list.append(scenario)
-                print(model_list)
-                print(scenario_list)
-            output_df['model'] = model_list
-            output_df['scenario'] = scenario_list
+        # # Get the list of model scenario pairs reporting on all of the mandatory variables
+        # for region in regions:
+        #     output_df = pd.DataFrame()
+        #     model_list = []
+        #     scenario_list = []
+        #     region_df = cat_df.filter(region=region)
+        #     for model in region_df['model'].unique().tolist():
+        #         model_df = region_df.filter(model=model)
+        #         print(model_df)
+        #         # make list of available scenarios
+        #         model_scenarios = model_df['scenario'].unique().tolist()
+        #         for scenario in model_scenarios:
+        #             scenario_df = model_df.filter(scenario=scenario)
+        #             if scenario_df['variable'].nunique() == len(variables):
+        #                 model_list.append(model)
+        #                 scenario_list.append(scenario)
+        #         print(model_list)
+        #         print(scenario_list)
+        #     output_df['model'] = model_list
+        #     output_df['scenario'] = scenario_list
         
-            print(output_df)
-            output_df.to_csv(region + '_mandatory_variables_scenarios.csv')
+        #     print(output_df)
+        #     output_df.to_csv(region + '_mandatory_variables_scenarios.csv')
 
         
 

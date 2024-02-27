@@ -13,6 +13,11 @@ Historical production from 10.1088/1748-9326/aca4ea (author shared file) and USG
 Reserves taken from https://www.usgs.gov/centers/national-minerals-information-center/
 Future recycling rates taken from 10.1088/1748-9326/aca4ea (supplementary file)
 
+Resilience
+Between country resilience data from https://link.springer.com/article/10.1007/s10584-021-03133-w#Sec2 via the author. Relevant data originally from KC and Lutz, and Dellink et al.
+
+Robust
+Historical CO2 emissions data from Friedlingstein et al (2023) https://globalcarbonbudgetdata.org/latest-data.html
 
  
 
