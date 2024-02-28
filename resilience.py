@@ -1,7 +1,7 @@
 import numpy as np
 import pyam
 import pandas as pd
-from utils import Utils
+# from utils import Utils
 from utils import Data
 
 
@@ -166,3 +166,4 @@ def gini_between_countries(pyam_df, scenario_model_list, end_year, meta_df, gini
 
 if __name__ == "__main__":
     main()
+    

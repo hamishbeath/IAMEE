@@ -57,7 +57,11 @@ class Data:
     
     model_scenarios = pd.read_csv('Countries of Sub-Saharan Africa_mandatory_variables_scenarios.csv')
     dimensions_pyamdf = cat_df = pyam.IamDataFrame(data='cat_df.csv')
-    meta_df = pd.read_csv('cat_meta.csv') 
+    # meta_df = pd.read_csv('cat_meta.csv') 
+
+    energy_variables = ['Primary Energy|Coal','Primary Energy|Oil',
+                        'Primary Energy|Gas', 'Primary Energy|Nuclear',
+                        'Primary Energy|Biomass', 'Primary Energy|Non-Biomass Renewables']
 
 class Utils:
 
