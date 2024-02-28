@@ -11,7 +11,14 @@
 !resilience.py
 !robust.py
 !main.py
-!inputs/
+
 !data_sources.md
 !model_classification.csv
 !variable_list_checked.csv
+
+!inputs
+!inputs/*
+
+!outputs
+!outputs/*
+

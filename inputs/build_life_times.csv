@@ -1,0 +1,7 @@
+﻿tech,lifetime,build_time,flexibility_factor,sources
+Coal,35,5,40,https://www.nature.com/articles/s41560-020-00696-3#Sec16
+Oil,35,5,40,https://www.nature.com/articles/s41560-020-00696-3#Sec16
+Gas,35,5,40,https://www.nature.com/articles/s41560-020-00696-3#Sec16
+Nuclear,50,7.5,57.5,https://www.world-nuclear.org/getmedia/0156a8d7-01c6-42d9-97be-3f04f34cb8fa/performance-report-2023-final.pdf.aspx
+Biomass,35,5,40,assumed same as thermal 
+Non-Biomass Renewables,25,2,27,https://www.nature.com/articles/s41560-020-00696-3#Sec16
