@@ -2,6 +2,7 @@ import numpy as np
 import pyam
 import pandas as pd
 from utils import Data
+from itertools import combinations
 from resources import NaturalResouces
 from scipy.spatial.distance import pdist, squareform
 
@@ -23,7 +24,7 @@ class IndexBuilder:
 class Selection:
 
     economic_scores = pd.read_csv('outputs/economic_scores.csv')
-    environmental_scores = pd.read_csv('outputs/environmental_scores.csv')
+    environment_scores = pd.read_csv('outputs/environmental_scores.csv')
     resource_scores = pd.read_csv('outputs/resource_scores.csv')
     resilience_scores = pd.read_csv('outputs/resilience_scores.csv')
     robustness_scores = pd.read_csv('outputs/robustness_scores.csv')
@@ -182,34 +183,63 @@ def select_most_dissimilar_scenarios(model_scenarios_list):
     data = pd.DataFrame({'model': Selection.economic_scores['model'],
                         'scenario': Selection.economic_scores['scenario'],
                         'economic_score': Selection.economic_scores['investment_score'],
-                        'environmental_score': Selection.environmental_scores['environmental_score'],
+                        'environmental_score': Selection.environment_scores['environmental_score'],
                         'resource_score': Selection.resource_scores['resource_score'],
                         'resilience_score': Selection.resilience_scores['resilience_score'],
                         'robustness_score': Selection.robustness_scores['robustness_score']}, index=None)
 
+    # normalise the scores
+    data['economic_score'] = (data['economic_score'] ) / data['economic_score'].max() 
+    data['environmental_score'] = (data['environmental_score'] ) / data['environmental_score'].max()
+    data['resource_score'] = (data['resource_score'] ) / data['resource_score'].max()
+    data['resilience_score'] = (data['resilience_score'] ) / data['resilience_score'].max()
+    data['robustness_score'] = (data['robustness_score'] ) / data['robustness_score'].max()
+    
     # make the model and scenario the index
     data.set_index(['model', 'scenario'], inplace=True)
 
     # Calculate pairwise Euclidean distances
     dist_matrix = squareform(pdist(data, 'euclidean'))
 
-    # Sample implementation for selecting 4 most dissimilar pathways (greedy approach)
-    n_select = Selection.number_of_illustrative_scenarios
-    selected_indices = [np.argmax(np.sum(dist_matrix, axis=1))]  # Start with the most dissimilar
+    # Generate all possible combinations of four pathways
+    pathway_indices = range(len(data))
+    combinations_of_four = list(combinations(pathway_indices, 4))
 
-    for _ in range(1, n_select):
-        # Calculate the minimum distance of remaining pathways to the selected set
-        min_dist_to_set = np.min(dist_matrix[:, selected_indices], axis=1)
-    
-        # Select the pathway that maximizes the minimum distance to the already selected set
-        next_index = np.argmax(min_dist_to_set)
-        selected_indices.append(next_index)
+    # Initialise variables to store the maxmium score and the best combination
+    max_score = -np.inf
+    best_combination = None
 
-    # reset the index of the model_scenarios_list
-    model_scenarios_list = model_scenarios_list.reset_index()
+    # Loop through all combinations of four pathways
+    for combo in combinations_of_four:
+
+        # Extract the distances for the current combination
+        combo_dist_matrix = dist_matrix[np.ix_(combo, combo)]
+
+        score = np.sum(combo_dist_matrix)
+
+        if score > max_score:
+            max_score = score
+            best_combination = combo
+        
+
+
+    # # Sample implementation for selecting 4 most dissimilar pathways (greedy approach)
+    # n_select = Selection.number_of_illustrative_scenarios
+    # selected_indices = [np.argmax(np.sum(dist_matrix, axis=1))]  # Start with the most dissimilar
+
+    # for _ in range(1, n_select):
+    #     # Calculate the minimum distance of remaining pathways to the selected set
+    #     min_dist_to_set = np.min(dist_matrix[:, selected_indices], axis=1)
     
-    # `selected_indices` now contains the indices of the 4 most different pathways
-    selected_pathways = model_scenarios_list.iloc[selected_indices]
+    #     # Select the pathway that maximizes the minimum distance to the already selected set
+    #     next_index = np.argmax(min_dist_to_set)
+    #     selected_indices.append(next_index)
+
+    # # reset the index of the model_scenarios_list
+    # model_scenarios_list = model_scenarios_list.reset_index()
+    best_combination = list(best_combination)
+    # # `selected_indices` now contains the indices of the 4 most different pathways
+    selected_pathways = model_scenarios_list.iloc[best_combination]
     print(selected_pathways)
 
 

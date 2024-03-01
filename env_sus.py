@@ -45,7 +45,8 @@ class EnvSus:
     plotting_category_colours = {'C1':'#f57200', 'C3':'#6302d9', 'C5':'#1b9e77'}
     violin_colours = ['#8CCFF4','#7FCACC','#006B7F']
     run_mode = 'cat'
-    regions = ['World','Countries of Sub-Saharan Africa', 'Asian countries except Japan']
+    regions = ['World', 'Countries of Sub-Saharan Africa']
+    region = ['Countries of Sub-Saharan Africa']
     checked_variables = pd.read_csv('variable_categories.csv')
 
     # beccs_threshold = 20500 # in mtCO2 / year
@@ -71,8 +72,9 @@ def main() -> None:
     # Utils.time_series_cluster_analysis(Utils, 'World', Data.c1aR10_scenarios,['Land Cover|Forest', 'Land Cover|Cropland'],'C1a_NZGHGs' , 4)
 
     # make_scenario_project_list()
-    Utils.manadory_variables_scenarios(Utils, 'AR6', 'C1a_NZGHGs', EnvSus.regions, Data.mandatory_variables)
+    # Utils.manadory_variables_scenarios(Utils, 'AR6', 'C1a_NZGHGs', EnvSus.regions, Data.mandatory_variables)
     # forest_cover_change(Data.dimensions_pyamdf, 2100, Data.model_scenarios, EnvSus.beccs_threshold)    
+    Utils.filter_data_sheet_variable_prevelance(Utils, 'C1a_NZGHGs', EnvSus.region, Data.mandatory_variables)
 
 def forest_cover_change(pyam_df, end_year, scenario_model_list, beccs_threshold):
 

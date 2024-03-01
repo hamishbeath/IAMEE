@@ -270,41 +270,111 @@ class Utils:
                 variable=variables, region=regions, year=2100
                     )
         
-        # Filter by temperature category
+        # # Filter by temperature category
+        # try:
         cat_df = df.filter(Category_subset=categories)
-        # cat_df.to_csv('cat_df.csv')
+        # except:
+        # cat_df = df.filter(Category=categories)
+        
+        cat_df.to_csv('cat_df.csv')
         cat_meta = cat_df.as_pandas(meta_cols=True)
         cat_meta.to_csv('cat_meta.csv')
 
         # cat_df = pyam.IamDataFrame(data='cat_df.csv')
 
-        # # Get the list of model scenario pairs reporting on all of the mandatory variables
-        # for region in regions:
-        #     output_df = pd.DataFrame()
-        #     model_list = []
-        #     scenario_list = []
-        #     region_df = cat_df.filter(region=region)
-        #     for model in region_df['model'].unique().tolist():
-        #         model_df = region_df.filter(model=model)
-        #         print(model_df)
-        #         # make list of available scenarios
-        #         model_scenarios = model_df['scenario'].unique().tolist()
-        #         for scenario in model_scenarios:
-        #             scenario_df = model_df.filter(scenario=scenario)
-        #             if scenario_df['variable'].nunique() == len(variables):
-        #                 model_list.append(model)
-        #                 scenario_list.append(scenario)
-        #         print(model_list)
-        #         print(scenario_list)
-        #     output_df['model'] = model_list
-        #     output_df['scenario'] = scenario_list
+        # Get the list of model scenario pairs reporting on all of the mandatory variables
+        for region in regions:
+            output_df = pd.DataFrame()
+            model_list = []
+            scenario_list = []
+            region_df = cat_df.filter(region=region)
+            for model in region_df['model'].unique().tolist():
+                model_df = region_df.filter(model=model)
+                print(model_df)
+                # make list of available scenarios
+                model_scenarios = model_df['scenario'].unique().tolist()
+                for scenario in model_scenarios:
+                    scenario_df = model_df.filter(scenario=scenario)
+                    if scenario_df['variable'].nunique() == len(variables):
+                        model_list.append(model)
+                        scenario_list.append(scenario)
+                print(model_list)
+                print(scenario_list)
+            output_df['model'] = model_list
+            output_df['scenario'] = scenario_list
         
-        #     print(output_df)
-        #     output_df.to_csv(region + '_mandatory_variables_scenarios.csv')
+            print(output_df)
+            output_df.to_csv(region + '_mandatory_variables_scenarios.csv')
 
+    
+    # function that takes the pyam dataframe and loops through each mandatory variable to assess the 
+    # whether or not removing the variable substantially increases the number of scenarios or models
+    def filter_data_sheet_variable_prevelance(self, category, region, variables):
+
+        cat_df = pyam.IamDataFrame(data='cat_df.csv')
+        cat_df = cat_df.filter(region=region)
+        # cat_df = cat_df.filter(Category_subset=category)
+        variable_list = []
+        model_number = []
+        scenario_number = []
         
+        output_df = pd.DataFrame()
+        
+        # Iterate through variables to see the effect of excluding each one
+        for variable in variables:
 
+            # pop out the variable from the list
+            variables_copy = variables.copy()
+            variables_copy.remove(variable)
+            variable_df = cat_df.filter(variable=variables_copy)
 
+            model_list = []
+            scenario_list = []
+
+            for model in variable_df['model'].unique().tolist():
+                model_df = variable_df.filter(model=model)
+
+                # make list of available scenarios
+                model_scenarios = model_df['scenario'].unique().tolist()
+                for scenario in model_scenarios:
+                    
+                    scenario_df = model_df.filter(scenario=scenario)
+                    
+                    # now make a list of the scenario variables
+                    scenario_variables = scenario_df['variable'].unique().tolist()
+                    scenario_counter = 0
+                    for test_variable in variables_copy:
+                        if test_variable not in scenario_variables:
+                            break
+                    
+                        else:
+                            scenario_counter += 1
+                    
+                    if scenario_counter == len(variables_copy):
+                        scenario_list.append(scenario)
+                        model_list.append(model)
+        
+            print('The scenarios for when excluding', variable, 'in the region of', region, 'is: ')
+            # print(scenario_list)
+
+            if variable == 'Carbon Sequestration|CCS|Fossil':
+
+                print(scenario_list)
+                print(model_list)
+            # count the number of unique models in the list
+            unique_models = len(set(model_list))
+            # print(unique_models)
+            
+            model_number.append(unique_models)
+            scenario_number.append(len(scenario_list))
+            variable_list.append(variable)
+            # print(scenario_number)
+
+        output_df['variable'] = variable_list
+        output_df['model_number'] = model_number
+        output_df['scenario_number'] = scenario_number
+
+        output_df.to_csv('variable_prevalance.csv')
 
 
     

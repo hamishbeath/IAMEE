@@ -5,7 +5,7 @@ GDP data from the IMF https://www.imf.org/en/Publications/WEO/weo-database/2023/
 Energy Supply Investment data from the IEA: https://www.iea.org/reports/world-energy-investment-2023#downloads
 
 Environmental
-Thresholds for BECCS and AR from https://www.science.org/doi/10.1126/science.adj6171
+Threshold for BECCS  from https://www.science.org/doi/10.1126/science.adj6171 - uses upper bound of the medium concern threshold with low conversion efficiency. 
 
 Resource
 Material intensities from doi: 10.1088/1748-9326/aca4ea (supplementary file)
