@@ -46,19 +46,20 @@ def main() -> None:
     # Plotting.box_plot_variables(Plotting, 'variable_categories.csv', 'robust', 'C1a_NZGHGs', [2050, 2100])
     # Plotting.single_variable_box_line(Plotting, Data.c1aR10_scenarios, 'Land Cover|Forest', 'C1a_NZGHGs', 'World',years=range(2020, 2101))
     # Plotting.plot_metrics(Plotting, Plotting.bright_modern_colors, Data.model_scenarios)
-    Plotting.create_radar_plots(Plotting, 
-                                Data.model_scenarios, 
-                                Selection.economic_scores, 
-                                Selection.environment_scores, 
-                                Selection.resource_scores, 
-                                Selection.resilience_scores, 
-                                Selection.robustness_scores, 
-                                Plotting.bright_modern_colors)      
-
+    # Plotting.create_radar_plots(Plotting, 
+    #                             Data.model_scenarios, 
+    #                             Selection.economic_scores, 
+    #                             Selection.environment_scores, 
+    #                             Selection.resource_scores, 
+    #                             Selection.resilience_scores, 
+    #                             Selection.robustness_scores, 
+    #                             Plotting.bright_modern_colors)      
+    Plotting.radar_plot_scenario_archetypes(Plotting, Data.model_scenarios, Selection.archetypes, Plotting.bright_modern_colors)
 
 class Plotting:
 
     dimensions = ['economic', 'environment', 'resilience', 'resource', 'robust']
+    dimension_names = ['Economic', 'Environment', 'Resource', 'Resilience', 'Robust']
     dimension_colours = {'economic': 'red', 'environment': 'green', 'resilience': 'blue', 'resource': 'orange', 'robust': 'purple'}
     dimension_titles = {'economic': 'Economic Feasibility', 'environment': 'Non-climate Environmental Sustainability', 'resilience': 'Societal Resilience', 'resource': 'Resource Availability', 'robust': 'Scenario Robustness'}
     dimention_cmaps = {'economic': 'Reds', 'environment': 'Greens', 'resilience': 'Blues', 'resource': 'Oranges', 'robust': 'Purples'}
@@ -519,30 +520,31 @@ class Plotting:
         radar_data['model'] = economic_scores['model']
         print(radar_data)
         # make a fig with 15 subplots, 3 rows
-        fig, axs = plt.subplots(3, 5, figsize=(20, 11), subplot_kw=dict(polar=True))
+        fig, axs = plt.subplots(6, 3, figsize=(13, 20), subplot_kw=dict(polar=True))
 
         # Number of variables we're plotting.
         categories = list(radar_data)[0:5]  # get the first 5 columns as the categories
         N = len(categories)
         print(categories)
         # make a list of the scenario 
-        scenario_list = radar_data['scenario'].unique().tolist()
+        scenario_list = radar_data['scenario'].tolist()
         
+        i = 0
         # loop through each scenario
-        for i, scenario in enumerate(scenario_list):
+        for scenario, model in zip(scenario_model_list['scenario'], scenario_model_list['model']): 
             # Find the right subplot
+
             ax = axs.flatten()[i]
             scenario_item = radar_data['scenario'][i]
             model = radar_data['model'][i]
             # Compute angle each bar is centered on:
             angles = np.linspace(0, 2 * np.pi, N, endpoint=False).tolist()
-            print(angles)
             # The plot is circular, so we need to "complete the loop" and append the start value to the end.
-            stats = radar_data.loc[radar_data['scenario'] == scenario_item, categories].values.flatten().tolist()
-            print(stats)
+            stats = radar_data.loc[radar_data['model'] == model]
+            stats = stats.loc[stats['scenario'] == scenario_item, categories].values.flatten().tolist()
             stats += stats[:1]
             angles += angles[:1]
-            print(stats)
+
             # Draw the outline of our data.
             ax.fill(angles, stats, color=colours[i], alpha=0.25)
             ax.plot(angles, stats, color=colours[i], linewidth=2)
@@ -568,12 +570,50 @@ class Plotting:
             # ax.set_yticks([])
             # ax.set_xlabel('')
             # ax.set_ylabel('')
+            i += 1
+        # Show the figure
+        plt.tight_layout()
+        plt.savefig('figures/radar_plots' + str(Data.categories) + '.pdf')
+        plt.show()
+        
+
+    def radar_plot_scenario_archetypes(self, scenario_model_list, archetypes, colours):
+
+        # plt.rcParams['font.size'] = 7
+        # Number of variables we're plotting.
+        categories = list(archetypes)[0:5]
+        archetype_names = ['Warning lights', 'Resource risk', 'Sustainability struggle', 'Clear path']
+        archetype_colours = ['#FF5733', '#3357FF', '#9933FF', '#33FF42']
+        # make a fig with 4 subplots, 2 rows
+        fig, axs = plt.subplots(2, 2, figsize=(10, 10), subplot_kw=dict(polar=True))
+
+        N = len(categories)
+
+        for archetype in range(0, 4):
+
+            ax = axs.flatten()[archetype]
+            angles = np.linspace(0, 2 * np.pi, N, endpoint=False).tolist()
+            stats = archetypes.loc[archetypes['cluster'] == archetype, categories].values.flatten().tolist()
+            stats += stats[:1]
+            angles += angles[:1]
+            
+            # Draw the outline of our data.
+            ax.fill(angles, stats, color=archetype_colours[archetype], alpha=0.25)
+            ax.plot(angles, stats, color=archetype_colours[archetype], linewidth=3)
+
+            # # Labels for each point
+            ax.set_xticks(angles[:-1])
+            ax.set_xticklabels(Plotting.dimension_names)
+
+            #set the y limit
+            ax.set_ylim(0, 1)
+
+            # Title for each subplot with the archetype name
+            ax.set_title(archetype_names[archetype],size=14, y=1.1, fontweight='bold')
 
         # Show the figure
         plt.tight_layout()
         plt.show()
-
-
 
 if __name__ == "__main__":
     main()

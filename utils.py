@@ -54,7 +54,7 @@ class Data:
 
 
     dollar_2022_2010 = 0.25 # reduction in value of 2022 dollars to 2010 dollars
-    categories = ['C1', 'C2']
+    categories = ''
     model_scenarios = pd.read_csv('Countries of Sub-Saharan Africa_mandatory_variables_scenarios' + str(categories) + '.csv')
     dimensions_pyamdf = cat_df = pyam.IamDataFrame(data='cat_df' + str(categories) + '.csv')
     meta_df = pd.read_csv('cat_meta' + str(categories) + '.csv') 
@@ -62,6 +62,12 @@ class Data:
     energy_variables = ['Primary Energy|Coal','Primary Energy|Oil',
                         'Primary Energy|Gas', 'Primary Energy|Nuclear',
                         'Primary Energy|Biomass', 'Primary Energy|Non-Biomass Renewables']
+
+    try:
+        scenario_archetypes = pd.read_csv('outputs/scenario_archetypes '+ str(categories) + '.csv')
+    except:
+        print('No scenario archetypes file found for the category of', categories)
+
 
 class Utils:
 

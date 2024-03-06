@@ -2,33 +2,43 @@ import numpy as np
 import pyam
 import pandas as pd
 from utils import Data
-from itertools import combinations
+from itertools import combinations, product
 from resources import NaturalResouces
 from scipy.spatial.distance import pdist, squareform
+from sklearn.cluster import KMeans
+
 
 class IndexBuilder:
 
-    investment_metrics = pd.read_csv('outputs/energy_supply_investment_score.csv')
-    environment_metrics = pd.read_csv('outputs/environmental_metrics.csv')
-    resource_metrics = pd.read_csv('outputs/material_use_ratios.csv')
+    investment_metrics = pd.read_csv('outputs/energy_supply_investment_score' + str(Data.categories) + '.csv')
+    environment_metrics = pd.read_csv('outputs/environmental_metrics' + str(Data.categories) + '.csv')
+    resource_metrics = pd.read_csv('outputs/material_use_ratios' + str(Data.categories) + '.csv')
     
     # import resilience metrics
-    final_energy_demand = pd.read_csv('outputs/final_energy_demand.csv')    
-    energy_diversity = pd.read_csv('outputs/shannon_diversity_index.csv')   
-    gini_coefficient = pd.read_csv('outputs/gini_coefficient.csv')
+    final_energy_demand = pd.read_csv('outputs/final_energy_demand' + str(Data.categories) + '.csv')    
+    energy_diversity = pd.read_csv('outputs/shannon_diversity_index' + str(Data.categories) + '.csv')   
+    gini_coefficient = pd.read_csv('outputs/gini_coefficient' + str(Data.categories) + '.csv')
 
     # import robustness metrics
-    energy_system_flexibility = pd.read_csv('outputs/flexibility_scores.csv')
-    carbon_budgets = pd.read_csv('outputs/carbon_budget_shares.csv')
+    energy_system_flexibility = pd.read_csv('outputs/flexibility_scores' + str(Data.categories) + '.csv')
+    carbon_budgets = pd.read_csv('outputs/carbon_budget_shares' + str(Data.categories) + '.csv')
 
 class Selection:
 
-    economic_scores = pd.read_csv('outputs/economic_scores.csv')
-    environment_scores = pd.read_csv('outputs/environmental_scores.csv')
-    resource_scores = pd.read_csv('outputs/resource_scores.csv')
-    resilience_scores = pd.read_csv('outputs/resilience_scores.csv')
-    robustness_scores = pd.read_csv('outputs/robustness_scores.csv')
-    number_of_illustrative_scenarios = 4
+    try:
+        economic_scores = pd.read_csv('outputs/economic_scores' + str(Data.categories) + '.csv')
+        environment_scores = pd.read_csv('outputs/environmental_scores' + str(Data.categories) + '.csv')
+        resource_scores = pd.read_csv('outputs/resource_scores' + str(Data.categories) + '.csv')
+        resilience_scores = pd.read_csv('outputs/resilience_scores' + str(Data.categories) + '.csv')
+        robustness_scores = pd.read_csv('outputs/robustness_scores' + str(Data.categories) + '.csv')
+        number_of_illustrative_scenarios = 4
+    except:
+        print('IndexBuilder class has not been run yet')
+
+    try:
+        archetypes = pd.read_csv('outputs/scenario_archetypes' + str(Data.categories) + '.csv')
+    except:
+        print('find_scenario_archetypes function has not been run yet')
 
 def main() -> None:
 
@@ -41,8 +51,9 @@ def main() -> None:
     # calculate_robustness_score(IndexBuilder.energy_system_flexibility, 
     #                            IndexBuilder.energy_diversity, 
     #                            IndexBuilder.carbon_budgets)
-    select_most_dissimilar_scenarios(Data.model_scenarios)
-
+    # select_most_dissimilar_scenarios(Data.model_scenarios)
+    find_scenario_archetypes(Data.model_scenarios, 4)
+    
 
 # calculate the economic score (higher score = more economic challenges)
 def economic_score(investment_scores):
@@ -60,7 +71,7 @@ def economic_score(investment_scores):
     output_df['investment_score'] = energy_investment_normalised
     output_df['investment_score_2050'] = energy_investment_2050_normalised
     
-    output_df.to_csv('outputs/economic_scores.csv', index=False)
+    output_df.to_csv('outputs/economic_scores' + str(Data.categories) + '.csv', index=False)
 
 
 # calculate the environmental score (higher score = more environmental challenges)
@@ -81,7 +92,7 @@ def environment_score(environment_metrics):
     output_df['environmental_score'] = forest_change_normalised + beccs_threshold_breached
     output_df['environmental_score_2050'] = forest_change_2050_normalised + beccs_threshold_breached
 
-    output_df.to_csv('outputs/environmental_scores.csv', index=False)
+    output_df.to_csv('outputs/environmental_scores' + str(Data.categories) + '.csv', index=False)
 
 
 # calculate the resource score (higher score = more resource challenges)
@@ -103,7 +114,7 @@ def resource_score(minerals, resource_metrics):
             output_df['total'] = mineral_score_normalised
     # create a composite resource score
     output_df['resource_score'] = output_df['total'] / len(minerals)
-    output_df.to_csv('outputs/resource_scores.csv', index=False)
+    output_df.to_csv('outputs/resource_scores' + str(Data.categories) + '.csv', index=False)
 
 
 # calculate the resilience score (higher score = more resilience challenges)
@@ -135,7 +146,7 @@ def resilience_score(final_energy_demand, energy_diversity, gini_coefficient):
 
     # create the composite resilience score
     outout_df['resilience_score'] = outout_df['final_energy_demand'] + outout_df['energy_diversity'] + outout_df['gini_coefficient']
-    outout_df.to_csv('outputs/resilience_scores.csv', index=False)
+    outout_df.to_csv('outputs/resilience_scores' + str(Data.categories) + '.csv', index=False)
 
 
 # calculate the robustness score (higher score = more robustness challenges)
@@ -168,7 +179,7 @@ def calculate_robustness_score(flexibility_scores, shannon_index, carbon_budgets
 
     # create the composite robustness score
     outout_df['robustness_score'] = outout_df['flexibility_scores'] + outout_df['shannon_index'] + outout_df['carbon_budgets']
-    outout_df.to_csv('outputs/robustness_scores.csv', index=False)
+    outout_df.to_csv('outputs/robustness_scores' + str(Data.categories) + '.csv', index=False)
 
 
 # select most dissimilar scenarios
@@ -197,7 +208,7 @@ def select_most_dissimilar_scenarios(model_scenarios_list):
     
     # make the model and scenario the index
     data.set_index(['model', 'scenario'], inplace=True)
-
+    data.to_csv('outputs/normalised_scores' + str(Data.categories) + '.csv', index=True)
     # Calculate pairwise Euclidean distances
     dist_matrix = squareform(pdist(data, 'euclidean'))
 
@@ -209,9 +220,10 @@ def select_most_dissimilar_scenarios(model_scenarios_list):
     max_score = -np.inf
     best_combination = None
 
+
     # Loop through all combinations of four pathways
     for combo in combinations_of_four:
-
+        
         # Extract the distances for the current combination
         combo_dist_matrix = dist_matrix[np.ix_(combo, combo)]
 
@@ -241,6 +253,59 @@ def select_most_dissimilar_scenarios(model_scenarios_list):
     # # `selected_indices` now contains the indices of the 4 most different pathways
     selected_pathways = model_scenarios_list.iloc[best_combination]
     print(selected_pathways)
+
+
+# find scenario archetypes (K-means clustering of scenarios)
+def find_scenario_archetypes(model_scenarios_list, cluster_number=int):
+    """
+    Find scenario archetypes using K-means clustering of the scenarios based on the
+    scores across the different dimensions.
+    
+    """
+    data = pd.read_csv('outputs/normalised_scores' + str(Data.categories) + '.csv')
+    
+    # set index
+    data.set_index(['model', 'scenario'], inplace=True)
+
+    # Sample implementation for finding 4 scenario archetypes (K-means clustering)
+    n_clusters = cluster_number
+    kmeans = KMeans(n_clusters=n_clusters, random_state=0).fit(data)
+    data['cluster'] = kmeans.labels_
+    
+    data.to_csv('outputs/clustered_scores' + str(Data.categories) + '.csv', index=True)
+    
+    # Split the DataFrame into a list of DataFrames for each cluster
+    clusters = [data[data['cluster'] == i] for i in data['cluster'].unique()]   
+
+    # Generate all combinations, one scenario from each cluster
+    combinations = list(product(*[cluster.iterrows() for cluster in clusters]))
+
+    # Calculate dissimilarity for each combination and select the most dissimilar one
+    most_dissimilar_combination = max(combinations, key=calculate_total_dissimilarity)
+
+    # Extract the selected scenarios
+    selected_scenarios = [scenario for scenario in most_dissimilar_combination]
+
+    print(selected_scenarios)
+
+    # output selected scenarios to csv
+    selected_scenarios_df = pd.DataFrame(selected_scenarios)
+    selected_scenarios_df.to_csv('outputs/selected_scenarios' + str(Data.categories) + '.csv', index=False)
+
+    # calculate scenario archetype scores as the centroids of each cluster
+    cluster_centroids = pd.DataFrame(kmeans.cluster_centers_, columns=data.columns[:-1])
+    # add in the cluster number
+    cluster_centroids['cluster'] = range(0, n_clusters)
+    cluster_centroids.to_csv('outputs/scenario_archetypes' + str(Data.categories) + '.csv', index=False)
+    
+# Function to calculate total dissimilarity for a combination of scenarios
+def calculate_total_dissimilarity(combination):
+    # Extracting the scenarios' features from the combination
+    # Adjusted to handle `(index, row)` tuples
+    scenarios_features = [scenario[1].drop('cluster').values for scenario in combination]
+    # Calculating pairwise distances and then the total sum of those distances
+    total_dissimilarity = sum(pdist(scenarios_features, 'euclidean'))
+    return total_dissimilarity
 
 
 if __name__ == "__main__":

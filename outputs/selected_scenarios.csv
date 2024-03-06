@@ -1,0 +1,29 @@
+0,1
+"('AIM/CGE 2.2', 'EN_NPi2020_300f')","economic_score         0.125530
+environmental_score    0.941922
+resource_score         0.459598
+resilience_score       0.496395
+robustness_score       0.568680
+cluster                2.000000
+Name: (AIM/CGE 2.2, EN_NPi2020_300f), dtype: float64"
+"('IMAGE 3.2', 'SSP1_SPA1_19I_RE_LB')","economic_score         0.298180
+environmental_score    0.169358
+resource_score         0.890644
+resilience_score       0.082349
+robustness_score       0.666421
+cluster                1.000000
+Name: (IMAGE 3.2, SSP1_SPA1_19I_RE_LB), dtype: float64"
+"('WITCH 5.0', 'EN_NPi2020_400f')","economic_score         0.000000
+environmental_score    0.000584
+resource_score         0.252978
+resilience_score       0.531805
+robustness_score       0.342218
+cluster                3.000000
+Name: (WITCH 5.0, EN_NPi2020_400f), dtype: float64"
+"('REMIND-MAgPIE 1.7-3.0', 'PEP_1p5C_red_eff')","economic_score         1.000000
+environmental_score    0.584357
+resource_score         0.943041
+resilience_score       0.994022
+robustness_score       0.578642
+cluster                0.000000
+Name: (REMIND-MAgPIE 1.7-3.0, PEP_1p5C_red_eff), dtype: float64"

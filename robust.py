@@ -98,12 +98,8 @@ def harmonize_emissions_calc_budgets(df, var, scenario_model_list,
 
     carbon_budget_shares = []
     for scenario, model in zip(scenario_model_list['scenario'], scenario_model_list['model']): 
-        ret = df.filter(variable=var, region='World',model=model, scenario=scenario)
-        # filter for only years after 2005
-        ret = ret.filter(year=valid_years)
-        
-        ret_test = ret
-        print(scenario, model)
+        ret = df.filter(variable=var, region='World',model=model, scenario=scenario, year=range(2005, 2100+1))
+
        # interpolate the data so that we have values for all years
         ret = ret.interpolate(range(2005, unity_year+1))        
         assert unity_year >= max(harm_years)
