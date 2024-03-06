@@ -17,18 +17,19 @@ class Resilience:
 
 def main() -> None:
 
-    # shannon_index_energy_mix(Data.dimensions_pyamdf, Data.model_scenarios, 2100)
-    # final_energy_demand(Data.dimensions_pyamdf, Data.model_scenarios, 2100)
+    shannon_index_energy_mix(Data.dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories)
+    final_energy_demand(Data.dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories)
     gini_between_countries(Data.dimensions_pyamdf, 
                            Data.model_scenarios, 
                            2100, 
                            Data.meta_df,
-                           Resilience.gini_between_countries)
+                           Resilience.gini_between_countries,
+                           Data.categories)
 
 
 
 # Function that calculates the shannon index for the energy mix for each scenario
-def shannon_index_energy_mix(pyam_df, scenario_model_list, end_year):
+def shannon_index_energy_mix(pyam_df, scenario_model_list, end_year, categories):
 
     # filter for the variables needed
     df = pyam_df.filter(variable=Resilience.energy_variables,
@@ -73,11 +74,11 @@ def shannon_index_energy_mix(pyam_df, scenario_model_list, end_year):
     
     # create a new dataframe with the shannon indexes
     shannon_df = pd.DataFrame({'model': scenario_model_list['model'], 'scenario': scenario_model_list['scenario'], 'shannon_index': shannon_indexes})
-    shannon_df.to_csv('outputs/shannon_diversity_index.csv', index=False)
+    shannon_df.to_csv('outputs/shannon_diversity_index' + str(categories) + '.csv', index=False)
 
 
 # Function that calculates the cumulative final energy demand for each scenario
-def final_energy_demand(pyam_df, scenario_model_list, end_year):
+def final_energy_demand(pyam_df, scenario_model_list, end_year, categories):
     
     # filter for the variables needed
     df = pyam_df.filter(variable='Final Energy',
@@ -105,11 +106,11 @@ def final_energy_demand(pyam_df, scenario_model_list, end_year):
     final_energy_demand_df = pd.DataFrame({'model': scenario_model_list['model'], 
                                            'scenario': scenario_model_list['scenario'], 
                                            'final_energy_demand': final_energy_demand})
-    final_energy_demand_df.to_csv('outputs/final_energy_demand.csv', index=False)
+    final_energy_demand_df.to_csv('outputs/final_energy_demand' + str(categories) + '.csv', index=False)
 
     
 # Function that gives the gini coefficient and SSP population for each scenario
-def gini_between_countries(pyam_df, scenario_model_list, end_year, meta_df, gini_df):
+def gini_between_countries(pyam_df, scenario_model_list, end_year, meta_df, gini_df, categories):
     
     # filter for the variables needed
     df = pyam_df.filter(variable='Emissions|CO2',
@@ -156,11 +157,9 @@ def gini_between_countries(pyam_df, scenario_model_list, end_year, meta_df, gini
                             'scenario': scenario_model_list['scenario'], 
                             'ssp_gini_coefficient': ssp_gini_coefficients,
                             'ssp': ssps})
-    gini_df.to_csv('outputs/gini_coefficient.csv', index=False)
+    gini_df.to_csv('outputs/gini_coefficient' + str(categories) +  '.csv', index=False)
     ssp_gini_coefficients = pd.DataFrame({'ssp': list(ssp_ginis.keys()), 
                                           'gini_coefficient': list(ssp_ginis.values())})
-
-
 
 
 

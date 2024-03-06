@@ -47,17 +47,17 @@ class Data:
                            'Capacity|Electricity|Solar|PV', 'Final Energy',
                            'Primary Energy|Coal', 'Primary Energy|Oil', 'Primary Energy|Gas', 'Primary Energy|Nuclear',
                            'Primary Energy|Biomass', 'Primary Energy|Non-Biomass Renewables','Carbon Sequestration|CCS|Biomass',
-                            'Carbon Sequestration|CCS|Fossil', 'GDP|MER', 'Land Cover|Forest','Land Cover']
+                            'GDP|MER', 'Land Cover|Forest','Land Cover']
 
     mandatory_CDR_variables = ['Carbon Sequestration|Enhanced Weathering', 'Carbon Sequestration|Direct Air Capture', 
                                'Carbon Sequestration|Land Use','Carbon Sequestration|CCS|Biomass', 'Carbon Utilization|CCS|Industry']
 
 
     dollar_2022_2010 = 0.25 # reduction in value of 2022 dollars to 2010 dollars
-    
-    model_scenarios = pd.read_csv('Countries of Sub-Saharan Africa_mandatory_variables_scenarios.csv')
-    dimensions_pyamdf = cat_df = pyam.IamDataFrame(data='cat_df.csv')
-    # meta_df = pd.read_csv('cat_meta.csv') 
+    categories = ['C1', 'C2']
+    model_scenarios = pd.read_csv('Countries of Sub-Saharan Africa_mandatory_variables_scenarios' + str(categories) + '.csv')
+    dimensions_pyamdf = cat_df = pyam.IamDataFrame(data='cat_df' + str(categories) + '.csv')
+    meta_df = pd.read_csv('cat_meta' + str(categories) + '.csv') 
 
     energy_variables = ['Primary Energy|Coal','Primary Energy|Oil',
                         'Primary Energy|Gas', 'Primary Energy|Nuclear',
@@ -72,9 +72,7 @@ class Utils:
     
     categories = ['C1', 'C2', 'C3', 'C4', 'C5']
     
-    # connAr6 = pyam.iiasa.Connection(name='ar6-public', 
-    #                             creds=None, 
-    #                             auth_url='https://api.manager.ece.iiasa.ac.at')
+
     
     # connSR15 = pyam.iiasa.Connection(name='iamc15', 
     #                             creds=None, 
@@ -242,7 +240,7 @@ class Utils:
 
     # function that takes as an input a list of mandatory variables and regional coverage and 
     # provides a list of scenarios that report on all of the mandatory variables for the given region
-    def manadory_variables_scenarios(self, db, categories, regions, variables):
+    def manadory_variables_scenarios(self, categories, regions, variables, subset=False):
 
         """
         Function that takes as an input a list of mandatory variables and regional coverage and 
@@ -258,17 +256,20 @@ class Utils:
         - list of scenarios that report on all of the mandatory variables for the given region
 
         """
-            
-        if db == 'AR6':
+        connAr6 = pyam.iiasa.Connection(name='ar6-public', 
+                            creds=None, 
+                            auth_url='https://api.manager.ece.iiasa.ac.at')    
 
-            df = Utils.connAr6.query(model='*', scenario='*',
-                variable=variables, region=regions, year=2100
-                )
-        if db == 'SR15':
+        df = connAr6.query(model='*', scenario='*',
+                variable=variables, region=regions)
 
-            df = Utils.connSR15.query(model='*', scenario='*',
-                variable=variables, region=regions, year=2100
-                    )
+        # ensure filtering by temperature category (subset or not)
+        if subset == True:
+            df = df.filter(Category_subset=categories)        
+        elif subset == False:
+            df = df.filter(Category=categories)
+        else:
+            raise ValueError('Subset must be a boolean')
         
         # # Filter by temperature category
         # try:
@@ -276,9 +277,9 @@ class Utils:
         # except:
         # cat_df = df.filter(Category=categories)
         
-        cat_df.to_csv('cat_df.csv')
+        cat_df.to_csv('cat_df' + str(categories) + '.csv')
         cat_meta = cat_df.as_pandas(meta_cols=True)
-        cat_meta.to_csv('cat_meta.csv')
+        cat_meta.to_csv('cat_meta' + str(categories) + '.csv')
 
         # cat_df = pyam.IamDataFrame(data='cat_df.csv')
 
@@ -302,9 +303,9 @@ class Utils:
                 print(scenario_list)
             output_df['model'] = model_list
             output_df['scenario'] = scenario_list
-        
+
             print(output_df)
-            output_df.to_csv(region + '_mandatory_variables_scenarios.csv')
+            output_df.to_csv(region + '_mandatory_variables_scenarios' + str(categories) + '.csv')
 
     
     # function that takes the pyam dataframe and loops through each mandatory variable to assess the 

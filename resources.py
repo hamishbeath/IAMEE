@@ -50,7 +50,8 @@ def main() -> None:
                                  NaturalResouces.minerals, 
                                  Data.model_scenarios, 
                                  NaturalResouces.material_thresholds, 
-                                 2050)
+                                 2050,
+                                 Data.categories)
     # calculate_base_shares_minerals()
 # function with adjustable parameters that calculates the total global availability of each material
 def calculate_global_availability(recycling, reserves, production):
@@ -221,7 +222,7 @@ def calculate_global_availability(recycling, reserves, production):
 
 
 # function that takes input of the scenarios and assesses 
-def scenario_assessment_minerals(pyam_df, minerals, scenario_model_list, base_thresholds, end_year):
+def scenario_assessment_minerals(pyam_df, minerals, scenario_model_list, base_thresholds, end_year, categories):
 
         # filter for the variables needed
     df = pyam_df.filter(variable=['Capacity|Electricity|Wind','Capacity|Electricity|Solar|PV'],region='World',
@@ -291,7 +292,7 @@ def scenario_assessment_minerals(pyam_df, minerals, scenario_model_list, base_th
         material_use_ratios = material_use_ratios.set_index(['scenario', 'model'])
     
     # save the dataframe to a csv
-    material_use_ratios.to_csv('outputs/material_use_ratios.csv')
+    material_use_ratios.to_csv('outputs/material_use_ratios' + str(categories) + '.csv')
 
 
 def calculate_base_shares_minerals():

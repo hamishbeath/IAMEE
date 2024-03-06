@@ -72,11 +72,11 @@ def main() -> None:
     # Utils.time_series_cluster_analysis(Utils, 'World', Data.c1aR10_scenarios,['Land Cover|Forest', 'Land Cover|Cropland'],'C1a_NZGHGs' , 4)
 
     # make_scenario_project_list()
-    # Utils.manadory_variables_scenarios(Utils, 'AR6', 'C1a_NZGHGs', EnvSus.regions, Data.mandatory_variables)
-    # forest_cover_change(Data.dimensions_pyamdf, 2100, Data.model_scenarios, EnvSus.beccs_threshold)    
-    Utils.filter_data_sheet_variable_prevelance(Utils, 'C1a_NZGHGs', EnvSus.region, Data.mandatory_variables)
+    # Utils.manadory_variables_scenarios(Utils, ['C1','C2'], EnvSus.regions, Data.mandatory_variables, subset=False)
+    forest_cover_change(Data.dimensions_pyamdf, 2100, Data.model_scenarios, EnvSus.beccs_threshold, Data.categories)    
+    # Utils.filter_data_sheet_variable_prevelance(Utils, 'C1a_NZGHGs', EnvSus.region, Data.mandatory_variables)
 
-def forest_cover_change(pyam_df, end_year, scenario_model_list, beccs_threshold):
+def forest_cover_change(pyam_df, end_year, scenario_model_list, beccs_threshold, categories):
 
     # filter for the variables needed
     df = pyam_df.filter(variable=['Land Cover|Forest','Land Cover','Carbon Sequestration|CCS|Biomass'],region='World',
@@ -140,11 +140,11 @@ def forest_cover_change(pyam_df, end_year, scenario_model_list, beccs_threshold)
     output_df['forest_change_2050'] = forest_change_2050
     output_df['forest_change_2100'] = forest_change_2100
     output_df['beccs_threshold_breached'] = beccs_threshold_breached
-    output_df.to_csv('outputs/environmental_metrics.csv')
+    output_df.to_csv('outputs/environmental_metrics' + str(categories) + '.csv')
 
 
         
-                
+
 
 def joel_data_download():
    

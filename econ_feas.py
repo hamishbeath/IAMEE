@@ -41,7 +41,7 @@ def main() -> None:
     # plot_using_pyam()
     # violin_plots()
     # assess_variable_data()
-    energy_supply_investment_score(Data.dimensions_pyamdf, 0.023, 2100, Data.model_scenarios)
+    energy_supply_investment_score(Data.dimensions_pyamdf, 0.023, 2100, Data.model_scenarios, Data.categories)
 
 def assess_variable_data():
 
@@ -325,7 +325,7 @@ def violin_plots():
     plt.show()
 
 # takes as an input a Pyam dataframe object with n number of scenarios in it. For each scenario it calculates both a binary 
-def energy_supply_investment_score(pyam_df, base_value, end_year, scenario_model_list):
+def energy_supply_investment_score(pyam_df, base_value, end_year, scenario_model_list, categories):
 
     """
     This function takes an inputted Pyam dataframe and calculates to what extent the determined threshold for energy supply investment 
@@ -404,9 +404,9 @@ def energy_supply_investment_score(pyam_df, base_value, end_year, scenario_model
     output_df['mean_value'] = mean_value_list
     output_df['mean_value_2050'] = mean_value_2050_list
 
-    output_df.to_csv('outputs/energy_supply_investment_score.csv')
+    output_df.to_csv('outputs/energy_supply_investment_score' + str(categories) + '.csv')
 
-
+    
         
 
 

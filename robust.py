@@ -14,15 +14,16 @@ class Robust:
 
 def main() -> None:
 
-    # harmonize_emissions_calc_budgets(Data.dimensions_pyamdf, 'Emissions|CO2', Data.model_scenarios,
-    #                      Robust.historic_emissions, 2023, False, 2050)
+    harmonize_emissions_calc_budgets(Data.dimensions_pyamdf, 'Emissions|CO2', Data.model_scenarios,
+                         Robust.historic_emissions, 2023, Data.categories, False, 2050)
     flexibility_score(Data.dimensions_pyamdf, Data.model_scenarios, 
-                      2100, Data.energy_variables, Robust.flexibility_data)
+                      2100, Data.energy_variables, Robust.flexibility_data, Data.categories)
 
 # calculate a flexibility score for the energy mix
 def flexibility_score(pyam_df, scenario_model_list, 
                       end_year, energy_variables, 
-                      flexibility_data):
+                      flexibility_data,
+                      categories):
 
     flexibility_data = flexibility_data.set_index('tech')
     flexibility_data = flexibility_data['flexibility_factor']
@@ -75,7 +76,7 @@ def flexibility_score(pyam_df, scenario_model_list,
                                    'flexibility_score': flexibility_indexes})
 
     # print(flexibility_df)
-    flexibility_df.to_csv('outputs/flexibility_scores.csv', index=False)
+    flexibility_df.to_csv('outputs/flexibility_scores' + str(categories) + '.csv', index=False)
 
 """
 Code below based on code Robin Lamboll (2024) for harmonising data
@@ -84,7 +85,7 @@ https://www.nature.com/articles/s41558-023-01848-5
 """
 # Harmonize a variable in a dataframe to match a reference dataframe
 def harmonize_emissions_calc_budgets(df, var, scenario_model_list, 
-                        harm_df, startyear, offset=False, 
+                        harm_df, startyear, categories, offset=False, 
                         unity_year=int):
     # harm_df is a dataframe with the actual values to harmonise to
     # df is the pyamdataframe to harmonise
@@ -94,11 +95,15 @@ def harmonize_emissions_calc_budgets(df, var, scenario_model_list,
     # for years before startyear up until unity_year. If offset is true, uses a linear offset tailing to 0 in unity_year.
     # If offset is false, uses a ratio correction that tends to 1 in unity_year
     harm_years = np.array([y for y in df.year if y>2005 and y<unity_year])
+
     carbon_budget_shares = []
     for scenario, model in zip(scenario_model_list['scenario'], scenario_model_list['model']): 
         ret = df.filter(variable=var, region='World',model=model, scenario=scenario)
+        # filter for only years after 2005
+        ret = ret.filter(year=valid_years)
+        
         ret_test = ret
-       
+        print(scenario, model)
        # interpolate the data so that we have values for all years
         ret = ret.interpolate(range(2005, unity_year+1))        
         assert unity_year >= max(harm_years)
@@ -136,7 +141,7 @@ def harmonize_emissions_calc_budgets(df, var, scenario_model_list,
                                      'scenario': scenario_model_list['scenario'], 
                                      'carbon_budget_share': carbon_budget_shares})
 
-    carbon_budget_df.to_csv('outputs/carbon_budget_shares.csv', index=False)
+    carbon_budget_df.to_csv('outputs/carbon_budget_shares' + str(categories) + '.csv', index=False)
 
 if __name__ == "__main__":
     main()
