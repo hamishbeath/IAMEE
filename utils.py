@@ -49,9 +49,20 @@ class Data:
                            'Primary Energy|Biomass', 'Primary Energy|Non-Biomass Renewables','Carbon Sequestration|CCS|Biomass',
                             'GDP|MER', 'Land Cover|Forest','Land Cover']
 
+    mandatory_econ_variables = ['GDP|MER', 'Investment|Energy Supply']
+
     mandatory_CDR_variables = ['Carbon Sequestration|Enhanced Weathering', 'Carbon Sequestration|Direct Air Capture', 
                                'Carbon Sequestration|Land Use','Carbon Sequestration|CCS|Biomass', 'Carbon Utilization|CCS|Industry']
 
+
+    narrative_variables = ['Final Energy|Transportation', 'Final Energy|Transportation|Liquids', 'Final Energy|Transportation|Liquids|Oil', 
+                           'Primary Energy|Fossil', 'Land Cover|Pasture', 'Land Cover|Cropland', 'Land Cover|Forest', 'Land Cover',  'Carbon Sequestration|CCS|Biomass', 
+                           'Carbon Sequestration|CCS|Fossil', 'Primary Energy|Non-Biomass Renewables', 'Primary Energy|Fossil|w/ CCS', 'Carbon Sequestration|Direct Air Capture',
+                           'Primary Energy|Fossil|w/o CCS','Final Energy', 'Agricultural Demand', 'Emissions|CO2|AFOLU', 'Capacity|Electricity|Wind',
+                           'Capacity|Electricity|Solar|PV','Energy Service|Transportation|Passenger', 'Energy Service|Transportation|Freight', 'Carbon Sequestration|Land Use' ]
+
+    c1a_scenarios_selected = ['PEP_1p5C_red_eff', 'SSP1_SPA1_19I_RE_LB', 'EN_NPi2020_300f', 'EN_NPi2020_400f']
+    c1a_models_selected = ['REMIND-MAgPIE 1.7-3.0', 'IMAGE 3.2', 'AIM/CGE 2.2', 'WITCH 5.0']
 
     dollar_2022_2010 = 0.25 # reduction in value of 2022 dollars to 2010 dollars
     categories = ''
@@ -62,12 +73,17 @@ class Data:
     energy_variables = ['Primary Energy|Coal','Primary Energy|Oil',
                         'Primary Energy|Gas', 'Primary Energy|Nuclear',
                         'Primary Energy|Biomass', 'Primary Energy|Non-Biomass Renewables']
-
+    econ_regions = ['Countries of Sub-Saharan Africa','World']
+    
     try:
         scenario_archetypes = pd.read_csv('outputs/scenario_archetypes '+ str(categories) + '.csv')
     except:
         print('No scenario archetypes file found for the category of', categories)
 
+    try:
+        land_use_seq_data = pyam.IamDataFrame(data='land_sequestration_imputed.csv')
+    except:
+        print('No land use imputed data found')
 
 class Utils:
 
@@ -76,7 +92,7 @@ class Utils:
                             'Land Cover', 'Land Cover|Cropland',
                             'Land Cover|Cropland|Energy Crops']
     
-    categories = ['C1', 'C2', 'C3', 'C4', 'C5']
+    categories = ['C1', 'C2', 'C3', 'C4', 'C5','C6', 'C7', 'C8']
     
 
     
@@ -246,7 +262,7 @@ class Utils:
 
     # function that takes as an input a list of mandatory variables and regional coverage and 
     # provides a list of scenarios that report on all of the mandatory variables for the given region
-    def manadory_variables_scenarios(self, categories, regions, variables, subset=False):
+    def manadory_variables_scenarios(self, categories, regions, variables, subset=False, special_file_name=None):
 
         """
         Function that takes as an input a list of mandatory variables and regional coverage and 
@@ -311,7 +327,10 @@ class Utils:
             output_df['scenario'] = scenario_list
 
             print(output_df)
-            output_df.to_csv(region + '_mandatory_variables_scenarios' + str(categories) + '.csv')
+            if special_file_name != None:
+                output_df.to_csv(special_file_name + '_' + region + '.csv')
+            else:
+                output_df.to_csv(region + '_mandatory_variables_scenarios' + str(categories) + '.csv')
 
     
     # function that takes the pyam dataframe and loops through each mandatory variable to assess the 
@@ -385,6 +404,21 @@ class Utils:
 
 
     
+    def data_download(variables, models, scenarios, region, file_name=str):
+   
+        connAr6 = pyam.iiasa.Connection(name='ar6-public', 
+                    creds=None, 
+                    auth_url='https://api.manager.ece.iiasa.ac.at')    
+
+        df = connAr6.query(model=models, scenario=scenarios,
+            variable=variables, region=region
+            )
+
+        df.to_csv(file_name + '_scenario_narrative_data.csv')
+        
+
+
+
     # def filter_data_sheet_variable_prevelance(self, db, categories, region, threshold):
 
     #     """"

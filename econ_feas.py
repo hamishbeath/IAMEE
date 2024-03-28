@@ -31,7 +31,8 @@ class EconFeas:
     # plotting_categories = ['C3']
     plotting_category_colours = {'C1':'#f57200', 'C3':'#6302d9', 'C5':'#1b9e77'}
     # violin_colours = ['#f57200','#6302d9','#1b9e77']
-    
+    econ_scenarios = pd.read_csv('scenarios_investment_all_World.csv')
+    # econ_data = pyam.IamDataFrame(data="cat_meta['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8'].csv")
     run_mode = 'cat'
 
 def main() -> None:
@@ -41,7 +42,8 @@ def main() -> None:
     # plot_using_pyam()
     # violin_plots()
     # assess_variable_data()
-    energy_supply_investment_score(Data.dimensions_pyamdf, 0.023, 2100, Data.model_scenarios, Data.categories)
+    # energy_supply_investment_score(Data.dimensions_pyamdf, 0.023, 2100, Data.model_scenarios, Data.categories)
+    energy_supply_investment_analysis(0.023, 2100, EconFeas.econ_scenarios)
 
 def assess_variable_data():
 
@@ -344,7 +346,7 @@ def energy_supply_investment_score(pyam_df, base_value, end_year, scenario_model
     """
     
     # Filter out the data for the required variables
-    df = pyam_df.filter(variable=['Investment|Energy Supply', 'GDP|MER'])
+    df = pyam_df.filter(variable=['Investment|Energy Supply','GDP|MER'])
     
     # Filter for the region
     df = df.filter(region='World')
@@ -407,9 +409,6 @@ def energy_supply_investment_score(pyam_df, base_value, end_year, scenario_model
     output_df.to_csv('outputs/energy_supply_investment_score' + str(categories) + '.csv')
 
     
-        
-
-
         # # calculate the ratio of the mean value to the base value
         # ratio = mean_value / base_value
         # print(ratio)
@@ -420,14 +419,139 @@ def energy_supply_investment_score(pyam_df, base_value, end_year, scenario_model
         #     return df
 
 
+def energy_supply_investment_analysis(base_value, end_year, scenario_model_list):
 
-
+    """
+    Function similar to the above but that has additional indicator and different
+    outputs required for analysis beyond the assessment framework.
+    """
+    # connAr6 = pyam.iiasa.Connection(name='ar6-public', 
+    #                 creds=None, 
+    #                 auth_url='https://api.manager.ece.iiasa.ac.at') 
+    # Filter out the data for the required variables
+    df = pyam.IamDataFrame(data="cat_df['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8'].csv")
     
+    df = df.filter(variable=['Investment|Energy Supply','GDP|MER'], 
+                        region='World', year=range(2020, end_year+1), 
+                        scenario=scenario_model_list['scenario'], 
+                        model=scenario_model_list['model'])
+    
+    meta_data = pd.read_csv("cat_meta['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8'].csv")
 
+    # lists of the mean values and temp categories 
+    # to be appended as columns to the dataframe
+    mean_value_list = []
+    mean_value_2050_list = []
+    temperature_category_list = []
+    largest_annual_increase_list = []
+    mean_annual_increase_list = []
+    # make a dataframe to store the results with scenario and model 
+    output_df = pd.DataFrame()
+    # output_df['scenario'] = scenario_model_list['scenario']
+    # output_df['model'] = scenario_model_list['model']
 
+    # get list of years between 2020 and 2100 at decedal intervals
+    year_list = list(range(2030, end_year+1, 10))
 
+    # make a column for each year in year list
+    for year in year_list:
+        output_df[str(year)] = []
+    
+    print(output_df)
 
+    # loop through the scenario model list
+    for scenario, model in zip(scenario_model_list['scenario'], scenario_model_list['model']):
 
+         # Filter out the data for the required scenario
+        scenario_df = df.filter(scenario=scenario)
+        scenario__model_df = scenario_df.filter(model=model)
+
+        # # make pandas series with the values and years as index
+        variable_df = scenario__model_df.filter(variable='Investment|Energy Supply')
+        # variable_series = pd.Series(variable_df['value'].values, index=variable_df['year'])
+        variable_df = variable_df.interpolate(range(2020, 2101))
+        # make a list of the values
+        investment_values = list(variable_df['value'].values)     
+
+        # make lists to calculate the results from
+        share_of_gdp = {}
+        # model_year_list = []
+        # proportion_of_base = []
+        # investment_values = []
+        # Iterate through the years
+        for year in year_list:    
+ 
+            # Filter out the data for the required year
+            year_df = scenario__model_df.filter(year=year)
+            year_df = year_df.as_pandas()
+            
+            investment = year_df['value'][year_df['variable'] == 'Investment|Energy Supply'].values
+            gdp = year_df['value'][year_df['variable'] == 'GDP|MER'].values
+
+            # Calculate the share of GDP that is invested in energy supply
+            year_share = investment[0] / gdp[0]
+            share_of_gdp[year] = year_share
+            # investment_values.append(investment[0])
+        
+        
+        # Calculate the mean value of the share of GDP that is invested in energy supply
+        list_of_values = list(share_of_gdp.values())
+        mean_value_list.append(np.mean(list_of_values))
+
+        # Calculate the mean value up to 2050
+        list_of_values_2050 = list_of_values[:3]
+        mean_value_2050_list.append(np.mean(list_of_values_2050))
+        
+        # from all the investment values, calculate the largest percentage increase
+        # from the previous year
+        max_increase_total = 0
+        max_increase = 0
+        for i in range(1, len(investment_values)):
+            increase = (investment_values[i] - investment_values[i-1]) / investment_values[i-1]
+            if increase > max_increase:
+                max_increase = increase
+            max_increase_total += increase
+        
+        # calculate the mean annual increase
+        mean_increase = max_increase_total / len(investment_values)
+        largest_annual_increase_list.append(max_increase)
+        mean_annual_increase_list.append(mean_increase)
+
+        values_list = list(share_of_gdp.values())
+        years_list = list(share_of_gdp.keys())
+        to_append_df = pd.DataFrame()
+        to_append_df['year'] = years_list
+        to_append_df['value'] = values_list
+        to_append_df = to_append_df.T
+
+        # make the years the column headers
+        to_append_df.columns = to_append_df.iloc[0].astype(int).astype(str)
+        to_append_df = to_append_df[1:]
+
+        # append the values to the output dataframe
+        output_df = pd.concat([output_df, to_append_df], axis=0)
+
+        # get the temperature category for the scenario
+        temp_category = meta_data[meta_data['scenario'] == scenario]
+        temp_category = temp_category[temp_category['model'] == model]
+        temperature_category_list.append(temp_category['Category'].values[0])
+
+    output_df = output_df.reset_index(drop=True)
+    output_df['mean_value'] = mean_value_list
+    output_df['mean_value_2050'] = mean_value_2050_list
+    output_df['largest_annual_increase'] = largest_annual_increase_list
+    output_df['mean_annual_increase'] = mean_annual_increase_list
+    output_df['temperature_category'] = temperature_category_list
+    output_df['scenario'] = scenario_model_list['scenario']
+    output_df['model'] = scenario_model_list['model']
+
+    # move the scenario and model columns to the front
+    cols = output_df.columns.tolist()
+    cols = cols[-2:] + cols[:-2]
+    output_df = output_df[cols]
+    print(output_df)
+    output_df.to_csv('outputs/energy_supply_investment_analysis.csv')
+    
 
 if __name__ == "__main__":
     main()

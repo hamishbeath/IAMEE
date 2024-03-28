@@ -2,6 +2,7 @@ import numpy as np
 import pyam
 import pandas as pd
 from utils import Data
+from utils import Utils
 from itertools import combinations, product
 from resources import NaturalResouces
 from scipy.spatial.distance import pdist, squareform
@@ -52,9 +53,9 @@ def main() -> None:
     #                            IndexBuilder.energy_diversity, 
     #                            IndexBuilder.carbon_budgets)
     # select_most_dissimilar_scenarios(Data.model_scenarios)
-    find_scenario_archetypes(Data.model_scenarios, 4)
-    
-
+    # find_scenario_archetypes(Data.model_scenarios, 4)
+    # Utils.data_download(Data.narrative_variables, Data.c1a_models_selected, Data.c1a_scenarios_selected, 'World', 'c1a_selected')
+    Utils().manadory_variables_scenarios(Utils.categories, Data.econ_regions, Data.mandatory_econ_variables, subset=False, special_file_name='scenarios_investment_all')
 # calculate the economic score (higher score = more economic challenges)
 def economic_score(investment_scores):
     
@@ -283,20 +284,29 @@ def find_scenario_archetypes(model_scenarios_list, cluster_number=int):
     # Calculate dissimilarity for each combination and select the most dissimilar one
     most_dissimilar_combination = max(combinations, key=calculate_total_dissimilarity)
 
-    # Extract the selected scenarios
-    selected_scenarios = [scenario for scenario in most_dissimilar_combination]
+    # # Extract the selected scenarios
+    # selected_scenarios = [scenario for scenario in most_dissimilar_combination]
+        # Extract the selected scenarios into a new DataFrame
+    selected_scenarios_df = pd.DataFrame()
 
-    print(selected_scenarios)
+    for index, scenario_row in most_dissimilar_combination:
+        # Extract the row (as a DataFrame) and append it to the new DataFrame
+        scenario_df = pd.DataFrame([scenario_row], index=[index])
+        selected_scenarios_df = pd.concat([selected_scenarios_df, scenario_df])
+    
+    # Reset index if necessary, to include 'model' and 'scenario' in the columns
+    selected_scenarios_df.reset_index(inplace=True)
+    
+    # Assuming you want to save or further process 'selected_scenarios_df'
+    # For example, to save:
+    selected_scenarios_df.to_csv('outputs/selected_scenarios' + '.csv', index=False)
+    
 
-    # output selected scenarios to csv
-    selected_scenarios_df = pd.DataFrame(selected_scenarios)
-    selected_scenarios_df.to_csv('outputs/selected_scenarios' + str(Data.categories) + '.csv', index=False)
-
-    # calculate scenario archetype scores as the centroids of each cluster
-    cluster_centroids = pd.DataFrame(kmeans.cluster_centers_, columns=data.columns[:-1])
-    # add in the cluster number
-    cluster_centroids['cluster'] = range(0, n_clusters)
-    cluster_centroids.to_csv('outputs/scenario_archetypes' + str(Data.categories) + '.csv', index=False)
+    # # calculate scenario archetype scores as the centroids of each cluster
+    # cluster_centroids = pd.DataFrame(kmeans.cluster_centers_, columns=data.columns[:-1])
+    # # add in the cluster number
+    # cluster_centroids['cluster'] = range(0, n_clusters)
+    # cluster_centroids.to_csv('outputs/scenario_archetypes' + str(Data.categories) + '.csv', index=False)
     
 # Function to calculate total dissimilarity for a combination of scenarios
 def calculate_total_dissimilarity(combination):

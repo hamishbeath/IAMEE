@@ -54,7 +54,15 @@ def main() -> None:
     #                             Selection.resilience_scores, 
     #                             Selection.robustness_scores, 
     #                             Plotting.bright_modern_colors)      
-    Plotting.radar_plot_scenario_archetypes(Plotting, Data.model_scenarios, Selection.archetypes, Plotting.bright_modern_colors)
+    
+    # Plotting.radar_plot_scenario_archetypes(Plotting, Data.model_scenarios, Selection.archetypes, Plotting.bright_modern_colors,
+    #                                         Plotting.selected_scenarios)
+    # Plotting.line_plot_narrative_variables('Agricultural Demand', 2020, 2100, Plotting.c1a_data,ylim_min=None, ylim_max=None, base_normalisation=True, secondary_variable=None)
+    # Plotting.energy_system_stackplot(Plotting, Data.c1a_scenarios_selected, Data.c1a_models_selected, Data.dimensions_pyamdf, Plotting.c1a_data, Plotting.energy_shares_variables)
+    # Plotting.transport_stackplot(Plotting, Data.c1a_scenarios_selected, Data.c1a_models_selected, Plotting.c1a_data)
+    # Plotting.land_use_stacked_shares(Plotting, Data.c1a_scenarios_selected, Data.c1a_models_selected, Plotting.c1a_data)
+    Plotting.CDR_stacked_shares(Plotting, Data.c1a_scenarios_selected, Data.c1a_models_selected, Plotting.c1a_data)
+
 
 class Plotting:
 
@@ -63,6 +71,19 @@ class Plotting:
     dimension_colours = {'economic': 'red', 'environment': 'green', 'resilience': 'blue', 'resource': 'orange', 'robust': 'purple'}
     dimension_titles = {'economic': 'Economic Feasibility', 'environment': 'Non-climate Environmental Sustainability', 'resilience': 'Societal Resilience', 'resource': 'Resource Availability', 'robust': 'Scenario Robustness'}
     dimention_cmaps = {'economic': 'Reds', 'environment': 'Greens', 'resilience': 'Blues', 'resource': 'Oranges', 'robust': 'Purples'}
+
+    energy_shares_variables = ['Primary Energy|Fossil|w/o CCS', 
+                               'Primary Energy|Fossil|w/ CCS', 
+                               'Primary Energy|Nuclear', 
+                               'Primary Energy|Biomass', 
+                               'Primary Energy|Non-Biomass Renewables']
+
+    energy_shares_colours = {'Primary Energy|Fossil|w/o CCS': 'darkgrey', 
+                             'Primary Energy|Fossil|w/ CCS': 'lightgrey', 
+                             'Primary Energy|Nuclear': 'blue', 
+                             'Primary Energy|Biomass': 'green', 
+                             'Primary Energy|Non-Biomass Renewables': 'lightgreen'}
+
 
     bright_modern_colors = [
     "#FF5733",  # Bright Red
@@ -112,8 +133,8 @@ class Plotting:
     "#C3447A",  # Vivid Pink
     ]
 
-
-
+    selected_scenarios = pd.read_csv('outputs/selected_scenarios' + str(Data.categories) + '.csv')
+    c1a_data = pyam.IamDataFrame('c1a_selected_scenario_narrative_data.csv')
 
     # Create a detailed polar bar plot that categorises 
     def polar_bar_plot_variables(self, file_name, dimensions, category):
@@ -369,19 +390,19 @@ class Plotting:
         # # make a list of numbers accending for each scenario
         zero_list = [1] * len(investment_info)
         investment_info['x'] = zero_list
-        fig_width = 4 * len(column_list)
-        fig, axs = plt.subplots(1, len(column_list), figsize=(fig_width, 10))
+        fig_length = 3 * len(column_list)
+        fig, axs = plt.subplots(len(column_list), 1, figsize=(10, fig_length))
         count = 0
         for ax, investment_column in zip(axs, column_list):
             # create a box plot for the investment data with each scenario a different color
-            ax.boxplot(investment_info[investment_column], showfliers=False)
-            ax.scatter(x=investment_info['x'], y=investment_info[investment_column], c=colours[:len(investment_info)], marker='o', s=100)
+            ax.boxplot(investment_info[investment_column], showfliers=False, vert=False)
+            ax.scatter(y=investment_info['x'], x=investment_info[investment_column], c=colours[:len(investment_info)], marker='o', s=100)
             ax.set_title(y_labels[count])
             # set y min and max
-            ax.set_ylim(0.4, 1.3)
+            ax.set_xlim(0.4, 1.3)
             # remove x tick and label
-            ax.set_xticks([])
-            ax.set_xlabel('')
+            ax.set_yticks([])
+            ax.set_ylabel('')
             count += 1
         
         # make a ledgend with a swatch of each color and the scenario name and model
@@ -401,37 +422,38 @@ class Plotting:
         swatches = [mpatches.Patch(color=colors[i], label=labels[i]) for i in range(len(labels))]
         #create a legend
         fig.legend(handles=swatches, labels=labels, loc='lower center', ncol=3, fontsize=7, frameon=False)
-        plt.savefig('figures/investment_metrics.pdf')
-
+        plt.savefig('figures/investment_metrics_horizontal.pdf')
+        # plt.show()
         
         # plot the environmental data in a box plot
         environmental_info = IndexBuilder.environment_metrics
         column_list = ['forest_change_2050', 'forest_change_2100']
-        y_labels = ['Forest % Change (2020-2050)', 'Forest % Change (2020-2100)']
+        y_labels = ['Change in Forest Land Cover (2020-2050)', 'Change in Forest Land Cover (2020-2100)']
         environmental_info['x'] = zero_list
-        fig, axs = plt.subplots(1, len(column_list), figsize=(fig_width, 10))
+        fig, axs = plt.subplots(len(column_list),1, figsize=(fig_length, 10))
         count = 0
         for ax, environmental_column in zip(axs, column_list):
             # create a box plot for the investment data with each scenario a different color
-            ax.boxplot(environmental_info[environmental_column], showfliers=False)
-            ax.scatter(x=environmental_info['x'], y=environmental_info[environmental_column], c=colours[:len(environmental_info)], marker='o', s=100)
+            ax.boxplot(environmental_info[environmental_column], showfliers=False, vert=False)
+            ax.scatter(y=environmental_info['x'], x=environmental_info[environmental_column], c=colours[:len(environmental_info)], marker='o', s=100)
             ax.set_title(y_labels[count])
             # set y min and max
-            ax.set_ylim(0, 0.1)
+            ax.set_xlim(0, 0.1)
             # remove x tick and label
-            ax.set_xticks([])
-            ax.set_xlabel('')
+            ax.set_yticks([])
+            ax.set_ylabel('')
             count += 1
         
         fig.legend(handles=swatches, labels=labels, loc='lower center', ncol=3, fontsize=7, frameon=False)
-        plt.savefig('figures/environmental_metrics.pdf')
+        # plt.savefig('figures/environmental_metrics.pdf')
         
+
         # plot the resource data in a box plot
         resource_info = IndexBuilder.resource_metrics
         column_list = ['Nd', 'Dy', 'Cd', 'Te', 'Se', 'In']
         y_labels = ['Neodymium', 'Dysprosium', 'Cadmium', 'Tellurium', 'Selenium', 'Indium']
         resource_info['x'] = zero_list
-        fig, axs = plt.subplots(1, len(column_list), figsize=(fig_width, 10))
+        fig, axs = plt.subplots(1, len(column_list), figsize=(13, 10))
         count = 0
         for ax, resource_column in zip(axs, column_list):
             # create a box plot for the investment data with each scenario a different color
@@ -447,27 +469,30 @@ class Plotting:
         # add title
         fig.suptitle('Mean ratio of renewables mineral usage share (to 2050) to baseline share', fontsize=14)
         fig.legend(handles=swatches, labels=labels, loc='lower center', ncol=3, fontsize=7, frameon=False)
-
+        # plt.show()
+        
+        
         # plot the resilience data in a box plot
         resilience_info = IndexBuilder.final_energy_demand
         resilience_info['diversity'] = IndexBuilder.energy_diversity['shannon_index']
         column_list = ['final_energy_demand', 'diversity']
         y_labels = ['Cumulative Final Energy Demand (EJ)', 'Shannon Diversity Index']
         resilience_info['x'] = zero_list
-        fig, axs = plt.subplots(1, len(column_list), figsize=(fig_width, 10))
+        fig, axs = plt.subplots(len(column_list), 1, figsize=(10, fig_length))
         count = 0
         for ax, resilience_column in zip(axs, column_list):
             # create a box plot for the investment data with each scenario a different color
-            ax.boxplot(resilience_info[resilience_column], showfliers=False)
-            ax.scatter(x=resilience_info['x'], y=resilience_info[resilience_column], c=colours[:len(resilience_info)], marker='o', s=100)
+            ax.boxplot(resilience_info[resilience_column], showfliers=False, vert=False)
+            ax.scatter(y=resilience_info['x'], x=resilience_info[resilience_column], c=colours[:len(resilience_info)], marker='o', s=100)
             ax.set_title(y_labels[count])
             # remove x tick and label
-            ax.set_xticks([])
-            ax.set_xlabel('')
+            ax.set_yticks([])
+            ax.set_ylabel('')
             count += 1
 
         fig.legend(handles=swatches, labels=labels, loc='lower center', ncol=3, fontsize=7, frameon=False)
-        plt.savefig('figures/resilience_metrics.pdf')
+        # plt.show()
+        # plt.savefig('figures/resilience_metrics.pdf')
 
         # plot the robustness data in a box plot
         robustness_info = IndexBuilder.carbon_budgets
@@ -476,16 +501,16 @@ class Plotting:
         robustness_info['x'] = zero_list
         column_list = ['carbon_budget_share', 'diversity', 'flexibility']       
         y_labels = ['Carbon Budget Share \nused by 2030', 'Shannon Diversity Index', 'Flexibility Score']
-        fig, axs = plt.subplots(1, len(column_list), figsize=(fig_width, 10))
+        fig, axs = plt.subplots(len(column_list), 1, figsize=(10, fig_length))
         count = 0
         for ax, robustness_column in zip(axs, column_list):
             # create a box plot for the investment data with each scenario a different color
-            ax.boxplot(robustness_info[robustness_column], showfliers=False)
-            ax.scatter(x=robustness_info['x'], y=robustness_info[robustness_column], c=colours[:len(robustness_info)], marker='o', s=100)
+            ax.boxplot(robustness_info[robustness_column], showfliers=False, vert=False)
+            ax.scatter(y=robustness_info['x'], x=robustness_info[robustness_column], c=colours[:len(robustness_info)], marker='o', s=100)
             ax.set_title(y_labels[count])
             # remove x tick and label
-            ax.set_xticks([])
-            ax.set_xlabel('')
+            ax.set_yticks([])
+            ax.set_ylabel('')
             count += 1
         
         fig.legend(handles=swatches, labels=labels, loc='lower center', ncol=3, fontsize=7, frameon=False)
@@ -577,17 +602,20 @@ class Plotting:
         plt.show()
         
 
-    def radar_plot_scenario_archetypes(self, scenario_model_list, archetypes, colours):
+    def radar_plot_scenario_archetypes(self, scenario_model_list, archetypes, colours, selected_scenarios):
 
         # plt.rcParams['font.size'] = 7
         # Number of variables we're plotting.
         categories = list(archetypes)[0:5]
         archetype_names = ['Warning lights', 'Resource risk', 'Sustainability struggle', 'Clear path']
-        archetype_colours = ['#FF5733', '#3357FF', '#9933FF', '#33FF42']
+        archetype_colours = ['#FBA006', '#19E5FF', '#FF03FB', '#00F982']
         # make a fig with 4 subplots, 2 rows
         fig, axs = plt.subplots(2, 2, figsize=(10, 10), subplot_kw=dict(polar=True))
 
         N = len(categories)
+
+        # organise the selected scenarios by cluster 0-3
+        selected_scenarios = selected_scenarios.sort_values(by='cluster')
 
         for archetype in range(0, 4):
 
@@ -597,9 +625,15 @@ class Plotting:
             stats += stats[:1]
             angles += angles[:1]
             
+            stats_illustrative = selected_scenarios[selected_scenarios['cluster'] == archetype].values.flatten().tolist()
+            stats_illustrative = stats_illustrative[1:6]
+            stats_illustrative += stats_illustrative[:1]
+
             # Draw the outline of our data.
-            ax.fill(angles, stats, color=archetype_colours[archetype], alpha=0.25)
-            ax.plot(angles, stats, color=archetype_colours[archetype], linewidth=3)
+            ax.fill(angles, stats, color=archetype_colours[archetype], alpha=0.27, zorder=10)
+            ax.plot(angles, stats, color=archetype_colours[archetype], linewidth=3, zorder=11)
+            ax.fill(angles, stats_illustrative, color='black', alpha=0.1)
+            ax.plot(angles, stats_illustrative, color='black', linewidth=1)
 
             # # Labels for each point
             ax.set_xticks(angles[:-1])
@@ -614,6 +648,360 @@ class Plotting:
         # Show the figure
         plt.tight_layout()
         plt.show()
+
+
+    def line_plot_narrative_variables(variable, start_year, end_year, df,ylim_min=int, ylim_max=int, base_normalisation=False, secondary_variable=None):
+
+        plt.rcParams['ytick.minor.visible'] = True
+        plt.rcParams['ytick.labelright'] = True
+        scenario_colours = ['#FBA006', '#19E5FF', '#FF03FB', '#00F982']
+        names = ['Warning lights', 'Resource risk', 'Sustainability struggle', 'Eco balance']
+        # set up the figure
+        fig, ax = plt.subplots(figsize=(8, 6))
+
+        # filter for the variable
+        df_variable = df.filter(variable=variable)
+
+        # get the units
+        units = df_variable['unit'].unique().tolist()
+        units = units[0]
+
+        # filter for the years
+        df_variable = df_variable.filter(year=range(start_year, end_year+1))
+
+        for i, scenario in enumerate(Data.c1a_scenarios_selected):
+            
+            label = names[i] + ' (' + scenario + ')' 
+
+            # filter for the scenario
+            df_scenario = df_variable.filter(model=Data.c1a_models_selected[i], scenario=scenario)
+            
+            if base_normalisation == True:
+                # df_scenario['value'] = df_scenario['value'] / df_scenario['value'].iloc[0]
+                ax.plot(df_scenario['year'], (df_scenario['value']/df_scenario['value'][0]), label=label, color=scenario_colours[i], linewidth=2)
+            else:
+                ax.plot(df_scenario['year'], df_scenario['value'], label=label, color=scenario_colours[i], linewidth=2)
+        
+            if secondary_variable != None:
+                df_secondary_variable = df.filter(variable=secondary_variable)
+                df_secondary_variable = df_secondary_variable.filter(model=Data.c1a_models_selected[i], scenario=scenario)
+                if base_normalisation == True:
+                    ax.plot(df_secondary_variable['year'], (df_secondary_variable['value']/df_secondary_variable['value'][0]), label=secondary_variable, color=scenario_colours[i], linestyle='dashed', linewidth=2)
+                else:
+                    ax.plot(df_secondary_variable['year'], df_secondary_variable['value'], label=secondary_variable, color=scenario_colours[i], linestyle='dashed', linewidth=2)
+
+        # set the title of the plot
+        ax.set_title(variable)
+        # set the x and y axis labels
+        ax.set_xlabel('Year')
+        
+        if base_normalisation == True:
+            ax.set_ylabel('Change over time (normalised to 2020)')
+        else:
+            ax.set_ylabel(units)
+
+        # set x limits
+        ax.set_xlim(start_year, end_year)
+
+        # set y limits
+        ax.set_ylim(ylim_min, ylim_max)
+
+
+        # add a legend
+        ax.legend(frameon=False)
+
+        plt.show()
+        
+    
+    def energy_system_stackplot(self, illustrative_scenarios, 
+                                illustrative_models,
+                                indicator_df, 
+                                narrative_df, 
+                                energy_variables):
+        
+        plt.rcParams['ytick.minor.visible'] = True
+        names = ['Warning lights', 'Resource risk', 'Sustainability struggle', 'Eco balance']
+        print(energy_variables)
+        """
+        this function needs :
+        - set up four sublots, one for each illustrative scenario
+        - to extract all the energy data from 2020-2100 for each variable and for
+        each illustrative scenario, being mindful the data is coming from two different dataframes
+        - interpolate the data for each energy variable
+        - stack plot the data for each energy variable
+        """
+
+        # set up the figure
+        fig, axs = plt.subplots(2, 2, figsize=(12, 12))
+
+        for i in range(0, len(illustrative_scenarios)):
+
+            plotting_df = pd.DataFrame()
+            # set the scenario and model
+            scenario = illustrative_scenarios[i]
+            model = illustrative_models[i]
+            # filter the indicator dataframe for the scenario and model
+            indicator_df_scenario = indicator_df.filter(scenario=scenario, model=model, year=range(2020, 2101), region='World')
+            
+            # filter the narrative dataframe for the scenario and model
+            narrative_df_scenario = narrative_df.filter(scenario=scenario, model=model, year=range(2020, 2101), region='World')
+
+            # loop through each energy variable
+            for variable in energy_variables:
+                print(variable)
+                colours = Plotting.energy_shares_colours.values()
+                
+                if variable == 'Primary Energy|Fossil|w/ CCS' or variable == 'Primary Energy|Fossil|w/o CCS':
+                    df = narrative_df_scenario.filter(variable=variable)
+                    print(df)
+                else:
+                    df = indicator_df_scenario.filter(variable=variable)
+                    print(df)
+                # interpolate the data for the variable
+                interpolated_variable = df.interpolate(range(2020, 2101))
+
+                # add the interpolated data to the plotting dataframe
+                plotting_df[variable] = interpolated_variable['value']
+
+            # make a stack plot for the scenario
+            axs.flatten()[i].stackplot(range(2020, 2101), plotting_df.T, labels=energy_variables, colors=colours, alpha=0.45, edgecolor=colours)
+            
+            # # add line plot over the top
+            # for variable in energy_variables:
+            #     axs.flatten()[i].plot(range(2020, 2101), plotting_df[variable], label=variable, color=Plotting.energy_shares_colours[variable], linewidth=2)
+            title = names[i] + ' (' + scenario + ')'
+            # set the title of the plot
+            axs.flatten()[i].set_title(title)
+            # set the x and y axis labels
+            axs.flatten()[i].set_xlabel('Year')
+            axs.flatten()[i].set_ylabel('EJ')
+
+            # set x limits
+            axs.flatten()[i].set_xlim(2020, 2100)
+
+            # set y limits
+            axs.flatten()[i].set_ylim(0, 1100)
+
+        colours = list(Plotting.energy_shares_colours.values())
+
+        # create legend
+        labels = energy_variables
+        swatches = [mpatches.Patch(color=colours[j], label=labels[j]) for j in range(len(labels))]
+        # #create a legend
+        fig.legend(handles=swatches, labels=labels, loc='lower center', ncol=2, frameon=False)
+        
+        # add a legend
+        # fig.legend(frameon=False)
+        plt.show()
+
+
+    def transport_stackplot(self, illustrative_scenarios, 
+                                illustrative_models,
+                                narrative_df
+                                ):
+        
+        plt.rcParams['ytick.minor.visible'] = True
+        names = ['Warning lights', 'Resource risk', 'Sustainability struggle', 'Eco balance']
+        transport_variables = ['Final Energy|Transportation', 'Final Energy|Transportation|Liquids|Oil']
+        colours = ['#3399FF', 'darkgrey']
+        
+        # set up the figure
+        fig, axs = plt.subplots(2, 2, figsize=(12, 12))
+
+        for i in range(0, len(illustrative_scenarios)):
+
+            plotting_df = pd.DataFrame()
+            # set the scenario and model
+            scenario = illustrative_scenarios[i]
+            model = illustrative_models[i]
+            narrative_df_scenario = narrative_df.filter(scenario=scenario, model=model, year=range(2020, 2101), region='World')
+
+            # loop through each energy variable
+            for variable in transport_variables:
+                
+                if variable == 'Final Energy|Transportation':
+
+                    df = narrative_df_scenario.filter(variable=variable)
+                    df_other = narrative_df_scenario.filter(variable='Final Energy|Transportation|Liquids|Oil')
+                    interpolated_variable = df.interpolate(range(2020, 2101))
+                    interpolated_variable_other = df_other.interpolate(range(2020, 2101))
+                    
+                    # take away the oil from the total
+                    interpolated_variable = interpolated_variable.data.copy()
+                    interpolated_variable_other = interpolated_variable_other.data.copy()
+                    interpolated_variable['value'] = interpolated_variable['value'] - interpolated_variable_other['value']
+                    plotting_df[variable] = interpolated_variable['value']
+
+                else:
+                    df = narrative_df_scenario.filter(variable=variable)
+                    interpolated_variable = df.interpolate(range(2020, 2101))
+                    plotting_df[variable] = interpolated_variable['value']
+
+            # make a stack plot for the scenario
+            axs.flatten()[i].stackplot(range(2020, 2101), plotting_df.T, labels=transport_variables, colors=colours, alpha=0.55, edgecolor='darkgrey')
+            
+            # # add line plot over the top
+            # for variable in energy_variables:
+            #     axs.flatten()[i].plot(range(2020, 2101), plotting_df[variable], label=variable, color=Plotting.energy_shares_colours[variable], linewidth=2)
+            title = names[i] + ' (' + scenario + ')'
+            # set the title of the plot
+            axs.flatten()[i].set_title(title)
+            # set the x and y axis labels
+            axs.flatten()[i].set_xlabel('Year')
+            axs.flatten()[i].set_ylabel('EJ')
+
+            # set x limits
+            axs.flatten()[i].set_xlim(2020, 2100)
+
+            # set y limits
+            axs.flatten()[i].set_ylim(0, 160)
+
+        colours = list(Plotting.energy_shares_colours.values())
+
+        # create legend
+        labels = transport_variables
+        swatches = [mpatches.Patch(color=colours[j], label=labels[j]) for j in range(len(labels))]
+        # #create a legend
+        fig.legend(handles=swatches, labels=labels, loc='lower center', ncol=2, frameon=False)
+        
+        # add a legend
+        # fig.legend(frameon=False)
+        plt.show()
+
+    def land_use_stacked_shares(self, illustrative_scenarios,
+                                illustrative_models,
+                                narrative_df):
+        
+        plt.rcParams['ytick.minor.visible'] = True
+        land_use_variables = ['Land Cover|Pasture', 'Land Cover|Cropland', 'Land Cover|Forest', 'Land Cover']
+        colours = ['#955251', '#33FF33', '#009933', 'darkgrey']
+        names = ['Warning lights', 'Resource risk', 'Sustainability struggle', 'Eco balance']
+        
+        # set up the figure
+        fig, axs = plt.subplots(2, 2, figsize=(12, 12))
+
+        for i in range(0, len(illustrative_scenarios)):
+
+            plotting_df = pd.DataFrame()
+
+            # set the scenario and model
+            scenario = illustrative_scenarios[i]
+            model = illustrative_models[i]
+
+            narrative_df_scenario = narrative_df.filter(scenario=scenario, model=model, year=range(2020, 2101), region='World')
+            land_cover_total = narrative_df_scenario.filter(variable='Land Cover')
+            land_cover_total = land_cover_total.interpolate(range(2020, 2101)).data.copy()
+
+            for variable in land_use_variables:
+                if variable == 'Land Cover':
+                    # from the plotting df calculate the remaining land cover
+                    plotting_df['Land Cover|Other'] = 1 - (plotting_df['Land Cover|Pasture'] + plotting_df['Land Cover|Cropland'] + plotting_df['Land Cover|Forest'])
+
+                else:
+                    df = narrative_df_scenario.filter(variable=variable)
+                    interpolated_variable = df.interpolate(range(2020, 2101)).data.copy()
+                    # calculate the percentage of the land cover
+                    interpolated_variable['value'] = (interpolated_variable['value'] / land_cover_total['value'])
+                    plotting_df[variable] = interpolated_variable['value']
+
+            # make a stack plot for the scenario
+            axs.flatten()[i].stackplot(range(2020, 2101), plotting_df.T, labels=land_use_variables, colors=colours, alpha=0.4, edgecolor='darkgrey')
+
+            title = names[i] + ' (' + scenario + ')'
+
+            # set the title of the plot
+            axs.flatten()[i].set_title(title)
+
+            # set the x and y axis labels
+            axs.flatten()[i].set_xlabel('Year')
+            axs.flatten()[i].set_ylabel('Share of land cover')
+
+            # set x limits
+            axs.flatten()[i].set_xlim(2020, 2100)
+
+            # set y limits
+            axs.flatten()[i].set_ylim(0, 1)
+            plotting_df.to_csv('land_use_outputs_' + names[i] + '.csv')
+        # create legend
+        labels = land_use_variables
+        swatches = [mpatches.Patch(color=colours[j], label=labels[j]) for j in range(len(labels))]
+        # #create a legend
+        fig.legend(handles=swatches, labels=labels, loc='lower center', ncol=2, frameon=False)
+
+        plt.show()
+        
+            # loop through each energy variable
+
+    def CDR_stacked_shares(self, illustrative_scenarios,
+                           illustrative_models,
+                           narrative_df):
+        
+        plt.rcParams['ytick.minor.visible'] = True
+        names = ['Problem Pathway', 'Resource Risk', 'Sustainability Struggle', 'Eco-tech Endeavour']
+        CDR_variables = ['Carbon Sequestration|CCS|Biomass','Carbon Sequestration|Land Use','Carbon Sequestration|Direct Air Capture']
+        colours = ['#FF6600', '#FFCC00', '#FF0000']
+
+        # set up the figure
+        fig, axs = plt.subplots(2, 2, figsize=(12, 12))
+
+        for i in range(0, len(illustrative_scenarios)):
+            
+            Plotting.plotting_df = pd.DataFrame()
+            # set the scenario and model
+            scenario = illustrative_scenarios[i]
+            model = illustrative_models[i]
+            narrative_df_scenario = narrative_df.filter(scenario=scenario, model=model, year=range(2020, 2101), region='World')
+            print(model)
+            # loop through each CDR variable
+
+            for variable in CDR_variables:
+                print(variable)
+                if variable == 'Carbon Sequestration|Direct Air Capture':
+                    try:
+                        df = narrative_df_scenario.filter(variable=variable)
+                        interpolated_variable = df.interpolate(range(2020, 2101)).data.copy()
+                        Plotting.plotting_df[variable] = interpolated_variable['value']
+                    except:
+                        pass
+                
+                else:
+                    try:
+                        df = narrative_df_scenario.filter(variable=variable)
+                        interpolated_variable = df.interpolate(range(2020, 2101)).data.copy()
+                        Plotting.plotting_df[variable] = interpolated_variable['value']
+                    except:
+                        narrative_df_scenario = Data.land_use_seq_data.filter(scenario=scenario, model=model, year=range(2020, 2101), region='World')
+                        df = narrative_df_scenario.filter(variable='Imputed|Carbon Sequestration|Land Use')
+                        interpolated_variable = df.interpolate(range(2020, 2101)).data.copy()
+                        Plotting.plotting_df[variable] = interpolated_variable['value']
+                
+            # make a stack plot for the scenario
+            axs.flatten()[i].stackplot(range(2020, 2101), Plotting.plotting_df.T, labels=CDR_variables, colors=colours, alpha=0.4, edgecolor='darkgrey')
+
+            title = names[i] + ' (' + scenario + ')'
+
+            # set the title of the plot
+            axs.flatten()[i].set_title(title)
+
+            # set the x and y axis labels
+            axs.flatten()[i].set_xlabel('Year')
+            axs.flatten()[i].set_ylabel('MtCO2 Sequestered per year')
+
+            # set x limits
+            axs.flatten()[i].set_xlim(2020, 2100)
+
+            # set y limits
+            axs.flatten()[i].set_ylim(0, 21000)
+        
+        # create legend
+        labels = CDR_variables
+
+        swatches = [mpatches.Patch(color=colours[j], label=labels[j]) for j in range(len(labels))]
+        # #create a legend
+        fig.legend(handles=swatches, labels=labels, loc='lower center', ncol=2, frameon=False)
+
+        plt.show()
+
 
 if __name__ == "__main__":
     main()
