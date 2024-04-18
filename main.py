@@ -55,7 +55,7 @@ def main() -> None:
     # select_most_dissimilar_scenarios(Data.model_scenarios)
     # find_scenario_archetypes(Data.model_scenarios, 4)
     # Utils.data_download(Data.narrative_variables, Data.c1a_models_selected, Data.c1a_scenarios_selected, 'World', 'c1a_selected')
-    Utils().manadory_variables_scenarios(Utils.categories, Data.econ_regions, Data.mandatory_econ_variables, subset=False, special_file_name='scenarios_investment_all')
+    Utils().manadory_variables_scenarios(Utils.categories, Data.econ_regions, Data.mandatory_CDR_variables, subset=False, special_file_name='CDR_Robustness')
 # calculate the economic score (higher score = more economic challenges)
 def economic_score(investment_scores):
     

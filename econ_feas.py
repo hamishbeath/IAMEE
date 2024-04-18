@@ -34,6 +34,11 @@ class EconFeas:
     econ_scenarios = pd.read_csv('scenarios_investment_all_World.csv')
     # econ_data = pyam.IamDataFrame(data="cat_meta['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8'].csv")
     run_mode = 'cat'
+    alpha = -0.037
+    beta = -0.0018
+    warming_variable = 'AR6 climate diagnostics|Surface Temperature (GSAT)|MAGICCv7.5.3|50.0th Percentile' 
+    present_warming = 1.25
+    # AR6 climate diagnostics|Surface Temperature (GSAT)|MAGICCv7.5.3|95.0th Percentile
 
 def main() -> None:
 
@@ -419,7 +424,8 @@ def energy_supply_investment_score(pyam_df, base_value, end_year, scenario_model
         #     return df
 
 
-def energy_supply_investment_analysis(base_value, end_year, scenario_model_list):
+def energy_supply_investment_analysis(base_value, end_year, scenario_model_list, 
+                                      apply_damages=True):
 
     """
     Function similar to the above but that has additional indicator and different
@@ -431,7 +437,7 @@ def energy_supply_investment_analysis(base_value, end_year, scenario_model_list)
     # Filter out the data for the required variables
     df = pyam.IamDataFrame(data="cat_df['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8'].csv")
     
-    df = df.filter(variable=['Investment|Energy Supply','GDP|MER'], 
+    df = df.filter(variable=['Investment|Energy Supply','GDP|MER', EconFeas.warming_variable], 
                         region='World', year=range(2020, end_year+1), 
                         scenario=scenario_model_list['scenario'], 
                         model=scenario_model_list['model'])
@@ -457,7 +463,7 @@ def energy_supply_investment_analysis(base_value, end_year, scenario_model_list)
     for year in year_list:
         output_df[str(year)] = []
     
-    print(output_df)
+    # print(output_df)
 
     # loop through the scenario model list
     for scenario, model in zip(scenario_model_list['scenario'], scenario_model_list['model']):
@@ -473,6 +479,17 @@ def energy_supply_investment_analysis(base_value, end_year, scenario_model_list)
         # make a list of the values
         investment_values = list(variable_df['value'].values)     
 
+        # apply climate damages if the damages variable != None
+        if apply_damages != None:
+            # scenario__model_df.to_csv('outputs/gdp_untreated.csv')
+            scenario__model_df = apply_damage_function(scenario__model_df,
+                                                       scenario, model, 
+                                                       EconFeas.warming_variable,
+                                                       EconFeas.alpha,
+                                                       EconFeas.beta,
+                                                       EconFeas.present_warming, 
+                                                       meta_data, year_list)
+
         # make lists to calculate the results from
         share_of_gdp = {}
         # model_year_list = []
@@ -483,8 +500,7 @@ def energy_supply_investment_analysis(base_value, end_year, scenario_model_list)
  
             # Filter out the data for the required year
             year_df = scenario__model_df.filter(year=year)
-            year_df = year_df.as_pandas()
-            
+            year_df_new = year_df.data
             investment = year_df['value'][year_df['variable'] == 'Investment|Energy Supply'].values
             gdp = year_df['value'][year_df['variable'] == 'GDP|MER'].values
 
@@ -549,9 +565,63 @@ def energy_supply_investment_analysis(base_value, end_year, scenario_model_list)
     cols = output_df.columns.tolist()
     cols = cols[-2:] + cols[:-2]
     output_df = output_df[cols]
-    print(output_df)
-    output_df.to_csv('outputs/energy_supply_investment_analysis.csv')
+    if apply_damages != None:
+        output_df.to_csv('outputs/energy_supply_investment_analysis_damages' + 
+                         EconFeas.warming_variable + '.csv')
+    else:
+        output_df.to_csv('outputs/energy_supply_investment_analysis.csv')
     
+
+def apply_damage_function(gdp_untreated, 
+                          scenario, model, 
+                          warming_variable, 
+                          alpha, beta, 
+                          present_warming, 
+                          meta_data,
+                          year_list):
+    """
+    This function takes GDP data, scenario name and model as an input, warming variable, 
+    and then applies a damage function to the GDP data to calculate the economic impact of
+    the warming.
+
+    Inputs: 
+    - Pyam dataframe with the GDP 
+    - Scenario name and model
+    - Warming variable to use (e.g. MAGICC or FaIR)
+    - alpha 
+    - beta
+    - metadata
+    Outputs: 
+    - GDP timeseries treated for damages 
+    """
+    # check in metadata whether climate impacts have been accounted for
+    damages_accounted_for = meta_data[meta_data['scenario'] == scenario]
+    damages_accounted_for = damages_accounted_for[damages_accounted_for['model'] == model]
+    if damages_accounted_for['Climate impacts'].values[0] == 'yes':
+        return gdp_untreated
+    else:
+        # loop through each of the years to calculate the temperature difference 
+        # and apply the damage function
+        gdp_treated = gdp_untreated.as_pandas()
+        for year in year_list:
+            # print(year)
+            # print(type(gdp_untreated))
+            year_df = gdp_untreated.filter(year=year)
+            year_df_pd = year_df.as_pandas()
+            warming = year_df_pd['value'][year_df_pd['variable'] == warming_variable].values
+            gdp = year_df_pd['value'][year_df_pd['variable'] == 'GDP|MER'].values
+            decade_warming = warming - present_warming
+            damage = (alpha + (beta * present_warming)) * decade_warming + (beta/2) * decade_warming**2
+            new_gdp = gdp * (1 + damage)
+            # update the GDP value in the dataframe for the year
+            gdp_treated.loc[(gdp_treated['year'] == year) & 
+                            (gdp_treated['variable'] == 'GDP|MER'), 'value'] = new_gdp
+        # convert back to a Pyam dataframe and drop exclude column
+        gdp_treated = pyam.IamDataFrame(data=gdp_treated)
+        # gdp_treated.to_csv('outputs/gdp_treated.csv')
+        return gdp_treated
+
+
 
 if __name__ == "__main__":
     main()

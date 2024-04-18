@@ -49,10 +49,11 @@ class Data:
                            'Primary Energy|Biomass', 'Primary Energy|Non-Biomass Renewables','Carbon Sequestration|CCS|Biomass',
                             'GDP|MER', 'Land Cover|Forest','Land Cover']
 
-    mandatory_econ_variables = ['GDP|MER', 'Investment|Energy Supply']
+    mandatory_econ_variables = ['GDP|MER', 'Investment|Energy Supply',
+                                'AR6 climate diagnostics|Surface Temperature (GSAT)|MAGICCv7.5.3|50.0th Percentile',
+                                'AR6 climate diagnostics|Surface Temperature (GSAT)|MAGICCv7.5.3|95.0th Percentile']
 
-    mandatory_CDR_variables = ['Carbon Sequestration|Enhanced Weathering', 'Carbon Sequestration|Direct Air Capture', 
-                               'Carbon Sequestration|Land Use','Carbon Sequestration|CCS|Biomass', 'Carbon Utilization|CCS|Industry']
+    mandatory_CDR_variables = ['Carbon Sequestration|Direct Air Capture', 'Carbon Sequestration|Land Use','Carbon Sequestration|CCS|Biomass']
 
 
     narrative_variables = ['Final Energy|Transportation', 'Final Energy|Transportation|Liquids', 'Final Energy|Transportation|Liquids|Oil', 
@@ -65,7 +66,8 @@ class Data:
     c1a_models_selected = ['REMIND-MAgPIE 1.7-3.0', 'IMAGE 3.2', 'AIM/CGE 2.2', 'WITCH 5.0']
 
     dollar_2022_2010 = 0.25 # reduction in value of 2022 dollars to 2010 dollars
-    categories = ''
+    # categories = ''
+    categories = ['C1', 'C2']
     model_scenarios = pd.read_csv('Countries of Sub-Saharan Africa_mandatory_variables_scenarios' + str(categories) + '.csv')
     dimensions_pyamdf = cat_df = pyam.IamDataFrame(data='cat_df' + str(categories) + '.csv')
     meta_df = pd.read_csv('cat_meta' + str(categories) + '.csv') 
@@ -92,7 +94,8 @@ class Utils:
                             'Land Cover', 'Land Cover|Cropland',
                             'Land Cover|Cropland|Energy Crops']
     
-    categories = ['C1', 'C2', 'C3', 'C4', 'C5','C6', 'C7', 'C8']
+    categories = ['C1', 'C2']
+   # ['C1', 'C2', 'C3', 'C4', 'C5','C6', 'C7', 'C8']
     
 
     
@@ -298,10 +301,14 @@ class Utils:
         cat_df = df.filter(Category_subset=categories)
         # except:
         # cat_df = df.filter(Category=categories)
-        
-        cat_df.to_csv('cat_df' + str(categories) + '.csv')
-        cat_meta = cat_df.as_pandas(meta_cols=True)
-        cat_meta.to_csv('cat_meta' + str(categories) + '.csv')
+        if special_file_name != None:
+            cat_df.to_csv('cat_df' + str(categories) + special_file_name + '.csv')
+            cat_meta = cat_df.as_pandas(meta_cols=True)
+            cat_meta.to_csv('cat_meta' + str(categories) + special_file_name + '.csv')
+        else:    
+            cat_df.to_csv('cat_df' + str(categories) + '.csv')
+            cat_meta = cat_df.as_pandas(meta_cols=True)
+            cat_meta.to_csv('cat_meta' + str(categories) + '.csv')
 
         # cat_df = pyam.IamDataFrame(data='cat_df.csv')
 
@@ -416,7 +423,17 @@ class Utils:
 
         df.to_csv(file_name + '_scenario_narrative_data.csv')
         
+    def data_download_sub(variables, models, scenarios, region, end_year):
 
+        connAr6 = pyam.iiasa.Connection(name='ar6-public', 
+                    creds=None, 
+                    auth_url='https://api.manager.ece.iiasa.ac.at')    
+
+        df = connAr6.query(model=models, scenario=scenarios,
+            variable=variables, region=region, year=range(2020, end_year+1)
+            )
+
+        return df
 
 
     # def filter_data_sheet_variable_prevelance(self, db, categories, region, threshold):

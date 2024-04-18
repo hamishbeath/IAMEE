@@ -8,10 +8,10 @@ Environmental
 Threshold for BECCS  from https://www.science.org/doi/10.1126/science.adj6171 - uses upper bound of the medium concern threshold with low conversion efficiency. 
 
 Resource
-Material intensities from doi: 10.1088/1748-9326/aca4ea (supplementary file)
+Material intensities from: https://www.sciencedirect.com/science/article/pii/S2352484722024118#appSB
 Historical production from 10.1088/1748-9326/aca4ea (author shared file) and USGS https://www.usgs.gov/centers/national-minerals-information-center/
 Reserves taken from https://www.usgs.gov/centers/national-minerals-information-center/
-Future recycling rates taken from 10.1088/1748-9326/aca4ea (supplementary file)
+Recycling rates taken from 10.1088/1748-9326/aca4ea (supplementary file), and https://www.sciencedirect.com/science/article/pii/S2352484722024118#appSB (table 1).
 
 Resilience
 Between country resilience data from https://link.springer.com/article/10.1007/s10584-021-03133-w#Sec2 via the author. Relevant data originally from KC and Lutz, and Dellink et al.

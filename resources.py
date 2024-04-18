@@ -4,57 +4,52 @@ import pandas as pd
 from utils import Utils
 from utils import Data
 
-class NaturalResouces:
+class NaturalResources:
 
     # annual_retention_improvement = 0.01
     material_intensities = pd.read_csv('inputs/material_intensities.csv')
     material_intensities = material_intensities.set_index('tech')
     material_recycling = pd.read_csv('inputs/material_recycling.csv')
     material_reserves = pd.read_csv('inputs/material_reserves.csv')
+    material_intensities_temporal = pd.read_csv('inputs/material_intensities_temporal.csv')
+    tech_shares = pd.read_csv('inputs/technology_shares.csv')
     historical_production = pd.read_csv('inputs/mine_production_hist.csv') 
-    minerals = ['Nd', 'Dy', 'Cd', 'Te', 'Se', 'In']
-    material_recycling_scenario = 're_opt' # 're_opt' or 're_con'
+    minerals = ['Nd', 'Dy', 'Ni', 'Mn', 'Ag', 'Cd', 'Te', 'Se', 'In']
+    material_recycling_scenario = 're_neu' # 're_opt' or 're_con'
     growth_rate_ceiling = 2 # times the maximum growth rate of the historical data
     maximum_circularity_rate = 0.9
     product_life = 20 # years
-    reserve_growth_rate = 0.001 # 1% growth rate in reserves per year
+    reserve_growth_rate = 0.01 # 1% growth rate in reserves per year CHECK THIS zero error
     solar_base_capacity_added = 171 # GW (2022 values from IRENA)
     wind_base_capacity_added = 75 # GW (2022 values from IRENA) https://www.irena.org/News/pressreleases/2023/Mar/Record-9-point-6-Percentage-Growth-in-Renewables-Achieved-Despite-Energy-Crisis
     offshore_share = 0.5
     thin_film_share = 0.1
     material_thresholds = pd.read_csv('inputs/mineral_renewables_amounts.csv')
-
-"""
-Will need function that calculates the total global availability (at decadal intervals)
-of each of the chosen minerals. 
-
-This will need as inputs:
-1) current production and recycling rates
-2) assumptions about growth in mining 
-3) assumptions about improvements in recycling levels of each
-
-Outputs:
-CSV file with decedal levels of total global availability of each material
-
-"""
-
-
+    wind_variables = ['Capacity|Electricity|Wind|Onshore', 
+                     'Capacity|Electricity|Wind|Offshore']
 
 def main() -> None:
 
-    # calculate_global_availability(NaturalResouces.material_recycling, 
-    #                               NaturalResouces.material_reserves, 
-    #                               NaturalResouces.historical_production)
+    calculate_global_availability(NaturalResources.material_recycling, 
+                                  NaturalResources.material_reserves, 
+                                  NaturalResources.historical_production,
+                                  Data.categories)
     
-    scenario_assessment_minerals(Data.dimensions_pyamdf, 
-                                 NaturalResouces.minerals, 
-                                 Data.model_scenarios, 
-                                 NaturalResouces.material_thresholds, 
-                                 2050,
-                                 Data.categories)
+    # scenario_assessment_minerals(Data.dimensions_pyamdf, 
+    #                              NaturalResouces.minerals, 
+    #                              Data.model_scenarios, 
+    #                              NaturalResouces.material_thresholds, 
+    #                              2050,
+    #                              Data.categories)
     # calculate_base_shares_minerals()
+    # create_timeseries_material_intensities(NaturalResources.material_intensities_temporal, 
+    #                                        NaturalResources.tech_shares, 
+    #                                        NaturalResources.minerals, 
+    #                                        2050)
+
+
 # function with adjustable parameters that calculates the total global availability of each material
-def calculate_global_availability(recycling, reserves, production):
+def calculate_global_availability(recycling, reserves, production, categories):
 
     # firstly take the mine production in the first year and the recycling rate in the first year available. 
     # Then calculate the total availability of each material in each year by calculating the total production and recycling in that year.
@@ -69,12 +64,12 @@ def calculate_global_availability(recycling, reserves, production):
     future_availability_df = pd.DataFrame()
     all_availability = pd.DataFrame()
 
-    for mineral in NaturalResouces.minerals:
+    for mineral in NaturalResources.minerals:
 
         # extract the relevant data for the mineral
         relevant_data = recycling[mineral]
         recycling_current_rate = relevant_data.loc['re_cur']
-        future_recycling_rate = relevant_data.loc[NaturalResouces.material_recycling_scenario]
+        future_recycling_rate = relevant_data.loc[NaturalResources.material_recycling_scenario]
         mineral_production = production.loc[mineral]
 
         # establish the first year in the production data (column names are years)
@@ -130,7 +125,6 @@ def calculate_global_availability(recycling, reserves, production):
         # print(mineral, max_growth_rate, average_growth_rate)
 
         # calculate the annual improvement in the recycling rate based on the 2050 recycling rate and the current recycling rate
-        
         first_future_year = 2023
         rate_2050 = future_recycling_rate
         rate_current = recycling_current_rate
@@ -142,7 +136,6 @@ def calculate_global_availability(recycling, reserves, production):
         reserves_remaining = reserves_total
         
         # this loop is for the future mineral availability
-        
         for future_year in range(2024, 2101):
             
             # update the reserve total
@@ -152,15 +145,15 @@ def calculate_global_availability(recycling, reserves, production):
 
             # calculate the future recycling rate
             future_recycling_rate = rate_current + (annual_improvement * (future_year - first_future_year))
-            if future_recycling_rate > NaturalResouces.maximum_circularity_rate:
-                future_recycling_rate = NaturalResouces.maximum_circularity_rate
+            if future_recycling_rate > NaturalResources.maximum_circularity_rate:
+                future_recycling_rate = NaturalResources.maximum_circularity_rate
             
             # get stock outflow and number as basis for recycling from previous year
-            if (future_year - 2024) > NaturalResouces.product_life:
+            if (future_year - 2024) > NaturalResources.product_life:
                 try:
-                    stock_outflows = future_availability[future_year - NaturalResouces.product_life]
+                    stock_outflows = future_availability[future_year - NaturalResources.product_life]
                 except:
-                    stock_outflows = total_availability[str(future_year - NaturalResouces.product_life)]
+                    stock_outflows = total_availability[str(future_year - NaturalResources.product_life)]
             else:
                 stock_outflows = total_availability[str(2016)]
 
@@ -205,7 +198,7 @@ def calculate_global_availability(recycling, reserves, production):
         
     # concat the historical and future availability dataframes
     all_availability = pd.concat([historical_availability, future_availability_df], axis=0)
-    all_availability.to_csv('outputs/mineral_availability.csv')
+    all_availability.to_csv('outputs/mineral_availability' + str(categories) + '.csv')
     print(all_availability)
             
 
@@ -222,20 +215,32 @@ def calculate_global_availability(recycling, reserves, production):
 
 
 # function that takes input of the scenarios and assesses 
-def scenario_assessment_minerals(pyam_df, minerals, scenario_model_list, base_thresholds, end_year, categories):
+def scenario_assessment_minerals(pyam_df, minerals, scenario_model_list, base_thresholds, end_year, categories, 
+                                 temporal_material_intensity=None):
 
-        # filter for the variables needed
+    # filter for the variables needed
     df = pyam_df.filter(variable=['Capacity|Electricity|Wind','Capacity|Electricity|Solar|PV'],region='World',
                         year=range(2020, end_year+1),
                         scenario=scenario_model_list['scenario'], 
                         model=scenario_model_list['model'])
 
-    year_list = list(range(2030, end_year+1, 10))
-    
-    material_intensities = NaturalResouces.material_intensities
-    wind_material_intensity = material_intensities.loc['wind_neu']
-    solar_material_intensity = material_intensities.loc['solar_neu']
-    mineral_availability = pd.read_csv('outputs/mineral_availability.csv', index_col=0)
+    # check whether shares of wind types files exist 
+    try: 
+        wind_shares_scenarios = pd.read_csv('outputs/wind_shares_scenarios' + str(categories) + '.csv')
+    except FileNotFoundError:
+        wind_shares_scenarios = Utils.data_download_sub(NaturalResources.wind_variables,
+                                                        scenario_model_list['scenario'],
+                                                        scenario_model_list['model'],
+                                                        'World', end_year)
+        wind_shares_scenarios.to_csv('outputs/wind_shares_scenarios' + str(categories) + '.csv')
+
+    if temporal_material_intensity != None:
+
+    else:
+        material_intensities = NaturalResources.material_intensities
+        wind_material_intensity = material_intensities.loc['wind_neu']
+        solar_material_intensity = material_intensities.loc['solar_neu']
+        mineral_availability = pd.read_csv('outputs/mineral_availability.csv', index_col=0)
 
     material_use_ratios = pd.DataFrame(columns=minerals)
     
@@ -295,6 +300,7 @@ def scenario_assessment_minerals(pyam_df, minerals, scenario_model_list, base_th
     material_use_ratios.to_csv('outputs/material_use_ratios' + str(categories) + '.csv')
 
 
+# function that calculates the base shares of minerals in renewables
 def calculate_base_shares_minerals():
 
     # read in the mineral availability data
@@ -323,6 +329,109 @@ def calculate_base_shares_minerals():
     # save the dictionary to a dataframe
     mineral_renewables_amounts = pd.DataFrame(mineral_renewables_amounts, index=[0])
     mineral_renewables_amounts.to_csv('inputs/mineral_renewables_amounts.csv')
+
+
+
+# Function that creates timeseries of material intensities of different technology types
+def create_timeseries_material_intensities(temporal_intensities, 
+                                           tech_shares, minerals, 
+                                           end_year):
+    
+    """
+    Function that uses both the temporal estimates of material intensity (where available)
+    and the technology roadmap (shares of sub technology over time) to give material
+    intensity projections for on and offshore wind, solar PV. 
+
+    Inputs:
+        - Temporal material intensities
+        - Wind types (onshore, offshore)
+        - Solar types
+        - Minerals
+    
+    Outputs:
+        - Material intensity timeseries for offshore and onshore wind, solar PV
+    """
+    # make list of categories within the temporal_intensities dataframe
+    categories = temporal_intensities['category'].unique()
+    
+    # create empty dataframe to store the timeseries
+    timeseries_material_intensities = pd.DataFrame()
+
+    # set index for technology_shares
+    tech_shares = tech_shares.set_index('tech')
+
+    # create a year list
+    year_list = list(range(2020, end_year+1, 10))
+
+    category_list = []
+    mineral_list = []
+
+    for category in categories:
+
+        # extract the relevant data for the category
+        category_data = temporal_intensities[temporal_intensities['category'] == category]
+        
+        # set index as year and tech
+        category_data = category_data.set_index(['year', 'tech'])
+
+        # category_data = category_data.set_index('tech')
+        # create list of sub technologies within the category
+        sub_technologies = category_data.index.get_level_values('tech').unique()
+        
+        # extract the relevant data for the sub technology and mineral intensities
+        for mineral in minerals:
+        
+            # print(category_data)
+            mineral_tech_list = [0, 0, 0, 0]
+            mineral_data = category_data[mineral + ' (g/kW)']
+            # print(mineral_data)
+            # loop through the sub technologies
+            for sub_tech in sub_technologies:
+                
+                # print(tech_shares)
+                sub_tech_share = tech_shares.loc[sub_tech]
+                # drop the category column
+                sub_tech_share = sub_tech_share.drop('category')
+                
+                # filters the data for the sub technology and mineral
+                sub_tech_data = mineral_data.xs(sub_tech, level='tech')
+                
+                # create a dictionary to store the timeseries
+                timeseries = {}
+                # loop through years and append to dictionary, if no data append nan
+                for year in year_list:
+                    try:
+                        timeseries[year] = sub_tech_data.loc[year] 
+                    except:
+                        timeseries[year] = np.nan
+                
+                # interpolate over the nan values
+                timeseries = pd.Series(timeseries)
+                timeseries = timeseries.interpolate()
+
+                # multiply the timeseries by the sub technology share for each year
+                timeseries = timeseries.values * sub_tech_share.values
+                mineral_tech_list += timeseries
+
+            # make the mineral_tech_list into a dataframe with columns for each year
+            mineral_tech_dict = pd.DataFrame(mineral_tech_list, index=year_list).T
+
+            # add the dictionary to the dataframe
+            timeseries_material_intensities = pd.concat([timeseries_material_intensities, pd.DataFrame(mineral_tech_dict)], axis=0)
+            category_list.append(category)
+            mineral_list.append(mineral)
+
+
+    timeseries_material_intensities['category'] = category_list
+    timeseries_material_intensities['mineral'] = mineral_list
+
+    # put the category and mineral columns at the start
+    cols = timeseries_material_intensities.columns.tolist()
+    cols = cols[-2:] + cols[:-2]
+    timeseries_material_intensities = timeseries_material_intensities[cols]
+    timeseries_material_intensities.to_csv('outputs/timeseries_material_intensities.csv')
+
+
 
 
 if __name__ == "__main__":

@@ -11,13 +11,17 @@ class Robust:
     historic_emissions = historic_emissions['Emissions|CO2']
     remaining_carbon_budget_2030 =  250000  # MtCO2
     flexibility_data = pd.read_csv('inputs/build_life_times.csv')
+    cdr_variables = ['Carbon Sequestration|CCS|Biomass', 'Carbon Sequestration|Land Use',
+                     'Carbon Sequestration|Direct Air Capture']
+    cdr_df = pyam.IamDataFrame("cat_df['C1', 'C2']CDR_Robustness.csv")
 
 def main() -> None:
 
-    harmonize_emissions_calc_budgets(Data.dimensions_pyamdf, 'Emissions|CO2', Data.model_scenarios,
-                         Robust.historic_emissions, 2023, Data.categories, False, 2050)
-    flexibility_score(Data.dimensions_pyamdf, Data.model_scenarios, 
-                      2100, Data.energy_variables, Robust.flexibility_data, Data.categories)
+    # harmonize_emissions_calc_budgets(Data.dimensions_pyamdf, 'Emissions|CO2', Data.model_scenarios,
+    #                      Robust.historic_emissions, 2023, Data.categories, False, 2050)
+    # flexibility_score(Data.dimensions_pyamdf, Data.model_scenarios, 
+    #                   2100, Data.energy_variables, Robust.flexibility_data, Data.categories)
+    calculate_total_CDR(Data.model_scenarios, Robust.cdr_df, 2051)
 
 # calculate a flexibility score for the energy mix
 def flexibility_score(pyam_df, scenario_model_list, 
@@ -138,6 +142,70 @@ def harmonize_emissions_calc_budgets(df, var, scenario_model_list,
                                      'carbon_budget_share': carbon_budget_shares})
 
     carbon_budget_df.to_csv('outputs/carbon_budget_shares' + str(categories) + '.csv', index=False)
+
+
+
+# total CDR by 2050 from BECCS, DACC or land-based CDR
+def calculate_total_CDR(scenario_model_list, cdr_df,
+                        end_year):
+    if end_year != 2051:
+        raise ValueError("Indicator for 2050 values")
+    # # filter for the variables needed
+    # df = pyam_df.filter(variable=Robust.cdr_variables,
+    #                     region='World',
+    #                     year=range(2020, end_year+1),
+    #                     scenario=scenario_model_list['scenario'], 
+    #                     model=scenario_model_list['model'])
+    
+    cdr_df = cdr_df.filter(variable=Robust.cdr_variables,
+                        region='World',
+                        year=range(2020, end_year+1),
+                        scenario=scenario_model_list['scenario'], 
+                        model=scenario_model_list['model'])
+
+    total_CDR_values = []
+    for scenario, model in zip(scenario_model_list['scenario'], 
+                               scenario_model_list['model']):
+        scenario_df = cdr_df.filter(scenario=scenario, model=model)
+        total_CDR = 0
+        # add up cumulative CCS from bioenergy values
+        beccs = scenario_df.filter(variable='Carbon Sequestration|CCS|Biomass')
+        beccs = beccs.as_pandas()
+        # add all the values in the values column
+        total_CDR += beccs['value'].sum()
+
+        # add up cumulative land-based CDR values
+        land_use = scenario_df.filter(variable='Carbon Sequestration|Land Use')
+        land_use = land_use.as_pandas()
+        if land_use.empty:
+            print("No land based CDR data in AR6")
+            land_use = Data.land_use_seq_data.filter(scenario=scenario, model=model, year=range(2020, end_year), region='World')
+            land_use = land_use.filter(variable='Imputed|Carbon Sequestration|Land Use')
+            land_use = land_use.as_pandas()
+            
+            if land_use.empty:
+                print("No land based CDR data in imputed file")
+        total_CDR += land_use['value'].sum()
+                
+        # add up cumulative DACC values
+        dacc = scenario_df.filter(variable='Carbon Sequestration|Direct Air Capture')
+        dacc = dacc.as_pandas()
+        if dacc.empty:
+            print("No DACC data in AR6")
+        total_CDR += dacc['value'].sum()
+            # dacc_series = pd.Series(dacc['value'].values, index=dacc['year'])
+            # dacc_cumulative = pyam.timeseries.cumulative(dacc_series, 2020, end_year)
+            # total_CDR += dacc_cumulative[end_year]
+
+        total_CDR_values.append(total_CDR)
+    
+    # create a new dataframe with the total CDR values
+    total_CDR_df = pd.DataFrame({'model': scenario_model_list['model'], 
+                                 'scenario': scenario_model_list['scenario'], 
+                                 'total_CDR': total_CDR_values})
+    
+    total_CDR_df.to_csv('outputs/total_CDR' + str(Data.categories) + '.csv', index=False)
+
 
 if __name__ == "__main__":
     main()
