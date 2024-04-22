@@ -47,8 +47,8 @@ def main() -> None:
     # plot_using_pyam()
     # violin_plots()
     # assess_variable_data()
-    # energy_supply_investment_score(Data.dimensions_pyamdf, 0.023, 2100, Data.model_scenarios, Data.categories)
-    energy_supply_investment_analysis(0.023, 2100, EconFeas.econ_scenarios)
+    energy_supply_investment_score(Data.dimensions_pyamdf, 0.023, 2100, Data.model_scenarios, Data.categories)
+    # energy_supply_investment_analysis(0.023, 2100, EconFeas.econ_scenarios)
 
 def assess_variable_data():
 

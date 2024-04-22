@@ -55,13 +55,13 @@ def main() -> None:
     #                             Selection.robustness_scores, 
     #                             Plotting.bright_modern_colors)      
     
-    # Plotting.radar_plot_scenario_archetypes(Plotting, Data.model_scenarios, Selection.archetypes, Plotting.bright_modern_colors,
-    #                                         Plotting.selected_scenarios)
+    Plotting.radar_plot_scenario_archetypes(Plotting, Data.model_scenarios, Selection.archetypes, Plotting.bright_modern_colors,
+                                            Plotting.selected_scenarios)
     # Plotting.line_plot_narrative_variables('Agricultural Demand', 2020, 2100, Plotting.c1a_data,ylim_min=None, ylim_max=None, base_normalisation=True, secondary_variable=None)
     # Plotting.energy_system_stackplot(Plotting, Data.c1a_scenarios_selected, Data.c1a_models_selected, Data.dimensions_pyamdf, Plotting.c1a_data, Plotting.energy_shares_variables)
     # Plotting.transport_stackplot(Plotting, Data.c1a_scenarios_selected, Data.c1a_models_selected, Plotting.c1a_data)
     # Plotting.land_use_stacked_shares(Plotting, Data.c1a_scenarios_selected, Data.c1a_models_selected, Plotting.c1a_data)
-    Plotting.CDR_stacked_shares(Plotting, Data.c1a_scenarios_selected, Data.c1a_models_selected, Plotting.c1a_data)
+    # Plotting.CDR_stacked_shares(Plotting, Data.c1a_scenarios_selected, Data.c1a_models_selected, Plotting.c1a_data)
 
 
 class Plotting:
@@ -648,6 +648,24 @@ class Plotting:
         # Show the figure
         plt.tight_layout()
         plt.show()
+
+    def radar_plot_model_fingerprint(self, scenario_model_list, model_families, colours):
+
+        """
+        Model Fingerprint Radar Plot
+        
+        This function takes all the scenarios and their respective dimension scores, and 
+        sorts them into model families. There is then one radar per model family with the 
+        median value for each dimension plotted in bold, with every other scenario in the 
+        family plotted in a lighter color to demonstrate variation within the model 
+        family. 
+        
+
+        
+        """
+
+
+
 
 
     def line_plot_narrative_variables(variable, start_year, end_year, df,ylim_min=int, ylim_max=int, base_normalisation=False, secondary_variable=None):

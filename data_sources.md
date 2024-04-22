@@ -12,6 +12,7 @@ Material intensities from: https://www.sciencedirect.com/science/article/pii/S23
 Historical production from 10.1088/1748-9326/aca4ea (author shared file) and USGS https://www.usgs.gov/centers/national-minerals-information-center/
 Reserves taken from https://www.usgs.gov/centers/national-minerals-information-center/
 Recycling rates taken from 10.1088/1748-9326/aca4ea (supplementary file), and https://www.sciencedirect.com/science/article/pii/S2352484722024118#appSB (table 1).
+Trajectory for onshore and offshore wind, various sources inc. (https://about.bnef.com/blog/the-next-phase-of-wind-power-growth-in-five-charts/)
 
 Resilience
 Between country resilience data from https://link.springer.com/article/10.1007/s10584-021-03133-w#Sec2 via the author. Relevant data originally from KC and Lutz, and Dellink et al.

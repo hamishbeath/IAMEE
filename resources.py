@@ -12,35 +12,44 @@ class NaturalResources:
     material_recycling = pd.read_csv('inputs/material_recycling.csv')
     material_reserves = pd.read_csv('inputs/material_reserves.csv')
     material_intensities_temporal = pd.read_csv('inputs/material_intensities_temporal.csv')
+    timeseries_material_intensities = pd.read_csv('outputs/timeseries_material_intensities.csv')
     tech_shares = pd.read_csv('inputs/technology_shares.csv')
     historical_production = pd.read_csv('inputs/mine_production_hist.csv') 
     minerals = ['Nd', 'Dy', 'Ni', 'Mn', 'Ag', 'Cd', 'Te', 'Se', 'In']
     material_recycling_scenario = 're_neu' # 're_opt' or 're_con'
     growth_rate_ceiling = 2 # times the maximum growth rate of the historical data
     maximum_circularity_rate = 0.9
-    product_life = 20 # years
+    product_life = 15 # years
     reserve_growth_rate = 0.01 # 1% growth rate in reserves per year CHECK THIS zero error
     solar_base_capacity_added = 171 # GW (2022 values from IRENA)
     wind_base_capacity_added = 75 # GW (2022 values from IRENA) https://www.irena.org/News/pressreleases/2023/Mar/Record-9-point-6-Percentage-Growth-in-Renewables-Achieved-Despite-Energy-Crisis
-    offshore_share = 0.5
-    thin_film_share = 0.1
+
     material_thresholds = pd.read_csv('inputs/mineral_renewables_amounts.csv')
     wind_variables = ['Capacity|Electricity|Wind|Onshore', 
                      'Capacity|Electricity|Wind|Offshore']
 
+
+
 def main() -> None:
 
-    calculate_global_availability(NaturalResources.material_recycling, 
-                                  NaturalResources.material_reserves, 
-                                  NaturalResources.historical_production,
-                                  Data.categories)
+    # calculate_global_availability(NaturalResources.material_recycling, 
+    #                               NaturalResources.material_reserves, 
+    #                               NaturalResources.historical_production,
+    #                               Data.categories)
     
-    # scenario_assessment_minerals(Data.dimensions_pyamdf, 
-    #                              NaturalResouces.minerals, 
-    #                              Data.model_scenarios, 
-    #                              NaturalResouces.material_thresholds, 
-    #                              2050,
-    #                              Data.categories)
+    """
+    NOTE: when running the timeseries material intensities, need to add wind 
+    defaults manually at the moment. To-do item, automate this step within the 
+    function from the wind_default intensity values.
+    """
+    scenario_assessment_minerals(Data.dimensions_pyamdf, 
+                                 NaturalResources.minerals, 
+                                 Data.model_scenarios, 
+                                 NaturalResources.material_thresholds, 
+                                 2050,
+                                 Data.categories,
+                                 NaturalResources.timeseries_material_intensities,
+                                 fixed_material_intensities=True)
     # calculate_base_shares_minerals()
     # create_timeseries_material_intensities(NaturalResources.material_intensities_temporal, 
     #                                        NaturalResources.tech_shares, 
@@ -216,7 +225,7 @@ def calculate_global_availability(recycling, reserves, production, categories):
 
 # function that takes input of the scenarios and assesses 
 def scenario_assessment_minerals(pyam_df, minerals, scenario_model_list, base_thresholds, end_year, categories, 
-                                 temporal_material_intensity=None):
+                                 mineral_intensities_timeseries, fixed_material_intensities=False):
 
     # filter for the variables needed
     df = pyam_df.filter(variable=['Capacity|Electricity|Wind','Capacity|Electricity|Solar|PV'],region='World',
@@ -224,23 +233,42 @@ def scenario_assessment_minerals(pyam_df, minerals, scenario_model_list, base_th
                         scenario=scenario_model_list['scenario'], 
                         model=scenario_model_list['model'])
 
-    # check whether shares of wind types files exist 
+    # check whether shares of wind types files and scenario list exist 
     try: 
-        wind_shares_scenarios = pd.read_csv('outputs/wind_shares_scenarios' + str(categories) + '.csv')
+        wind_shares_scenarios = pyam.IamDataFrame(data='outputs/wind_shares_scenarios' + str(categories) + '.csv') 
+        wind_shares_regional_list = pd.read_csv('outputs/wind_shares_regional_list' + str(categories) + '.csv')
+    
     except FileNotFoundError:
         wind_shares_scenarios = Utils.data_download_sub(NaturalResources.wind_variables,
                                                         scenario_model_list['scenario'],
                                                         scenario_model_list['model'],
                                                         'World', end_year)
         wind_shares_scenarios.to_csv('outputs/wind_shares_scenarios' + str(categories) + '.csv')
+        wind_shares_regional_list = Utils().manadory_variables_scenarios(categories, 
+                                                                       Data.econ_regions, 
+                                                                       NaturalResources.wind_variables, 
+                                                                       subset=False, 
+                                                                       special_file_name=None,
+                                                                       call_sub=True)
+        wind_shares_regional_list.to_csv('outputs/wind_shares_regional_list' + str(categories) + '.csv')
 
-    if temporal_material_intensity != None:
+    # extract the material intensities for the different technologies
+    material_intensities = mineral_intensities_timeseries.set_index('category')
+    wind_on_material_intensity = material_intensities.loc['wind_on']
+    wind_off_material_intensity = material_intensities.loc['wind_off']
+    solar_material_intensity = material_intensities.loc['solar']
+    default_wind_material_intensity = material_intensities.loc['wind_default']
+    
+    # set the indexes as the minerals 
+    wind_on_material_intensity = wind_on_material_intensity.set_index('mineral')
+    wind_off_material_intensity = wind_off_material_intensity.set_index('mineral')
+    solar_material_intensity = solar_material_intensity.set_index('mineral')
+    default_wind_material_intensity = default_wind_material_intensity.set_index('mineral')
 
-    else:
-        material_intensities = NaturalResources.material_intensities
-        wind_material_intensity = material_intensities.loc['wind_neu']
-        solar_material_intensity = material_intensities.loc['solar_neu']
-        mineral_availability = pd.read_csv('outputs/mineral_availability.csv', index_col=0)
+    # material_intensities = NaturalResources.material_intensities
+    # wind_material_intensity = material_intensities.loc['wind_neu']
+    # solar_material_intensity = material_intensities.loc['solar_neu']
+    mineral_availability = pd.read_csv('outputs/mineral_availability' + str(categories) + '.csv', index_col=0)
 
     material_use_ratios = pd.DataFrame(columns=minerals)
     
@@ -251,12 +279,30 @@ def scenario_assessment_minerals(pyam_df, minerals, scenario_model_list, base_th
         scenario_df = df.filter(scenario=scenario)
         scenario__model_df = scenario_df.filter(model=model)
 
+        print(scenario, model)
+        # filter for model 
+        wind_shares_model = wind_shares_regional_list[wind_shares_regional_list['model'] == model]
+        
+        # check if the scenario is in the list that has regional shares of on and offshore wind
+        if scenario in wind_shares_model['scenario'].values:
+            # extract the wind shares for the scenario
+            wind_material_intensity = wind_shares_calc_sub(scenario, model, 
+                         wind_shares_scenarios,
+                         wind_off_material_intensity, 
+                         wind_on_material_intensity, end_year)
+            
+        
+        else:
+            wind_material_intensity = default_wind_material_intensity
+            
+            
         # empty dictionary to store the mineral shares with zeros 
         ratios = {keys: [] for keys in minerals}
         counter = 0
         for year in range(2030, end_year+1, 10):
 
-            # calculate the total capacity added for solar and wind
+            # calculate the total capacity added for solar and wind. Capacity additions variable has lower coverage so is necessary
+            # Note, could switch to using Pyam built in functionality for this.
             solar_capacity_current = scenario__model_df.filter(variable='Capacity|Electricity|Solar|PV', year=year).data['value'].values
             wind_capacity_current = scenario__model_df.filter(variable='Capacity|Electricity|Wind', year=year).data['value'].values
             solar_capacity_previous = scenario__model_df.filter(variable='Capacity|Electricity|Solar|PV', year=year-10).data['value'].values
@@ -267,15 +313,27 @@ def scenario_assessment_minerals(pyam_df, minerals, scenario_model_list, base_th
             wind_capacity_added = wind_capacity_added[0]
             
             # calculate the material intensity for solar and wind
-            scenario_solar_material_quantities = solar_material_intensity * (solar_capacity_added * NaturalResouces.thin_film_share)
-            scenario_wind_material_quantities = wind_material_intensity * wind_capacity_added
+            year_wind_material_intensity = wind_material_intensity[str(year)]
+            year_solar_material_intensity = solar_material_intensity[str(year)]
+
+            # print(year_wind_material_intensity)
+            # print(year_solar_material_intensity)
+            if fixed_material_intensities == True:
+                scenario_solar_material_quantities = solar_material_intensity[str(2020)] * solar_capacity_added
+                scenario_wind_material_quantities = wind_material_intensity[str(2020)] * wind_capacity_added
+            
+            elif fixed_material_intensities == False:
+                scenario_solar_material_quantities = solar_material_intensity[str(year)] * solar_capacity_added
+                scenario_wind_material_quantities = wind_material_intensity[str(year)] * wind_capacity_added
             total_scenario_material_quantities = scenario_solar_material_quantities + scenario_wind_material_quantities
+
+            # print(total_scenario_material_quantities)
 
             # calculate the mineral quantities for solar and wind from relevant decade
             decade_mineral_quantities = mineral_availability.loc[year-10:year]
             for mineral in minerals:
                 total_availability = decade_mineral_quantities[mineral].sum()
-                scenario_mineral_use = total_scenario_material_quantities[mineral + ' (g/kW)']
+                scenario_mineral_use = total_scenario_material_quantities.loc[mineral]
                 mineral_scenario_share = scenario_mineral_use / total_availability
                 base_threshold = base_thresholds[mineral].values[0]
                 # calculate the ratio of share to the threshold
@@ -301,6 +359,7 @@ def scenario_assessment_minerals(pyam_df, minerals, scenario_model_list, base_th
 
 
 # function that calculates the base shares of minerals in renewables
+# TO DO - update this function to work with split wind on and offshore
 def calculate_base_shares_minerals():
 
     # read in the mineral availability data
@@ -430,6 +489,50 @@ def create_timeseries_material_intensities(temporal_intensities,
     cols = cols[-2:] + cols[:-2]
     timeseries_material_intensities = timeseries_material_intensities[cols]
     timeseries_material_intensities.to_csv('outputs/timeseries_material_intensities.csv')
+
+
+def wind_shares_calc_sub(scenario, model, 
+                         wind_shares_pyamdf,
+                         wind_off_intensity, 
+                         wind_on_intensity, end_year
+                         ):
+    
+    # filter for the scenario and model
+    scenario_wind_shares = wind_shares_pyamdf.filter(scenario=scenario, model=model)
+    scenario_wind_mineral_intensities = pd.DataFrame()
+    
+    for year in range(2020, end_year+1, 10):
+        # filter for the year
+        year_wind_shares = scenario_wind_shares
+        # calculate the total capacity added for on and offshore wind
+        onshore_capacity = year_wind_shares.filter(variable='Capacity|Electricity|Wind|Onshore', year=year).data['value'].values
+        offshore_capacity = year_wind_shares.filter(variable='Capacity|Electricity|Wind|Offshore',year=year).data['value'].values
+        onshore_capacity_previous = year_wind_shares.filter(variable='Capacity|Electricity|Wind|Onshore', year=year-10).data['value'].values
+        offshore_capacity_previous = year_wind_shares.filter(variable='Capacity|Electricity|Wind|Offshore', year=year-10).data['value'].values
+        onshore_capacity_added = onshore_capacity - onshore_capacity_previous
+        offshore_capacity_added = offshore_capacity - offshore_capacity_previous
+        onshore_capacity_added = onshore_capacity_added[0]
+        offshore_capacity_added = offshore_capacity_added[0]
+        
+        # calculate the shares
+        onshore_share = onshore_capacity_added / (onshore_capacity_added + offshore_capacity_added)
+        offshore_share = offshore_capacity_added / (onshore_capacity_added + offshore_capacity_added)
+        # print(onshore_share, offshore_share)
+        # calculate the material intensity for on and offshore wind
+        year_mineral_intensity_onshore = wind_on_intensity[str(year)]
+        year_mineral_intensity_offshore = wind_off_intensity[str(year)]
+
+        # calculate the material quantities for on and offshore wind combined 
+        year_mineral_quantities_wind = (year_mineral_intensity_onshore * onshore_share) + (year_mineral_intensity_offshore * offshore_share)
+        scenario_wind_mineral_intensities[str(year)] = year_mineral_quantities_wind
+
+    # save the dictionary to a dataframe
+    
+    # scenario_wind_mineral_intensities = pd.DataFrame(scenario_wind_mineral_intensities, index=[0])
+    # print(scenario_wind_mineral_intensities)
+    # print('The scenario is', scenario)
+    return scenario_wind_mineral_intensities
+
 
 
 

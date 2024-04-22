@@ -265,7 +265,8 @@ class Utils:
 
     # function that takes as an input a list of mandatory variables and regional coverage and 
     # provides a list of scenarios that report on all of the mandatory variables for the given region
-    def manadory_variables_scenarios(self, categories, regions, variables, subset=False, special_file_name=None):
+    def manadory_variables_scenarios(self, categories, regions, variables, subset=False, special_file_name=None
+                                     ,call_sub=None):
 
         """
         Function that takes as an input a list of mandatory variables and regional coverage and 
@@ -296,19 +297,19 @@ class Utils:
         else:
             raise ValueError('Subset must be a boolean')
         
-        # # Filter by temperature category
-        # try:
         cat_df = df.filter(Category_subset=categories)
+        if call_sub == None:
+            
         # except:
         # cat_df = df.filter(Category=categories)
-        if special_file_name != None:
-            cat_df.to_csv('cat_df' + str(categories) + special_file_name + '.csv')
-            cat_meta = cat_df.as_pandas(meta_cols=True)
-            cat_meta.to_csv('cat_meta' + str(categories) + special_file_name + '.csv')
-        else:    
-            cat_df.to_csv('cat_df' + str(categories) + '.csv')
-            cat_meta = cat_df.as_pandas(meta_cols=True)
-            cat_meta.to_csv('cat_meta' + str(categories) + '.csv')
+            if special_file_name != None:
+                cat_df.to_csv('cat_df' + str(categories) + special_file_name + '.csv')
+                cat_meta = cat_df.as_pandas(meta_cols=True)
+                cat_meta.to_csv('cat_meta' + str(categories) + special_file_name + '.csv')
+            else:    
+                cat_df.to_csv('cat_df' + str(categories) + '.csv')
+                cat_meta = cat_df.as_pandas(meta_cols=True)
+                cat_meta.to_csv('cat_meta' + str(categories) + '.csv')
 
         # cat_df = pyam.IamDataFrame(data='cat_df.csv')
 
@@ -333,13 +334,15 @@ class Utils:
             output_df['model'] = model_list
             output_df['scenario'] = scenario_list
 
-            print(output_df)
-            if special_file_name != None:
-                output_df.to_csv(special_file_name + '_' + region + '.csv')
-            else:
-                output_df.to_csv(region + '_mandatory_variables_scenarios' + str(categories) + '.csv')
+            if call_sub == None:
+                print(output_df)
+                if special_file_name != None:
+                    output_df.to_csv(special_file_name + '_' + region + '.csv')
+                else:
+                    output_df.to_csv(region + '_mandatory_variables_scenarios' + str(categories) + '.csv')
+            elif call_sub != None:
+                return output_df
 
-    
     # function that takes the pyam dataframe and loops through each mandatory variable to assess the 
     # whether or not removing the variable substantially increases the number of scenarios or models
     def filter_data_sheet_variable_prevelance(self, category, region, variables):
@@ -429,7 +432,7 @@ class Utils:
                     creds=None, 
                     auth_url='https://api.manager.ece.iiasa.ac.at')    
 
-        df = connAr6.query(model=models, scenario=scenarios,
+        df = connAr6.query(model='*', scenario='*', categories=Data.categories,
             variable=variables, region=region, year=range(2020, end_year+1)
             )
 

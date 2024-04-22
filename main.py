@@ -4,7 +4,7 @@ import pandas as pd
 from utils import Data
 from utils import Utils
 from itertools import combinations, product
-from resources import NaturalResouces
+from resources import NaturalResources
 from scipy.spatial.distance import pdist, squareform
 from sklearn.cluster import KMeans
 
@@ -23,6 +23,8 @@ class IndexBuilder:
     # import robustness metrics
     energy_system_flexibility = pd.read_csv('outputs/flexibility_scores' + str(Data.categories) + '.csv')
     carbon_budgets = pd.read_csv('outputs/carbon_budget_shares' + str(Data.categories) + '.csv')
+    low_carbon_diversity = pd.read_csv('outputs/low_carbon_shannon_diversity_index' + str(Data.categories) + '.csv')
+    CDR_2050 = pd.read_csv('outputs/total_CDR' + str(Data.categories) + '.csv')
 
 class Selection:
 
@@ -43,19 +45,22 @@ class Selection:
 
 def main() -> None:
 
-    # economic_score(IndexBuilder.investment_metrics)
-    # environment_score(IndexBuilder.environment_metrics)
-    # resource_score(NaturalResouces.minerals, IndexBuilder.resource_metrics)
-    # resilience_score(IndexBuilder.final_energy_demand,
-    #                 IndexBuilder.energy_diversity,
-    #                 IndexBuilder.gini_coefficient)
-    # calculate_robustness_score(IndexBuilder.energy_system_flexibility, 
-    #                            IndexBuilder.energy_diversity, 
-    #                            IndexBuilder.carbon_budgets)
+    economic_score(IndexBuilder.investment_metrics)
+    environment_score(IndexBuilder.environment_metrics)
+    resource_score(NaturalResources.minerals, IndexBuilder.resource_metrics)
+    resilience_score(IndexBuilder.final_energy_demand,
+                    IndexBuilder.energy_diversity,
+                    IndexBuilder.gini_coefficient)
+    calculate_robustness_score(IndexBuilder.energy_system_flexibility, 
+                               IndexBuilder.low_carbon_diversity, 
+                               IndexBuilder.carbon_budgets,
+                               IndexBuilder.CDR_2050)
     # select_most_dissimilar_scenarios(Data.model_scenarios)
-    # find_scenario_archetypes(Data.model_scenarios, 4)
+    find_scenario_archetypes(Data.model_scenarios, 4)
     # Utils.data_download(Data.narrative_variables, Data.c1a_models_selected, Data.c1a_scenarios_selected, 'World', 'c1a_selected')
-    Utils().manadory_variables_scenarios(Utils.categories, Data.econ_regions, Data.mandatory_CDR_variables, subset=False, special_file_name='CDR_Robustness')
+    # Utils().manadory_variables_scenarios(Utils.categories, Data.econ_regions, Data.mandatory_CDR_variables, subset=False, special_file_name='CDR_Robustness')
+
+
 # calculate the economic score (higher score = more economic challenges)
 def economic_score(investment_scores):
     
@@ -151,12 +156,13 @@ def resilience_score(final_energy_demand, energy_diversity, gini_coefficient):
 
 
 # calculate the robustness score (higher score = more robustness challenges)
-def calculate_robustness_score(flexibility_scores, shannon_index, carbon_budgets):
+def calculate_robustness_score(flexibility_scores, shannon_index, carbon_budgets, CDR_2050):
     """
     composite of:
-    - energy system flexibility (lower better) weighting 1/3
-    - energy system diversity (higher better) weighting 1/3
-    - carbon budget share used up by 2030 (lower better) weighting 1/3
+    - energy system flexibility (lower better) weighting 1/4
+    - energy system diversity in low carbon options (higher better) weighting 1/4
+    - carbon budget share used up by 2030 (lower better) weighting 1/4
+    - total CDR by 2050 (lower better) weighting 1/4
     
     """
     outout_df = pd.DataFrame()
@@ -178,8 +184,13 @@ def calculate_robustness_score(flexibility_scores, shannon_index, carbon_budgets
     carbon_budgets_normalised = (carbon_budgets - carbon_budgets.min()) / (carbon_budgets.max() - carbon_budgets.min())
     outout_df['carbon_budgets'] = carbon_budgets_normalised
 
+    # normalise the CDR 2050
+    CDR_2050 = CDR_2050['total_CDR']
+    CDR_2050_normalised = (CDR_2050 - CDR_2050.min()) / (CDR_2050.max() - CDR_2050.min())
+    outout_df['CDR_2050'] = CDR_2050_normalised
+
     # create the composite robustness score
-    outout_df['robustness_score'] = outout_df['flexibility_scores'] + outout_df['shannon_index'] + outout_df['carbon_budgets']
+    outout_df['robustness_score'] = outout_df['flexibility_scores'] + outout_df['shannon_index'] + outout_df['carbon_budgets'] + outout_df['CDR_2050']
     outout_df.to_csv('outputs/robustness_scores' + str(Data.categories) + '.csv', index=False)
 
 
@@ -297,16 +308,17 @@ def find_scenario_archetypes(model_scenarios_list, cluster_number=int):
     # Reset index if necessary, to include 'model' and 'scenario' in the columns
     selected_scenarios_df.reset_index(inplace=True)
     
-    # Assuming you want to save or further process 'selected_scenarios_df'
-    # For example, to save:
-    selected_scenarios_df.to_csv('outputs/selected_scenarios' + '.csv', index=False)
+    # Save the selected scenarios to a CSV file
+    selected_scenarios_df.to_csv('outputs/selected_scenarios' + str(Data.categories) + '.csv', index=False)
     
 
     # # calculate scenario archetype scores as the centroids of each cluster
-    # cluster_centroids = pd.DataFrame(kmeans.cluster_centers_, columns=data.columns[:-1])
-    # # add in the cluster number
-    # cluster_centroids['cluster'] = range(0, n_clusters)
-    # cluster_centroids.to_csv('outputs/scenario_archetypes' + str(Data.categories) + '.csv', index=False)
+    cluster_centroids = pd.DataFrame(kmeans.cluster_centers_, columns=data.columns[:-1])
+    # add in the cluster number
+    cluster_centroids['cluster'] = range(0, n_clusters)
+    cluster_centroids.to_csv('outputs/scenario_archetypes' + str(Data.categories) + '.csv', index=False)
+
+
     
 # Function to calculate total dissimilarity for a combination of scenarios
 def calculate_total_dissimilarity(combination):

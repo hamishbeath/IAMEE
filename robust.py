@@ -4,6 +4,7 @@ import pandas as pd
 # from utils import Utils
 from utils import Data
 
+
 class Robust:
 
     historic_emissions = pd.read_csv('inputs/historical_emissions_co2.csv')
@@ -14,15 +15,19 @@ class Robust:
     cdr_variables = ['Carbon Sequestration|CCS|Biomass', 'Carbon Sequestration|Land Use',
                      'Carbon Sequestration|Direct Air Capture']
     cdr_df = pyam.IamDataFrame("cat_df['C1', 'C2']CDR_Robustness.csv")
+    low_carbon_energy_variables = variable=['Primary Energy|Nuclear','Primary Energy|Biomass', 
+                                            'Primary Energy|Non-Biomass Renewables']
+    
 
 def main() -> None:
 
-    # harmonize_emissions_calc_budgets(Data.dimensions_pyamdf, 'Emissions|CO2', Data.model_scenarios,
-    #                      Robust.historic_emissions, 2023, Data.categories, False, 2050)
-    # flexibility_score(Data.dimensions_pyamdf, Data.model_scenarios, 
-    #                   2100, Data.energy_variables, Robust.flexibility_data, Data.categories)
+    harmonize_emissions_calc_budgets(Data.dimensions_pyamdf, 'Emissions|CO2', Data.model_scenarios,
+                         Robust.historic_emissions, 2023, Data.categories, False, 2050)
+    flexibility_score(Data.dimensions_pyamdf, Data.model_scenarios, 
+                      2100, Data.energy_variables, Robust.flexibility_data, Data.categories)
     calculate_total_CDR(Data.model_scenarios, Robust.cdr_df, 2051)
-
+    shannon_index_low_carbon_mix(Data.dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories)
+                                 
 # calculate a flexibility score for the energy mix
 def flexibility_score(pyam_df, scenario_model_list, 
                       end_year, energy_variables, 
@@ -205,6 +210,57 @@ def calculate_total_CDR(scenario_model_list, cdr_df,
                                  'total_CDR': total_CDR_values})
     
     total_CDR_df.to_csv('outputs/total_CDR' + str(Data.categories) + '.csv', index=False)
+
+
+
+# Function that calculates the shannon index for low-carbon energy mix for each scenario
+def shannon_index_low_carbon_mix(pyam_df, scenario_model_list, end_year, categories):
+
+    # filter for the variables needed
+    df = pyam_df.filter(variable=Robust.low_carbon_energy_variables,
+                        region='World',
+                        year=range(2020, end_year+1),
+                        scenario=scenario_model_list['scenario'], 
+                        model=scenario_model_list['model'])
+    
+    shannon_indexes = []
+     # loop through models and scenarios
+    for scenario, model in zip(scenario_model_list['scenario'], scenario_model_list['model']):
+
+        # Filter out the data for the required scenario
+        scenario_df = df.filter(scenario=scenario)
+        scenario__model_df = scenario_df.filter(model=model)
+        
+        # create a dictionary to store the summed energy values
+        energy_summed = {}
+        total = 0
+        # loop through the energy variables to interpolate and sum the values
+        for variable in Robust.low_carbon_energy_variables:
+            # Filter out the data for the required variable
+            variable_df = scenario__model_df.filter(variable=variable) 
+            # make pandas series with the values and years as index
+            variable_df = variable_df.data
+            variable_series = pd.Series(variable_df['value'].values, index=variable_df['year'])
+            cumulative_interpolated = pyam.timeseries.cumulative(variable_series, 2020, 2100)
+            energy_summed[variable] = cumulative_interpolated
+            total += cumulative_interpolated
+        
+        # make a new dictionary to store the proportions of the energy sources 
+        #  and calculate the shannon index
+        proportions = {}
+        shannon_total = 0
+        for variable in Robust.low_carbon_energy_variables:
+            proportion = energy_summed[variable] / total
+            proportions[variable] = proportion
+            shannon_index_value = proportion * np.log(proportion)
+            shannon_total += shannon_index_value
+        shannon_index = -1 * shannon_total
+        shannon_indexes.append(shannon_index)
+    
+    # create a new dataframe with the shannon indexes
+    shannon_df = pd.DataFrame({'model': scenario_model_list['model'], 'scenario': scenario_model_list['scenario'], 'shannon_index': shannon_indexes})
+    shannon_df.to_csv('outputs/low_carbon_shannon_diversity_index' + str(categories) + '.csv', index=False)
+
 
 
 if __name__ == "__main__":
