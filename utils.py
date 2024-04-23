@@ -41,7 +41,7 @@ class Data:
         'Eastern and Western Europe (i.e., the EU28)',
         'Other countries of Asia',
         'Pacific OECD', 'Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia',
-        'World']
+        'Rest of the World (R10)']
 
     mandatory_variables = ['Emissions|CO2', 'Investment|Energy Supply','Capacity|Electricity|Wind',
                            'Capacity|Electricity|Solar|PV', 'Final Energy',
@@ -424,7 +424,7 @@ class Utils:
             variable=variables, region=region
             )
 
-        df.to_csv(file_name + '_scenario_narrative_data.csv')
+        df.to_csv(file_name + '.csv')
         
     def data_download_sub(variables, models, scenarios, region, end_year):
 

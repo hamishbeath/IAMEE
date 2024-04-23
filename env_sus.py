@@ -76,10 +76,43 @@ def main() -> None:
     forest_cover_change(Data.dimensions_pyamdf, 2100, Data.model_scenarios, EnvSus.beccs_threshold, Data.categories)    
     # Utils.filter_data_sheet_variable_prevelance(Utils, 'C1a_NZGHGs', EnvSus.region, Data.mandatory_variables)
 
-def forest_cover_change(pyam_df, end_year, scenario_model_list, beccs_threshold, categories):
 
+def forest_cover_change(pyam_df, end_year, scenario_model_list, beccs_threshold, categories, regional=None):
+    """
+    This function calculates the change in forest cover from 2020 to 2050 and 2020 to 2100 for a given scenario and model.
+    The function also checks if the BECCS threshold is breached for the given scenario and model.
+    
+    Inputs:
+    pyam_df: A pyam dataframe object with the scenario timeseries data
+    end_year: The final year of the analysis
+    scenario_model_list: A .csv file with the scenario and model names
+    beccs_threshold: The threshold for BECCS in mtCO2/year
+    categories: The categories of the scenarios
+    regional: The region for which the analysis is done (None for global analysis)
+
+    Outputs: 
+    A .csv file with the forest cover change values and whether the BECCS threshold is breached
+    
+    """
+
+    # Check if a regional filter is applied
+    if regional is not None:
+        region = regional
+        
+        # calculate the beccs threshold for the region
+        df = pyam_df.filter(variable='Land Cover',region=[region,'World'],
+                        year=2020,
+                        scenario=scenario_model_list['scenario'], 
+                        model=scenario_model_list['model'])
+        world_land_cover = np.mean(df['value'][df['region'] == 'World'].values)
+        region_land_cover = np.mean(df['value'][df['region'] == region].values)
+        beccs_threshold = (region_land_cover / world_land_cover) * beccs_threshold
+
+    else:
+        region = 'World'
+    
     # filter for the variables needed
-    df = pyam_df.filter(variable=['Land Cover|Forest','Land Cover','Carbon Sequestration|CCS|Biomass'],region='World',
+    df = pyam_df.filter(variable=['Land Cover|Forest','Land Cover','Carbon Sequestration|CCS|Biomass'],region=region,
                         year=range(2020, end_year+1),
                         scenario=scenario_model_list['scenario'], 
                         model=scenario_model_list['model'])
@@ -140,11 +173,18 @@ def forest_cover_change(pyam_df, end_year, scenario_model_list, beccs_threshold,
     output_df['forest_change_2050'] = forest_change_2050
     output_df['forest_change_2100'] = forest_change_2100
     output_df['beccs_threshold_breached'] = beccs_threshold_breached
-    output_df.to_csv('outputs/environmental_metrics' + str(categories) + '.csv')
+    
+    if regional is not None:
+        
+        # add column for region with region in each row
+        output_df['region'] = region
+        return output_df
+    
+    else:
+        output_df.to_csv('outputs/environmental_metrics' + str(categories) + '.csv')
 
 
         
-
 
 def joel_data_download():
    

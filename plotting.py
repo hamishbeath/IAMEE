@@ -55,14 +55,14 @@ def main() -> None:
     #                             Selection.robustness_scores, 
     #                             Plotting.bright_modern_colors)      
     
-    Plotting.radar_plot_scenario_archetypes(Plotting, Data.model_scenarios, Selection.archetypes, Plotting.bright_modern_colors,
-                                            Plotting.selected_scenarios)
+    # Plotting.radar_plot_scenario_archetypes(Plotting, Data.model_scenarios, Selection.archetypes, Plotting.bright_modern_colors,
+    #                                         Plotting.selected_scenarios)
     # Plotting.line_plot_narrative_variables('Agricultural Demand', 2020, 2100, Plotting.c1a_data,ylim_min=None, ylim_max=None, base_normalisation=True, secondary_variable=None)
     # Plotting.energy_system_stackplot(Plotting, Data.c1a_scenarios_selected, Data.c1a_models_selected, Data.dimensions_pyamdf, Plotting.c1a_data, Plotting.energy_shares_variables)
     # Plotting.transport_stackplot(Plotting, Data.c1a_scenarios_selected, Data.c1a_models_selected, Plotting.c1a_data)
     # Plotting.land_use_stacked_shares(Plotting, Data.c1a_scenarios_selected, Data.c1a_models_selected, Plotting.c1a_data)
     # Plotting.CDR_stacked_shares(Plotting, Data.c1a_scenarios_selected, Data.c1a_models_selected, Plotting.c1a_data)
-
+    Plotting.radar_plot_model_fingerprint(Plotting, Data.model_scenarios, Plotting.model_families, Plotting.model_colours, Plotting.clustered_scores)
 
 class Plotting:
 
@@ -84,6 +84,12 @@ class Plotting:
                              'Primary Energy|Biomass': 'green', 
                              'Primary Energy|Non-Biomass Renewables': 'lightgreen'}
 
+    model_families = pd.read_csv('inputs/model_family.csv')
+
+    try:
+        clustered_scores = pd.read_csv('outputs/clustered_scores' + str(Data.categories) + '.csv')
+    except FileNotFoundError:
+        print('No clustered scores file found')
 
     bright_modern_colors = [
     "#FF5733",  # Bright Red
@@ -135,6 +141,10 @@ class Plotting:
 
     selected_scenarios = pd.read_csv('outputs/selected_scenarios' + str(Data.categories) + '.csv')
     c1a_data = pyam.IamDataFrame('c1a_selected_scenario_narrative_data.csv')
+
+    model_colours = {'IMAGE': '#777C01', 'AIM':'#090059','GCAM':'#D57501', 'MESSAGE':'#02589D', 'REMIND':'#006D77', 'WITCH':'#502591'}
+
+
 
     # Create a detailed polar bar plot that categorises 
     def polar_bar_plot_variables(self, file_name, dimensions, category):
@@ -649,7 +659,8 @@ class Plotting:
         plt.tight_layout()
         plt.show()
 
-    def radar_plot_model_fingerprint(self, scenario_model_list, model_families, colours):
+
+    def radar_plot_model_fingerprint(self, scenario_model_list, model_families, model_colours, scenario_scores):
 
         """
         Model Fingerprint Radar Plot
@@ -660,12 +671,90 @@ class Plotting:
         family plotted in a lighter color to demonstrate variation within the model 
         family. 
         
-
+        Inputs: 
+        - scenario_model_list: a dataframe containing the scenario names and model names
+        - model_families: a dataframe containing the model names and the model family they belong to
+        - colours: a list of colors to use for the radar plots
         
+        Outputs: 
+        - Radar plots for each model family, showing the median value for each dimension in bold
+
         """
 
 
+        # add a column to the scenario scores with the model family
+        scenario_scores['model_family'] = scenario_scores['model'].map(model_families.set_index('model')['model_family'])
+       
+        # get the unique model families
+        model_families = scenario_scores['model_family'].unique().tolist()
 
+        print(model_families, len(model_families))
+
+        # Number of variables we're plotting.
+        categories = list(scenario_scores)[2:7]
+
+        # make a fig with 6 subplots, 2 rows
+        fig, axs = plt.subplots(3, 2, figsize=(10, 15), subplot_kw=dict(polar=True))
+
+        N = len(categories)
+
+        for i, model_family in enumerate(model_families):
+
+            ax = axs.flatten()[i]
+            angles = np.linspace(0, 2 * np.pi, N, endpoint=False).tolist()
+            stats = scenario_scores.loc[scenario_scores['model_family'] == model_family, categories].median().values.flatten().tolist()
+            stats += stats[:1]
+            angles += angles[:1]
+
+            print(model_family)
+            
+            # Get model colour from dictionary
+            model_colour = model_colours[model_family]
+
+            # make colour a shade brighter
+            model_colour = sns.light_palette(model_colour, n_colors=10)[8]
+
+            # Draw the outline of our data.
+            # ax.fill(angles, stats, color=colours[i], alpha=0.25)
+            ax.plot(angles, stats, color=model_colour, linewidth=2, zorder=10, alpha=0.9)
+
+            # # Labels for each point
+            ax.set_xticks(angles[:-1])
+            ax.set_xticklabels(categories)
+
+            #set the y limit
+            ax.set_ylim(0, 1)
+
+            # Title for each subplot with the model family name
+            ax.set_title(model_family,size=10, y=1.1, fontweight='bold')
+
+            model_family_data = scenario_scores.loc[scenario_scores['model_family'] == model_family]
+
+
+            # add the outlines for the other scenarios in the model family
+            for scenario in model_family_data.loc[model_family_data['model_family'] == model_family, 'scenario']:
+
+                print(scenario, model_family)
+                scenario_stats = model_family_data.loc[model_family_data['scenario'] == scenario, categories].values.flatten().tolist()
+                scenario_angle = np.linspace(0, 2 * np.pi, N, endpoint=False).tolist()
+                print(scenario_stats)
+                scenario_stats += scenario_stats[:1]  # Fix: Use scenario_stats instead of stats
+                scenario_angle += scenario_angle[:1]
+                ax.plot(scenario_angle, scenario_stats, color='black', alpha=0.1, zorder=9)
+
+            # # Labels for each point
+            ax.set_xticks(angles[:-1])
+            ax.set_xticklabels(Plotting.dimension_names)
+
+            #set the y limit
+            ax.set_ylim(0, 1)
+
+            # Title for each subplot with the model family name
+            ax.set_title(model_family,size=12, y=1.1, fontweight='bold')
+
+        # Show the figure
+        plt.tight_layout()
+        plt.show()
 
 
     def line_plot_narrative_variables(variable, start_year, end_year, df,ylim_min=int, ylim_max=int, base_normalisation=False, secondary_variable=None):
@@ -886,6 +975,7 @@ class Plotting:
         # fig.legend(frameon=False)
         plt.show()
 
+
     def land_use_stacked_shares(self, illustrative_scenarios,
                                 illustrative_models,
                                 narrative_df):
@@ -949,6 +1039,7 @@ class Plotting:
         plt.show()
         
             # loop through each energy variable
+
 
     def CDR_stacked_shares(self, illustrative_scenarios,
                            illustrative_models,
