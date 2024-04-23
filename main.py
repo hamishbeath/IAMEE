@@ -45,19 +45,19 @@ class Selection:
 
 def main() -> None:
 
-    economic_score(IndexBuilder.investment_metrics)
-    environment_score(IndexBuilder.environment_metrics)
-    resource_score(NaturalResources.minerals, IndexBuilder.resource_metrics)
-    resilience_score(IndexBuilder.final_energy_demand,
-                    IndexBuilder.energy_diversity,
-                    IndexBuilder.gini_coefficient)
-    calculate_robustness_score(IndexBuilder.energy_system_flexibility, 
-                               IndexBuilder.low_carbon_diversity, 
-                               IndexBuilder.carbon_budgets,
-                               IndexBuilder.CDR_2050)
-    # select_most_dissimilar_scenarios(Data.model_scenarios)
-    find_scenario_archetypes(Data.model_scenarios, 4)
-    # Utils.data_download(Data.narrative_variables, Data.c1a_models_selected, Data.c1a_scenarios_selected, 'World', 'c1a_selected')
+    # economic_score(IndexBuilder.investment_metrics)
+    # environment_score(IndexBuilder.environment_metrics)
+    # resource_score(NaturalResources.minerals, IndexBuilder.resource_metrics)
+    # resilience_score(IndexBuilder.final_energy_demand,
+    #                 IndexBuilder.energy_diversity,
+    #                 IndexBuilder.gini_coefficient)
+    # calculate_robustness_score(IndexBuilder.energy_system_flexibility, 
+    #                            IndexBuilder.low_carbon_diversity, 
+    #                            IndexBuilder.carbon_budgets,
+    #                            IndexBuilder.CDR_2050)
+    # # select_most_dissimilar_scenarios(Data.model_scenarios)
+    # find_scenario_archetypes(Data.model_scenarios, 4)
+    Utils.data_download(Data.mandatory_variables, '*', '*', Data.R10, Data.categories, file_name='pyamdf_dimensions_data_R10' + str(Data.categories))
     # Utils().manadory_variables_scenarios(Utils.categories, Data.econ_regions, Data.mandatory_CDR_variables, subset=False, special_file_name='CDR_Robustness')
 
 

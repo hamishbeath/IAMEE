@@ -41,7 +41,7 @@ class Data:
         'Eastern and Western Europe (i.e., the EU28)',
         'Other countries of Asia',
         'Pacific OECD', 'Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia',
-        'Rest of the World (R10)']
+        'World', 'North America; primarily the United States of America and Canada']
 
     mandatory_variables = ['Emissions|CO2', 'Investment|Energy Supply','Capacity|Electricity|Wind',
                            'Capacity|Electricity|Solar|PV', 'Final Energy',
@@ -78,10 +78,14 @@ class Data:
     econ_regions = ['Countries of Sub-Saharan Africa','World']
     
     try:
+        regional_dimensions_pyamdf = pyam.IamDataFrame(data='pyamdf_dimensions_data_R10' + str(categories) + '.csv')
+    except FileNotFoundError:
+        print('No regional dimensions data found')
+    
+    try:
         scenario_archetypes = pd.read_csv('outputs/scenario_archetypes '+ str(categories) + '.csv')
     except:
         print('No scenario archetypes file found for the category of', categories)
-
     try:
         land_use_seq_data = pyam.IamDataFrame(data='land_sequestration_imputed.csv')
     except:
@@ -414,14 +418,14 @@ class Utils:
 
 
     
-    def data_download(variables, models, scenarios, region, file_name=str):
+    def data_download(variables, models, scenarios, region, categories, file_name=str):
    
         connAr6 = pyam.iiasa.Connection(name='ar6-public', 
                     creds=None, 
                     auth_url='https://api.manager.ece.iiasa.ac.at')    
 
         df = connAr6.query(model=models, scenario=scenarios,
-            variable=variables, region=region
+            variable=variables, region=region, category=categories
             )
 
         df.to_csv(file_name + '.csv')

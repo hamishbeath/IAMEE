@@ -29,11 +29,17 @@ def main() -> None:
 
 
 # Function that calculates the shannon index for the energy mix for each scenario
-def shannon_index_energy_mix(pyam_df, scenario_model_list, end_year, categories):
+def shannon_index_energy_mix(pyam_df, scenario_model_list, end_year, categories, regional=None):
 
+     # Check if a regional filter is applied
+    if regional is not None:
+        region = regional
+    else:
+        region = 'World'
+    
     # filter for the variables needed
     df = pyam_df.filter(variable=Resilience.energy_variables,
-                        region='World',
+                        region=region
                         year=range(2020, end_year+1),
                         scenario=scenario_model_list['scenario'], 
                         model=scenario_model_list['model'])
@@ -74,7 +80,12 @@ def shannon_index_energy_mix(pyam_df, scenario_model_list, end_year, categories)
     
     # create a new dataframe with the shannon indexes
     shannon_df = pd.DataFrame({'model': scenario_model_list['model'], 'scenario': scenario_model_list['scenario'], 'shannon_index': shannon_indexes})
-    shannon_df.to_csv('outputs/shannon_diversity_index' + str(categories) + '.csv', index=False)
+    
+    if regional is not None:
+        shannon_df['region'] = region
+        return shannon_df
+    else:
+        shannon_df.to_csv('outputs/shannon_diversity_index' + str(categories) + '.csv', index=False)
 
 
 # Function that calculates the cumulative final energy demand for each scenario

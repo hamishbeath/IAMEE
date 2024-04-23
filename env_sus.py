@@ -73,7 +73,11 @@ def main() -> None:
 
     # make_scenario_project_list()
     # Utils.manadory_variables_scenarios(Utils, ['C1','C2'], EnvSus.regions, Data.mandatory_variables, subset=False)
-    forest_cover_change(Data.dimensions_pyamdf, 2100, Data.model_scenarios, EnvSus.beccs_threshold, Data.categories)    
+    empty_df = pd.DataFrame()
+    for region in Data.R10:
+        to_append = forest_cover_change(Data.regional_dimensions_pyamdf, 2100, Data.model_scenarios, EnvSus.beccs_threshold, Data.categories, regional=region)    
+        empty_df = pd.concat([empty_df, to_append], ignore_index=True, axis=0)
+    empty_df.to_csv('outputs/environmental_metrics_regional' + str(Data.categories) + '.csv')
     # Utils.filter_data_sheet_variable_prevelance(Utils, 'C1a_NZGHGs', EnvSus.region, Data.mandatory_variables)
 
 
@@ -100,6 +104,7 @@ def forest_cover_change(pyam_df, end_year, scenario_model_list, beccs_threshold,
         region = regional
         
         # calculate the beccs threshold for the region
+        print('Calculating the BECCS threshold for the region: ', region)
         df = pyam_df.filter(variable='Land Cover',region=[region,'World'],
                         year=2020,
                         scenario=scenario_model_list['scenario'], 
@@ -107,7 +112,7 @@ def forest_cover_change(pyam_df, end_year, scenario_model_list, beccs_threshold,
         world_land_cover = np.mean(df['value'][df['region'] == 'World'].values)
         region_land_cover = np.mean(df['value'][df['region'] == region].values)
         beccs_threshold = (region_land_cover / world_land_cover) * beccs_threshold
-
+        
     else:
         region = 'World'
     
@@ -183,25 +188,7 @@ def forest_cover_change(pyam_df, end_year, scenario_model_list, beccs_threshold,
     else:
         output_df.to_csv('outputs/environmental_metrics' + str(categories) + '.csv')
 
-
         
-
-def joel_data_download():
-   
-    variable_data = pd.read_csv('variable_categories.csv')
-    
-    # filter out all variables with low R10
-    variable_data = variable_data[variable_data["sufficientR10"] > 0]
-
-    # make a list of the variables
-    variables = variable_data['variable'].unique().tolist()
-
-
-    df = EnvSus.connAr6.query(model='*', scenario=Data.c1aR10_scenarios,
-                variable=variables, region=Data.R10)
-
-    print(df)
-    df.to_csv('joel_test.csv')
 
 def make_scenario_project_list():
    
@@ -283,7 +270,7 @@ def data_download():
     print(pddf)
     pddf.to_csv('ar6_test_scenarios.csv')
 
-def plot_using_pyam():
+
 
     # df = pyam.IamDataFrame(data='ar6_test_scenarios.csv')
     # # Plot each of the variables in the list on subplots, with different colours for
