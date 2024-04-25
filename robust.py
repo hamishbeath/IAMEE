@@ -29,12 +29,10 @@ def main() -> None:
     # shannon_index_low_carbon_mix(Data.dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories)
     empty_df = pd.DataFrame()
     for region in Data.R10:
-        to_append = shannon_index_low_carbon_mix(Data.dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories, regional=region)
+        to_append = calculate_total_CDR(Data.model_scenarios, Robust.cdr_df, Data.regional_dimensions_pyamdf, 2050, regional=region)
         empty_df = pd.concat([empty_df, to_append], ignore_index=True, axis=0)
-    empty_df.to_csv('outputs/shannon_diversity_index_regional' + str(Data.categories) + '.csv')
-    shannon_index_low_carbon_mix(Data.dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories)
-
-
+    empty_df.to_csv('outputs/total_CDR_regional' + str(Data.categories) + '.csv')
+    # shannon_index_low_carbon_mix(Data.dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories)
 
 
 # calculate a flexibility score for the energy mix
@@ -169,19 +167,35 @@ def harmonize_emissions_calc_budgets(df, var, scenario_model_list,
 
 
 # total CDR by 2050 from BECCS, DACC or land-based CDR
-def calculate_total_CDR(scenario_model_list, cdr_df,
-                        end_year):
-    if end_year != 2051:
-        raise ValueError("Indicator for 2050 values")
-    # # filter for the variables needed
-    # df = pyam_df.filter(variable=Robust.cdr_variables,
-    #                     region='World',
-    #                     year=range(2020, end_year+1),
-    #                     scenario=scenario_model_list['scenario'], 
-    #                     model=scenario_model_list['model'])
+def calculate_total_CDR(scenario_model_list, cdr_df, pyam_df,
+                        end_year, regional=None):
     
+    # Check if a regional filter is applied
+    if regional is not None:
+        region = regional
+        # calculate the division indicators for the region
+        division_df = pyam_df.filter(variable=['GDP|MER','Land Cover'], 
+                                region=region, year=range(2020, end_year+1), 
+                                scenario=scenario_model_list['scenario'], 
+                                model=scenario_model_list['model'])
+        gdp_values = []
+        land_values = []
+        for scenario, model in zip(scenario_model_list['scenario'], scenario_model_list['model']):
+            gdp_scenario_df = division_df.filter(scenario=scenario, model=model, variable='GDP|MER')
+            gdp_series = pd.Series(gdp_scenario_df['value'].values, index=gdp_scenario_df['year'])
+            gdp_cumulative = pyam.timeseries.cumulative(gdp_series, 2020, end_year)
+            gdp_values.append(gdp_cumulative)
+            land_scenario_df = division_df.filter(scenario=scenario, model=model, variable='Land Cover')
+            land_values.append(land_scenario_df['value'][0])
+        # create a new dataframe with the land values
+        division_basis_df = pd.DataFrame({'model': scenario_model_list['model'], 
+                            'scenario': scenario_model_list['scenario'], 
+                            'land_area': land_values,'gdp': gdp_values})
+    else:
+        region = 'World'
+
     cdr_df = cdr_df.filter(variable=Robust.cdr_variables,
-                        region='World',
+                        region=region,
                         year=range(2020, end_year+1),
                         scenario=scenario_model_list['scenario'], 
                         model=scenario_model_list['model'])
@@ -193,42 +207,70 @@ def calculate_total_CDR(scenario_model_list, cdr_df,
         total_CDR = 0
         # add up cumulative CCS from bioenergy values
         beccs = scenario_df.filter(variable='Carbon Sequestration|CCS|Biomass')
-        beccs = beccs.as_pandas()
-        # add all the values in the values column
-        total_CDR += beccs['value'].sum()
+        if beccs.empty:
+            beccs = 0
+        else:
+            interpolated_beccs = beccs.interpolate(range(2020, end_year)).data.copy()
+            beccs = interpolated_beccs['value'].sum()
+        total_CDR += beccs
 
         # add up cumulative land-based CDR values
         land_use = scenario_df.filter(variable='Carbon Sequestration|Land Use')
-        land_use = land_use.as_pandas()
+        # land_use = land_use.as_pandas()
         if land_use.empty:
             print("No land based CDR data in AR6")
-            land_use = Data.land_use_seq_data.filter(scenario=scenario, model=model, year=range(2020, end_year), region='World')
+            land_use = Data.land_use_seq_data.filter(scenario=scenario, model=model, 
+                                                     year=range(2020, end_year+1), region='World')
             land_use = land_use.filter(variable='Imputed|Carbon Sequestration|Land Use')
-            land_use = land_use.as_pandas()
+            # land_use = land_use.as_pandas()
             
             if land_use.empty:
                 print("No land based CDR data in imputed file")
-        total_CDR += land_use['value'].sum()
+        if land_use.empty:
+            land_use = 0
+        
+        else:
+            land_use_interpolated = land_use.interpolate(range(2020, end_year)).data.copy() 
+            land_use = land_use_interpolated['value'].sum()
+        
+        total_CDR += land_use
                 
         # add up cumulative DACC values
         dacc = scenario_df.filter(variable='Carbon Sequestration|Direct Air Capture')
-        dacc = dacc.as_pandas()
         if dacc.empty:
             print("No DACC data in AR6")
-        total_CDR += dacc['value'].sum()
+            dacc = 0
+        else:
+            dacc_interpolated = dacc.interpolate(range(2020, end_year)).data.copy()
+            dacc = dacc_interpolated['value'].sum()
+        total_CDR += dacc
             # dacc_series = pd.Series(dacc['value'].values, index=dacc['year'])
             # dacc_cumulative = pyam.timeseries.cumulative(dacc_series, 2020, end_year)
             # total_CDR += dacc_cumulative[end_year]
 
         total_CDR_values.append(total_CDR)
     
-    # create a new dataframe with the total CDR values
-    total_CDR_df = pd.DataFrame({'model': scenario_model_list['model'], 
-                                 'scenario': scenario_model_list['scenario'], 
-                                 'total_CDR': total_CDR_values})
-    
-    total_CDR_df.to_csv('outputs/total_CDR' + str(Data.categories) + '.csv', index=False)
+    if regional is not None:
 
+        # divide the total CDR by the division basis
+        total_CDR_gdp = total_CDR_values / division_basis_df['gdp'].values
+        total_CDR_land = total_CDR_values / division_basis_df['land_area'].values
+
+        # create a new dataframe with the total CDR values
+        total_CDR_df = pd.DataFrame({'model': scenario_model_list['model'],
+                                        'scenario': scenario_model_list['scenario'],
+                                        'total_CDR': total_CDR_values,
+                                        'total_CDR_gdp': total_CDR_gdp,
+                                        'total_CDR_land': total_CDR_land})
+        total_CDR_df['region'] = region
+        return total_CDR_df
+    else:
+        # create a new dataframe with the total CDR values
+        total_CDR_df = pd.DataFrame({'model': scenario_model_list['model'], 
+                                    'scenario': scenario_model_list['scenario'], 
+                                    'total_CDR': total_CDR_values})
+        
+        total_CDR_df.to_csv('outputs/total_CDR' + str(Data.categories) + '.csv', index=False)
 
 
 # Function that calculates the shannon index for low-carbon energy mix for each scenario
