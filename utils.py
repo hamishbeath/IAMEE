@@ -41,7 +41,7 @@ class Data:
         'Eastern and Western Europe (i.e., the EU28)',
         'Other countries of Asia',
         'Pacific OECD', 'Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia',
-        'World', 'North America; primarily the United States of America and Canada']
+        'North America; primarily the United States of America and Canada']
 
     mandatory_variables = ['Emissions|CO2', 'Investment|Energy Supply','Capacity|Electricity|Wind',
                            'Capacity|Electricity|Solar|PV', 'Final Energy',

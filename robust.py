@@ -21,25 +21,40 @@ class Robust:
 
 def main() -> None:
 
-    harmonize_emissions_calc_budgets(Data.dimensions_pyamdf, 'Emissions|CO2', Data.model_scenarios,
-                         Robust.historic_emissions, 2023, Data.categories, False, 2050)
-    flexibility_score(Data.dimensions_pyamdf, Data.model_scenarios, 
-                      2100, Data.energy_variables, Robust.flexibility_data, Data.categories)
-    calculate_total_CDR(Data.model_scenarios, Robust.cdr_df, 2051)
+    # harmonize_emissions_calc_budgets(Data.dimensions_pyamdf, 'Emissions|CO2', Data.model_scenarios,
+    #                      Robust.historic_emissions, 2023, Data.categories, False, 2050)
+    # flexibility_score(Data.dimensions_pyamdf, Data.model_scenarios, 
+    #                   2100, Data.energy_variables, Robust.flexibility_data, Data.categories)
+    # calculate_total_CDR(Data.model_scenarios, Robust.cdr_df, 2051)
+    # shannon_index_low_carbon_mix(Data.dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories)
+    empty_df = pd.DataFrame()
+    for region in Data.R10:
+        to_append = shannon_index_low_carbon_mix(Data.dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories, regional=region)
+        empty_df = pd.concat([empty_df, to_append], ignore_index=True, axis=0)
+    empty_df.to_csv('outputs/shannon_diversity_index_regional' + str(Data.categories) + '.csv')
     shannon_index_low_carbon_mix(Data.dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories)
-                                 
+
+
+
+
 # calculate a flexibility score for the energy mix
 def flexibility_score(pyam_df, scenario_model_list, 
                       end_year, energy_variables, 
                       flexibility_data,
-                      categories):
+                      categories, regional=None):
 
+    # Check if a regional filter is applied
+    if regional is not None:
+        region = regional
+    else:
+        region = 'World'
+        
     flexibility_data = flexibility_data.set_index('tech')
     flexibility_data = flexibility_data['flexibility_factor']
     
     # filter for the variables needed
     df = pyam_df.filter(variable=Data.energy_variables,
-                        region='World',
+                        region=region,
                         year=range(2020, end_year+1),
                         scenario=scenario_model_list['scenario'], 
                         model=scenario_model_list['model'])
@@ -83,9 +98,12 @@ def flexibility_score(pyam_df, scenario_model_list,
     flexibility_df = pd.DataFrame({'model': scenario_model_list['model'], 
                                    'scenario': scenario_model_list['scenario'], 
                                    'flexibility_score': flexibility_indexes})
+    if regional is not None:
+        flexibility_df['region'] = region
+        return flexibility_df
+    else:
+        flexibility_df.to_csv('outputs/flexibility_scores' + str(categories) + '.csv', index=False)
 
-    # print(flexibility_df)
-    flexibility_df.to_csv('outputs/flexibility_scores' + str(categories) + '.csv', index=False)
 
 """
 Code below based on code Robin Lamboll (2024) for harmonising data
@@ -214,11 +232,17 @@ def calculate_total_CDR(scenario_model_list, cdr_df,
 
 
 # Function that calculates the shannon index for low-carbon energy mix for each scenario
-def shannon_index_low_carbon_mix(pyam_df, scenario_model_list, end_year, categories):
+def shannon_index_low_carbon_mix(pyam_df, scenario_model_list, end_year, categories, regional=None):
+
+    # Check if a regional filter is applied
+    if regional is not None:
+        region = regional
+    else:
+        region = 'World'
 
     # filter for the variables needed
     df = pyam_df.filter(variable=Robust.low_carbon_energy_variables,
-                        region='World',
+                        region=region,
                         year=range(2020, end_year+1),
                         scenario=scenario_model_list['scenario'], 
                         model=scenario_model_list['model'])
@@ -259,7 +283,11 @@ def shannon_index_low_carbon_mix(pyam_df, scenario_model_list, end_year, categor
     
     # create a new dataframe with the shannon indexes
     shannon_df = pd.DataFrame({'model': scenario_model_list['model'], 'scenario': scenario_model_list['scenario'], 'shannon_index': shannon_indexes})
-    shannon_df.to_csv('outputs/low_carbon_shannon_diversity_index' + str(categories) + '.csv', index=False)
+    if regional is not None:
+        shannon_df['region'] = region
+        return shannon_df
+    else:
+        shannon_df.to_csv('outputs/low_carbon_shannon_diversity_index' + str(categories) + '.csv', index=False)
 
 
 

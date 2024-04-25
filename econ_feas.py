@@ -3,6 +3,7 @@ import pyam
 import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
+import country_converter as coco
 from matplotlib import rcParams
 from utils import Data
 rcParams['font.family'] = 'sans-serif'
@@ -39,6 +40,8 @@ class EconFeas:
     warming_variable = 'AR6 climate diagnostics|Surface Temperature (GSAT)|MAGICCv7.5.3|50.0th Percentile' 
     present_warming = 1.25
     # AR6 climate diagnostics|Surface Temperature (GSAT)|MAGICCv7.5.3|95.0th Percentile
+    iea_country_groupings = pd.read_csv('econ/iea_country_groupings.csv')
+    by_country_gdp = pd.read_csv('econ/IMF_GDP_data_all_countries.csv')
 
 def main() -> None:
 
@@ -47,8 +50,16 @@ def main() -> None:
     # plot_using_pyam()
     # violin_plots()
     # assess_variable_data()
-    energy_supply_investment_score(Data.dimensions_pyamdf, 0.023, 2100, Data.model_scenarios, Data.categories)
-    # energy_supply_investment_analysis(0.023, 2100, EconFeas.econ_scenarios)
+    # energy_supply_investment_score(Data.dimensions_pyamdf, 0.023, 2100, Data.model_scenarios, Data.categories)
+    # # energy_supply_investment_analysis(0.023, 2100, EconFeas.econ_scenarios)
+    # map_countries_to_regions(EconFeas.iea_country_groupings, EconFeas.by_country_gdp)
+    output_df = pd.DataFrame()
+    for region in Data.R10:
+        to_append = energy_supply_investment_score(Data.regional_dimensions_pyamdf, 0.023, 2100, Data.model_scenarios, Data.categories, regional=region)
+        output_df = pd.concat([output_df, to_append], ignore_index=True, axis=0)
+    output_df.to_csv('outputs/energy_supply_investment_score_regional' + str(Data.categories) + '.csv')
+    # energy_supply_investment_score(Data.dimensions_pyamdf, 0.023, 2100, Data.model_scenarios, Data.categories, regional='World')
+
 
 def assess_variable_data():
 
@@ -332,7 +343,7 @@ def violin_plots():
     plt.show()
 
 # takes as an input a Pyam dataframe object with n number of scenarios in it. For each scenario it calculates both a binary 
-def energy_supply_investment_score(pyam_df, base_value, end_year, scenario_model_list, categories):
+def energy_supply_investment_score(pyam_df, base_value, end_year, scenario_model_list, categories, regional=None):
 
     """
     This function takes an inputted Pyam dataframe and calculates to what extent the determined threshold for energy supply investment 
@@ -350,17 +361,29 @@ def energy_supply_investment_score(pyam_df, base_value, end_year, scenario_model
     and IEA
     """
     
+    # Check if a regional filter is applied
+    if regional is not None:
+        region = regional
+        try:
+            regional_thresholds = pd.read_csv('econ/energy_investment_regions.csv')
+        except FileNotFoundError:
+            print('Regional investment file not found. Please ensure regional investment thresholds file is available.')
+
+        # Filter out the data for the required region
+        regional_threshold_data = regional_thresholds[regional_thresholds['region'] == region]
+
+        # calculate the mean of the columns 2015 to 2023
+        base_value = regional_threshold_data.iloc[:, 3:12].mean(axis=1)
+        print(base_value)
+    else:
+        region = 'World'
+
     # Filter out the data for the required variables
-    df = pyam_df.filter(variable=['Investment|Energy Supply','GDP|MER'])
+    df = pyam_df.filter(variable=['Investment|Energy Supply','GDP|MER'],
+                        region=region, year=range(2020, end_year+1),
+                        scenario=scenario_model_list['scenario'],
+                        model=scenario_model_list['model'])
     
-    # Filter for the region
-    df = df.filter(region='World')
-
-    # Filter out the data for the required years
-    df = df.filter(year=range(2020, end_year+1))
-
-    df = df.filter(scenario=scenario_model_list['scenario'], model=scenario_model_list['model'])
-    # print(scenario_model_list)
     # get list of years between 2020 and 2100 at decedal intervals
     year_list = list(range(2020, end_year+1, 10))
     
@@ -411,17 +434,14 @@ def energy_supply_investment_score(pyam_df, base_value, end_year, scenario_model
     output_df['mean_value'] = mean_value_list
     output_df['mean_value_2050'] = mean_value_2050_list
 
-    output_df.to_csv('outputs/energy_supply_investment_score' + str(categories) + '.csv')
+    if regional is not None:
+        output_df['region'] = region
+        return output_df
+
+    else:
+        output_df.to_csv('outputs/energy_supply_investment_score' + str(categories) + '.csv')
 
     
-        # # calculate the ratio of the mean value to the base value
-        # ratio = mean_value / base_value
-        # print(ratio)
-        
-        # # Export the results to a .csv file
-        # df.to_csv('investment_score.csv')
-        
-        #     return df
 
 
 def energy_supply_investment_analysis(base_value, end_year, scenario_model_list, 
@@ -621,6 +641,53 @@ def apply_damage_function(gdp_untreated,
         # gdp_treated.to_csv('outputs/gdp_treated.csv')
         return gdp_treated
 
+
+def map_countries_to_regions(country_groups, country_data):
+
+    # print(country_groups)
+    # print(country_data)
+    output_dict = {}
+    # get the list groups of countries
+    country_groups_list = country_groups['group'].unique().tolist()
+    country_data_countries = country_data['country'].unique().tolist()
+    
+    output_df = pd.DataFrame()
+
+    for group in country_groups_list:
+
+        group_to_append = pd.DataFrame()
+        # get the countries in the group
+        countries = country_groups[country_groups['group'] == group]
+        countries_list = countries['countries'].unique().tolist()
+        # extract list items from the string, broken up by commas
+        countries_list = [i.split(', ') for i in countries_list]
+        countries_list = [item for sublist in countries_list for item in sublist]
+        countries_list = [i.split(' and ') for i in countries_list]
+        countries_list = [item for sublist in countries_list for item in sublist]
+        # convert to ISO3 codes
+        countries_list = coco.convert(names=countries_list, to='ISO3')
+        # append the countries to the output dictionary
+        output_dict[group] = countries
+        for country in country_data_countries:
+            # convert to ISO3 codes
+            country_iso3 = coco.convert(names=country, to='ISO3')
+            # check if the country is in the list of countries
+            if country_iso3 in countries_list:
+                country_row = country_data[country_data['country'] == country]
+                group_to_append = pd.concat([group_to_append, country_row], axis=0)
+        group_to_append['group'] = group
+        output_df = pd.concat([output_df, group_to_append], axis=0)
+    
+    print(output_df)
+    output_df.to_csv('econ/country_groupings_IMF.csv')
+                
+
+
+
+    print(output_dict)
+
+
+    # print(output_dict)
 
 
 if __name__ == "__main__":

@@ -17,15 +17,20 @@ class Resilience:
 
 def main() -> None:
 
-    shannon_index_energy_mix(Data.dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories)
-    final_energy_demand(Data.dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories)
-    gini_between_countries(Data.dimensions_pyamdf, 
-                           Data.model_scenarios, 
-                           2100, 
-                           Data.meta_df,
-                           Resilience.gini_between_countries,
-                           Data.categories)
-
+    empty_df = pd.DataFrame()
+    for region in Data.R10:
+        to_append = shannon_index_energy_mix(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories, regional=region)
+        empty_df = pd.concat([empty_df, to_append], ignore_index=True, axis=0)
+    empty_df.to_csv('outputs/shannon_diversity_index_regional' + str(Data.categories) + '.csv')
+        
+    # shannon_index_energy_mix(Data.dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories)
+    # final_energy_demand(Data.dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories)
+    # gini_between_countries(Data.dimensions_pyamdf, 
+    #                        Data.model_scenarios, 
+    #                        2100, 
+    #                        Data.meta_df,
+    #                        Resilience.gini_between_countries,
+    #                        Data.categories)
 
 
 # Function that calculates the shannon index for the energy mix for each scenario
@@ -39,7 +44,7 @@ def shannon_index_energy_mix(pyam_df, scenario_model_list, end_year, categories,
     
     # filter for the variables needed
     df = pyam_df.filter(variable=Resilience.energy_variables,
-                        region=region
+                        region=region,
                         year=range(2020, end_year+1),
                         scenario=scenario_model_list['scenario'], 
                         model=scenario_model_list['model'])
