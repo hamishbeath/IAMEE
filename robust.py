@@ -111,9 +111,21 @@ https://www.nature.com/articles/s41558-023-01848-5
 # Harmonize a variable in a dataframe to match a reference dataframe
 def harmonize_emissions_calc_budgets(df, var, scenario_model_list, 
                         harm_df, startyear, categories, offset=False, 
-                        unity_year=int):
-    # harm_df is a dataframe with the actual values to harmonise to
-    # df is the pyamdataframe to harmonise
+                        unity_year=int, regional=None):
+
+    if regional is not None:
+        region = regional
+
+    else:
+        region = 'World'
+
+    """
+    Implementation notes:
+    1. determine the models median division of emissions for each region for 2023, interpolated
+    2. using the share, take the total carbon budget and divide it accordingly to give regional carbon budget
+    3. take the share and calculate a harmonised emissions trajectory based on the scenario emissions
+    4. calculate the sum of emissions between 2023 and 2030 and the share of the remaining carbon budget
+    """
     
     
     # Harmonises the variable var in the dataframe df to be equal to the values in the dataframe harmdf
@@ -123,7 +135,7 @@ def harmonize_emissions_calc_budgets(df, var, scenario_model_list,
 
     carbon_budget_shares = []
     for scenario, model in zip(scenario_model_list['scenario'], scenario_model_list['model']): 
-        ret = df.filter(variable=var, region='World',model=model, scenario=scenario, year=range(2005, 2100+1))
+        ret = df.filter(variable=var, region='World', model=model, scenario=scenario, year=range(2005, 2100+1))
 
        # interpolate the data so that we have values for all years
         ret = ret.interpolate(range(2005, unity_year+1))        
@@ -151,7 +163,6 @@ def harmonize_emissions_calc_budgets(df, var, scenario_model_list,
             for year in [y for y in harm_years if y > startyear]:
                 ret[year] += offset_val * (1 - (year - startyear) / (unity_year-startyear))
         
-
         output = pyam.IamDataFrame(ret)
         # calculate the sum of emissions between 2023 and 2030 and the share of the remaining carbon budget
         sum_emissions = output.filter(year=range(2023, 2031)).timeseries().sum().sum()
@@ -330,6 +341,12 @@ def shannon_index_low_carbon_mix(pyam_df, scenario_model_list, end_year, categor
         return shannon_df
     else:
         shannon_df.to_csv('outputs/low_carbon_shannon_diversity_index' + str(categories) + '.csv', index=False)
+
+# sub_function to calculate the regional emission shares for the categories
+def calculate_regional_emission_share(regional_pyam_df, scenario_model_list, end_year):
+
+    pass
+
 
 
 

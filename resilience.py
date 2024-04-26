@@ -19,10 +19,12 @@ def main() -> None:
 
     empty_df = pd.DataFrame()
     for region in Data.R10:
-        to_append = shannon_index_energy_mix(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories, regional=region)
+        # to_append = shannon_index_energy_mix(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories, regional=region)
+        to_append = final_energy_demand(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories, regional=region)
         empty_df = pd.concat([empty_df, to_append], ignore_index=True, axis=0)
-    empty_df.to_csv('outputs/shannon_diversity_index_regional' + str(Data.categories) + '.csv')
-        
+    # empty_df.to_csv('outputs/shannon_diversity_index_regional' + str(Data.categories) + '.csv')
+    empty_df.to_csv('outputs/final_energy_demand_regional' + str(Data.categories) + '.csv')
+
     # shannon_index_energy_mix(Data.dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories)
     # final_energy_demand(Data.dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories)
     # gini_between_countries(Data.dimensions_pyamdf, 
@@ -94,17 +96,25 @@ def shannon_index_energy_mix(pyam_df, scenario_model_list, end_year, categories,
 
 
 # Function that calculates the cumulative final energy demand for each scenario
-def final_energy_demand(pyam_df, scenario_model_list, end_year, categories):
+def final_energy_demand(pyam_df, scenario_model_list, end_year, categories, regional=None):
     
+    if regional is not None:
+        region = regional
+    else:
+        region = 'World'
+    print(region)
     # filter for the variables needed
-    df = pyam_df.filter(variable='Final Energy',
-                        region='World',
+    df = pyam_df.filter(variable=['Final Energy','GDP|MER'],
+                        region=region,
                         year=range(2020, end_year+1),
                         scenario=scenario_model_list['scenario'], 
                         model=scenario_model_list['model'])
+    gdp = pyam_df.filter(variable='GDP|MER')
+    df = df.filter(variable='Final Energy')
     
     final_energy_demand = []
-    
+    gdp_values = []
+
     # loop through models and scenarios
     for scenario, model in zip(scenario_model_list['scenario'], scenario_model_list['model']):
         
@@ -118,11 +128,26 @@ def final_energy_demand(pyam_df, scenario_model_list, end_year, categories):
         cumulative_interpolated = pyam.timeseries.cumulative(variable_series, 2020, 2100)
         final_energy_demand.append(cumulative_interpolated)
 
+        if regional is not None:
+            gdp_df = gdp.filter(scenario=scenario)
+            gdp_model_df = gdp_df.filter(model=model)
+            gdp_interpolated = gdp_model_df.interpolate(range(2020, end_year)).data.copy()
+            gdp_cumulative = gdp_interpolated['value'].sum()
+            gdp_values.append(gdp_cumulative)
+
+
     # create a new dataframe with the shannon indexes
     final_energy_demand_df = pd.DataFrame({'model': scenario_model_list['model'], 
                                            'scenario': scenario_model_list['scenario'], 
                                            'final_energy_demand': final_energy_demand})
-    final_energy_demand_df.to_csv('outputs/final_energy_demand' + str(categories) + '.csv', index=False)
+    if regional is not None:
+        energy_per_gdp = [x/y for x, y in zip(final_energy_demand, gdp_values)]
+        final_energy_demand_df['energy_per_gdp'] = energy_per_gdp
+        final_energy_demand_df['region'] = region
+        return final_energy_demand_df
+
+    else:
+        final_energy_demand_df.to_csv('outputs/final_energy_demand' + str(categories) + '.csv', index=False)
 
     
 # Function that gives the gini coefficient and SSP population for each scenario
