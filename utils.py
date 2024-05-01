@@ -98,8 +98,8 @@ class Utils:
                             'Land Cover', 'Land Cover|Cropland',
                             'Land Cover|Cropland|Energy Crops']
     
-    categories = ['C1', 'C2']
-   # ['C1', 'C2', 'C3', 'C4', 'C5','C6', 'C7', 'C8']
+    # categories = ['C1', 'C2']
+    categories = ['C1', 'C2', 'C3', 'C4', 'C5','C6', 'C7', 'C8']
     
 
     

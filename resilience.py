@@ -104,7 +104,7 @@ def final_energy_demand(pyam_df, scenario_model_list, end_year, categories, regi
         region = 'World'
     print(region)
     # filter for the variables needed
-    df = pyam_df.filter(variable=['Final Energy','GDP|MER'],
+    df = pyam_df.filter(variable=['Final Energy','GDP|MER'],  # mention
                         region=region,
                         year=range(2020, end_year+1),
                         scenario=scenario_model_list['scenario'], 

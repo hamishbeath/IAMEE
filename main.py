@@ -57,8 +57,8 @@ def main() -> None:
     #                            IndexBuilder.CDR_2050)
     # # select_most_dissimilar_scenarios(Data.model_scenarios)
     # find_scenario_archetypes(Data.model_scenarios, 4)
-    Utils.data_download(Data.mandatory_variables, '*', '*', Data.R10, Data.categories, file_name='pyamdf_dimensions_data_R10' + str(Data.categories))
-    # Utils().manadory_variables_scenarios(Utils.categories, Data.econ_regions, Data.mandatory_CDR_variables, subset=False, special_file_name='CDR_Robustness')
+    # Utils.data_download(Data.mandatory_variables, '*', '*', Data.R10, Data.categories, file_name='pyamdf_dimensions_data_R10' + str(Data.categories))
+    Utils().manadory_variables_scenarios(Utils.categories, Data.econ_regions, Data.mandatory_CDR_variables, subset=False, special_file_name='CDR_Robustness')
 
 
 # calculate the economic score (higher score = more economic challenges)
