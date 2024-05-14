@@ -349,6 +349,22 @@ def calculate_regional_emission_share(regional_pyam_df, scenario_model_list, end
 
 
 
+def get_regional_level_remaining_budgets()
+
+    """
+    Function that uses historical emissions and historical population at the 
+    country level to calculate regional remaining carbon budgets for 2023. 
+    
+    Inputs:
+    - historical emissions data per country
+    - historical population data per country
+    - breakdown of regions into countries
+    Outputs:
+
+    """
+
 
 if __name__ == "__main__":
     main()
+
+

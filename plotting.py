@@ -46,14 +46,14 @@ def main() -> None:
     # Plotting.box_plot_variables(Plotting, 'variable_categories.csv', 'robust', 'C1a_NZGHGs', [2050, 2100])
     # Plotting.single_variable_box_line(Plotting, Data.c1aR10_scenarios, 'Land Cover|Forest', 'C1a_NZGHGs', 'World',years=range(2020, 2101))
     # Plotting.plot_metrics(Plotting, Plotting.bright_modern_colors, Data.model_scenarios)
-    # Plotting.create_radar_plots(Plotting, 
-    #                             Data.model_scenarios, 
-    #                             Selection.economic_scores, 
-    #                             Selection.environment_scores, 
-    #                             Selection.resource_scores, 
-    #                             Selection.resilience_scores, 
-    #                             Selection.robustness_scores, 
-    #                             Plotting.bright_modern_colors)      
+    Plotting.create_radar_plots(Plotting, 
+                                Data.model_scenarios, 
+                                Selection.economic_scores, 
+                                Selection.environment_scores, 
+                                Selection.resource_scores, 
+                                Selection.resilience_scores, 
+                                Selection.robustness_scores, 
+                                Plotting.bright_modern_colors)      
     
     # Plotting.radar_plot_scenario_archetypes(Plotting, Data.model_scenarios, Selection.archetypes, Plotting.bright_modern_colors,
     #                                         Plotting.selected_scenarios)
@@ -62,7 +62,7 @@ def main() -> None:
     # Plotting.transport_stackplot(Plotting, Data.c1a_scenarios_selected, Data.c1a_models_selected, Plotting.c1a_data)
     # Plotting.land_use_stacked_shares(Plotting, Data.c1a_scenarios_selected, Data.c1a_models_selected, Plotting.c1a_data)
     # Plotting.CDR_stacked_shares(Plotting, Data.c1a_scenarios_selected, Data.c1a_models_selected, Plotting.c1a_data)
-    Plotting.radar_plot_model_fingerprint(Plotting, Data.model_scenarios, Plotting.model_families, Plotting.model_colours, Plotting.clustered_scores)
+    # Plotting.radar_plot_model_fingerprint(Plotting, Data.model_scenarios, Plotting.model_families, Plotting.model_colours, Plotting.clustered_scores)
 
 class Plotting:
 
@@ -556,7 +556,7 @@ class Plotting:
         print(radar_data)
         # make a fig with 15 subplots, 3 rows
         fig, axs = plt.subplots(6, 3, figsize=(13, 20), subplot_kw=dict(polar=True))
-
+        # fig, axs = plt.subplots(3, 6, figsize=(20, 10), subplot_kw=dict(polar=True))
         # Number of variables we're plotting.
         categories = list(radar_data)[0:5]  # get the first 5 columns as the categories
         N = len(categories)
@@ -608,7 +608,7 @@ class Plotting:
             i += 1
         # Show the figure
         plt.tight_layout()
-        plt.savefig('figures/radar_plots' + str(Data.categories) + '.pdf')
+        # plt.savefig('figures/radar_plots' + str(Data.categories) + '.pdf')
         plt.show()
         
 

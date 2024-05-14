@@ -23,8 +23,8 @@ class IndexBuilder:
     # import robustness metrics
     energy_system_flexibility = pd.read_csv('outputs/flexibility_scores' + str(Data.categories) + '.csv')
     carbon_budgets = pd.read_csv('outputs/carbon_budget_shares' + str(Data.categories) + '.csv')
-    low_carbon_diversity = pd.read_csv('outputs/low_carbon_shannon_diversity_index' + str(Data.categories) + '.csv')
-    CDR_2050 = pd.read_csv('outputs/total_CDR' + str(Data.categories) + '.csv')
+    # low_carbon_diversity = pd.read_csv('outputs/low_carbon_shannon_diversity_index' + str(Data.categories) + '.csv')
+    # CDR_2050 = pd.read_csv('outputs/total_CDR' + str(Data.categories) + '.csv')
 
 class Selection:
 
@@ -57,8 +57,14 @@ def main() -> None:
     #                            IndexBuilder.CDR_2050)
     # # select_most_dissimilar_scenarios(Data.model_scenarios)
     # find_scenario_archetypes(Data.model_scenarios, 4)
-    # Utils.data_download(Data.mandatory_variables, '*', '*', Data.R10, Data.categories, file_name='pyamdf_dimensions_data_R10' + str(Data.categories))
-    Utils().manadory_variables_scenarios(Utils.categories, Data.econ_regions, Data.mandatory_CDR_variables, subset=False, special_file_name='CDR_Robustness')
+    scenarios_list = pd.read_csv('scenarios_investment_all_Countries of Sub-Saharan Africa.csv')
+    models = scenarios_list['model'].unique()
+    scenarios = scenarios_list['scenario'].unique()
+    Utils.data_download(Data.mandatory_econ_variables,'*', '*', Data.R10, Data.categories, file_name='pyamdf_econ_data_R10' + str(Utils.categories))
+    # Utils().manadory_variables_scenarios(Utils.categories, 
+    #                                      Data.econ_regions, 
+    #                                      Data.mandatory_econ_variables, 
+    #                                      subset=False, special_file_name='econ_regional', call_sub=None)
 
 
 # calculate the economic score (higher score = more economic challenges)

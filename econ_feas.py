@@ -6,6 +6,7 @@ import pandas as pd
 import country_converter as coco
 from matplotlib import rcParams
 from utils import Data
+from utils import Utils
 rcParams['font.family'] = 'sans-serif'
 rcParams['font.sans-serif'] = ['Arial']
 
@@ -53,11 +54,17 @@ def main() -> None:
     # energy_supply_investment_score(Data.dimensions_pyamdf, 0.023, 2100, Data.model_scenarios, Data.categories)
     # # energy_supply_investment_analysis(0.023, 2100, EconFeas.econ_scenarios)
     # map_countries_to_regions(EconFeas.iea_country_groupings, EconFeas.by_country_gdp)
+    scenarios_list = pd.read_csv('econ_regional_Countries of Sub-Saharan Africa.csv')
+    data = pyam.IamDataFrame(data="pyamdf_econ_data_R10['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8'].csv")
     output_df = pd.DataFrame()
     for region in Data.R10:
-        to_append = energy_supply_investment_score(Data.regional_dimensions_pyamdf, 0.023, 2100, Data.model_scenarios, Data.categories, regional=region)
-        output_df = pd.concat([output_df, to_append], ignore_index=True, axis=0)
-    output_df.to_csv('outputs/energy_supply_investment_score_regional' + str(Data.categories) + '.csv')
+        print(region)
+        try:
+            to_append = energy_supply_investment_score(data, 0.023, 2100, scenarios_list, Utils.categories, regional=region)
+            output_df = pd.concat([output_df, to_append], ignore_index=True, axis=0)
+        except:
+            print('Region not found')
+    output_df.to_csv('outputs/energy_supply_investment_score_regional' + str(Utils.categories) + '.csv')
     # energy_supply_investment_score(Data.dimensions_pyamdf, 0.023, 2100, Data.model_scenarios, Data.categories, regional='World')
 
 
@@ -383,7 +390,7 @@ def energy_supply_investment_score(pyam_df, base_value, end_year, scenario_model
                         region=region, year=range(2020, end_year+1),
                         scenario=scenario_model_list['scenario'],
                         model=scenario_model_list['model'])
-    
+    print(df)
     # get list of years between 2020 and 2100 at decedal intervals
     year_list = list(range(2020, end_year+1, 10))
     
@@ -442,7 +449,6 @@ def energy_supply_investment_score(pyam_df, base_value, end_year, scenario_model
         output_df.to_csv('outputs/energy_supply_investment_score' + str(categories) + '.csv')
 
     
-
 
 def energy_supply_investment_analysis(base_value, end_year, scenario_model_list, 
                                       apply_damages=True):
