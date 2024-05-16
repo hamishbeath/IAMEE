@@ -19,6 +19,7 @@ Between country resilience data from https://link.springer.com/article/10.1007/s
 
 Robust
 Historical CO2 emissions data from Friedlingstein et al (2023) https://globalcarbonbudgetdata.org/latest-data.html and https://essd.copernicus.org/articles/15/5301/2023/ for 2023 values.
+Historical population: https://population.un.org/wpp/Download/Standard/CSV/
 Regional values: https://globalcarbonatlas.org/emissions/carbon-emissions/
 Emissions data = fossil fuels and land use change
 

@@ -43,6 +43,13 @@ class Data:
         'Pacific OECD', 'Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia',
         'North America; primarily the United States of America and Canada']
 
+    R10_codes = ['R10LATIN_AM', 'R10INDIA+', 'R10AFRICA', 'R10CHINA+', 'R10MIDDLE_EAST',
+                 'R10EUROPE', 'R10REST_ASIA', 'R10PAC_OECD', 'R10REF_ECON','R10NORTH_AM'] #r10_iamc
+
+    region_country_df = pd.read_csv('iso3c_regions.csv')
+    #https://github.com/setupelz/regioniso3c/blob/main/iso3c_region_mapping_20240319.csv    
+
+
     mandatory_variables = ['Emissions|CO2', 'Investment|Energy Supply','Capacity|Electricity|Wind',
                            'Capacity|Electricity|Solar|PV', 'Final Energy',
                            'Primary Energy|Coal', 'Primary Energy|Oil', 'Primary Energy|Gas', 'Primary Energy|Nuclear',
@@ -66,8 +73,8 @@ class Data:
     c1a_models_selected = ['REMIND-MAgPIE 1.7-3.0', 'IMAGE 3.2', 'AIM/CGE 2.2', 'WITCH 5.0']
 
     dollar_2022_2010 = 0.25 # reduction in value of 2022 dollars to 2010 dollars
-    categories = ''
-    # categories = ['C1', 'C2']
+    # categories = ''
+    categories = ['C1', 'C2']
     model_scenarios = pd.read_csv('Countries of Sub-Saharan Africa_mandatory_variables_scenarios' + str(categories) + '.csv')
     dimensions_pyamdf = cat_df = pyam.IamDataFrame(data='cat_df' + str(categories) + '.csv')
     meta_df = pd.read_csv('cat_meta' + str(categories) + '.csv') 
@@ -98,8 +105,8 @@ class Utils:
                             'Land Cover', 'Land Cover|Cropland',
                             'Land Cover|Cropland|Energy Crops']
     
-    # categories = ['C1', 'C2']
-    categories = ['C1', 'C2', 'C3', 'C4', 'C5','C6', 'C7', 'C8']
+    categories = ['C1', 'C2']
+    # categories = ['C1', 'C2', 'C3', 'C4', 'C5','C6', 'C7', 'C8']
     
 
     
