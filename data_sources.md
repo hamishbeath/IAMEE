@@ -2,7 +2,7 @@ Data Sources
 
 Economic
 GDP data from the IMF https://www.imf.org/en/Publications/WEO/weo-database/2023/October/download-entire-database
-Energy Supply Investment data from the IEA: https://www.iea.org/reports/world-energy-investment-2023#downloads
+Energy Supply Investment data from the IEA: https://www.iea.org/reports/world-energy-investment-2023#downloads and https://assets.bbhub.io/professional/sites/24/BNEF-EIRP-Climate-Scenarios-and-Energy-Investment-Ratios.pdf
 
 Environmental
 Threshold for BECCS  from https://www.science.org/doi/10.1126/science.adj6171 - uses upper bound of the medium concern threshold with low conversion efficiency. 
@@ -16,6 +16,7 @@ Trajectory for onshore and offshore wind, various sources inc. (https://about.bn
 
 Resilience
 Between country resilience data from https://link.springer.com/article/10.1007/s10584-021-03133-w#Sec2 via the author. Relevant data originally from KC and Lutz, and Dellink et al.
+SSP level GDP and population data from https://data.ece.iiasa.ac.at/ssp/#/workspaces/321
 
 Robust
 Historical CO2 emissions data from Friedlingstein et al (2023) https://globalcarbonbudgetdata.org/latest-data.html and https://essd.copernicus.org/articles/15/5301/2023/ for 2023 values.

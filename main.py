@@ -11,18 +11,21 @@ from sklearn.cluster import KMeans
 
 class IndexBuilder:
 
-    investment_metrics = pd.read_csv('outputs/energy_supply_investment_score' + str(Data.categories) + '.csv')
-    environment_metrics = pd.read_csv('outputs/environmental_metrics' + str(Data.categories) + '.csv')
-    resource_metrics = pd.read_csv('outputs/material_use_ratios' + str(Data.categories) + '.csv')
-    
-    # import resilience metrics
-    final_energy_demand = pd.read_csv('outputs/final_energy_demand' + str(Data.categories) + '.csv')    
-    energy_diversity = pd.read_csv('outputs/shannon_diversity_index' + str(Data.categories) + '.csv')   
-    gini_coefficient = pd.read_csv('outputs/gini_coefficient' + str(Data.categories) + '.csv')
+    try:
+        investment_metrics = pd.read_csv('outputs/energy_supply_investment_score' + str(Data.categories) + '.csv')
+        environment_metrics = pd.read_csv('outputs/environmental_metrics' + str(Data.categories) + '.csv')
+        resource_metrics = pd.read_csv('outputs/material_use_ratios' + str(Data.categories) + '.csv')
+        
+        # import resilience metrics
+        final_energy_demand = pd.read_csv('outputs/final_energy_demand' + str(Data.categories) + '.csv')    
+        energy_diversity = pd.read_csv('outputs/shannon_diversity_index' + str(Data.categories) + '.csv')   
+        gini_coefficient = pd.read_csv('outputs/gini_coefficient' + str(Data.categories) + '.csv')
 
-    # import robustness metrics
-    energy_system_flexibility = pd.read_csv('outputs/flexibility_scores' + str(Data.categories) + '.csv')
-    carbon_budgets = pd.read_csv('outputs/carbon_budget_shares' + str(Data.categories) + '.csv')
+        # import robustness metrics
+        energy_system_flexibility = pd.read_csv('outputs/flexibility_scores' + str(Data.categories) + '.csv')
+        carbon_budgets = pd.read_csv('outputs/carbon_budget_shares' + str(Data.categories) + '.csv')
+    except FileNotFoundError:
+        print('Index data not available yet')
     # low_carbon_diversity = pd.read_csv('outputs/low_carbon_shannon_diversity_index' + str(Data.categories) + '.csv')
     # CDR_2050 = pd.read_csv('outputs/total_CDR' + str(Data.categories) + '.csv')
 
@@ -57,14 +60,15 @@ def main() -> None:
     #                            IndexBuilder.CDR_2050)
     # # select_most_dissimilar_scenarios(Data.model_scenarios)
     # find_scenario_archetypes(Data.model_scenarios, 4)
-    scenarios_list = pd.read_csv('scenarios_investment_all_Countries of Sub-Saharan Africa.csv')
-    models = scenarios_list['model'].unique()
-    scenarios = scenarios_list['scenario'].unique()
-    Utils.data_download(Data.mandatory_econ_variables,'*', '*', Data.R10, Data.categories, file_name='pyamdf_econ_data_R10' + str(Utils.categories))
-    # Utils().manadory_variables_scenarios(Utils.categories, 
-    #                                      Data.econ_regions, 
-    #                                      Data.mandatory_econ_variables, 
-    #                                      subset=False, special_file_name='econ_regional', call_sub=None)
+    # scenarios_list = pd.read_csv('scenarios_investment_all_Countries of Sub-Saharan Africa.csv')
+    # models = scenarios_list['model'].unique()
+    # scenarios = scenarios_list['scenario'].unique()
+    # Utils.data_download(Data.mandatory_econ_variables,'*', '*', 'World', Data.categories, file_name='pyamdf_econ_data_world' + str(Data.categories))
+    regions = ['World']
+    Utils().manadory_variables_scenarios(Data.categories, 
+                                         regions, 
+                                         Data.mandatory_econ_variables, 
+                                         subset=False, special_file_name='econ_world', call_sub=None)
 
 
 # calculate the economic score (higher score = more economic challenges)

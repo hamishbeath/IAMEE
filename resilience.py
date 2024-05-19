@@ -3,8 +3,8 @@ import pyam
 import pandas as pd
 # from utils import Utils
 from utils import Data
-
-
+import country_converter as coco
+from pygini import gini
 
 class Resilience:
 
@@ -13,17 +13,18 @@ class Resilience:
                         'Primary Energy|Biomass', 'Primary Energy|Non-Biomass Renewables']
 
     gini_between_countries = pd.read_csv('inputs/gini_btw_6.csv')
+    ssp_gini_data = pd.read_csv('inputs/ssp_population_gdp_projections.csv')
 
 
 def main() -> None:
 
-    empty_df = pd.DataFrame()
-    for region in Data.R10:
-        # to_append = shannon_index_energy_mix(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories, regional=region)
-        to_append = final_energy_demand(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories, regional=region)
-        empty_df = pd.concat([empty_df, to_append], ignore_index=True, axis=0)
-    # empty_df.to_csv('outputs/shannon_diversity_index_regional' + str(Data.categories) + '.csv')
-    empty_df.to_csv('outputs/final_energy_demand_regional' + str(Data.categories) + '.csv')
+    # empty_df = pd.DataFrame()
+    # for region in Data.R10:
+    #     # to_append = shannon_index_energy_mix(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories, regional=region)
+    #     to_append = final_energy_demand(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories, regional=region)
+    #     empty_df = pd.concat([empty_df, to_append], ignore_index=True, axis=0)
+    # # empty_df.to_csv('outputs/shannon_diversity_index_regional' + str(Data.categories) + '.csv')
+    # empty_df.to_csv('outputs/final_energy_demand_regional' + str(Data.categories) + '.csv')
 
     # shannon_index_energy_mix(Data.dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories)
     # final_energy_demand(Data.dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories)
@@ -33,6 +34,8 @@ def main() -> None:
     #                        Data.meta_df,
     #                        Resilience.gini_between_countries,
     #                        Data.categories)
+    get_within_region_gini(Resilience.ssp_gini_data, Data.region_country_df, 
+                           Data.R10_codes, 2025)
 
 
 # Function that calculates the shannon index for the energy mix for each scenario
@@ -151,15 +154,23 @@ def final_energy_demand(pyam_df, scenario_model_list, end_year, categories, regi
 
     
 # Function that gives the gini coefficient and SSP population for each scenario
-def gini_between_countries(pyam_df, scenario_model_list, end_year, meta_df, gini_df, categories):
+def gini_between_countries(pyam_df, scenario_model_list, end_year, meta_df, gini_df, categories, regional=None):
     
+
+    if regional is not None:
+        region = regional
+    else:
+        region = 'World'
+
     # filter for the variables needed
     df = pyam_df.filter(variable='Emissions|CO2',
-                        region='World',
+                        region=region,
                         year=range(2020, end_year+1),
                         scenario=scenario_model_list['scenario'], 
                         model=scenario_model_list['model'])
     
+
+    if regional is not None:
     # loop through the ssps and the gini data to get the between country 
     # gini coefficients and the population for each ssp
     ssp_ginis = {}
@@ -201,6 +212,102 @@ def gini_between_countries(pyam_df, scenario_model_list, end_year, meta_df, gini
     gini_df.to_csv('outputs/gini_coefficient' + str(categories) +  '.csv', index=False)
     ssp_gini_coefficients = pd.DataFrame({'ssp': list(ssp_ginis.keys()), 
                                           'gini_coefficient': list(ssp_ginis.values())})
+
+
+
+# calculate regional within region Gini by SSP
+def get_within_region_gini(ssp_data, regions_breakdown, region_codes, start_year):
+
+    """
+    Inputs: 
+    - SSP data (pop and GDP)
+    - regional breakdown
+    - region codes
+    - start_year
+
+    Outputs:
+    - df with SSP and region gini coefficients
+
+    """
+    # prepare the data
+    ssp_data['ISO3'] =  coco.convert(names = ssp_data['Region'], to='ISO3')
+    ssp_gdp = ssp_data[ssp_data['Model'] == 'OECD ENV-Growth 2023'] # GDP|PPP  billion USD_2017/yr
+    ssp_pop = ssp_data[ssp_data['Model'] == 'IIASA-WiC POP 2023'] # million
+
+    # lists of the values 
+    country_list = ssp_gdp['ISO3'].unique()
+    processed_ISO3 = []
+    processed_ssp = []
+    output_gdp_per_capita = pd.DataFrame()
+
+    # loop through all the ssps, countries
+    for ssp in range(1, 6):
+
+        
+        ssp_gdp_selected = ssp_gdp[ssp_gdp['Scenario'] == 'SSP' + str(ssp)]
+        ssp_pop_selected = ssp_pop[ssp_pop['Scenario'] == 'SSP' + str(ssp)]
+
+        for country in country_list:
+
+            gdp = ssp_gdp_selected[ssp_gdp_selected['ISO3'] == country]
+            pop = ssp_pop_selected[ssp_pop_selected['ISO3'] == country]
+
+            if not gdp.empty and not pop.empty:
+                
+                processed_ISO3.append(country)
+                gdp.columns = gdp.columns.astype(str)
+                pop.columns = pop.columns.astype(str)
+                gdp_data = gdp.loc[:, '2025':'2100'].reset_index(drop=True)
+                pop_data = pop.loc[:, '2025':'2100'].reset_index(drop=True)
+                gdp_per_capita = gdp_data.div(pop_data)           
+                output_gdp_per_capita = pd.concat([output_gdp_per_capita, gdp_per_capita], axis=0)
+                processed_ssp.append(ssp)
+
+    # form the output dataframe
+    output_gdp_per_capita['ISO3'] = processed_ISO3
+    output_gdp_per_capita['ssp'] = processed_ssp
+    output_gdp_per_capita = output_gdp_per_capita.set_index('ISO3')
+    
+    # now add the regional breakdown
+    regions_breakdown = regions_breakdown.set_index('iso3c')
+    output_gdp_per_capita = output_gdp_per_capita.join(regions_breakdown['r10_iamc'], how='inner')
+    # now calculate the gini coefficients
+    # gini_coefficients = []
+
+    output_ginis = pd.DataFrame()
+    for ssp in range(1, 6):
+        
+        ssp_data = output_gdp_per_capita[output_gdp_per_capita['ssp'] == ssp]
+        # list of ginis for each region for the SSP
+        ssp_ginis = []
+    
+        # work through each of the R10 regions
+        for region in region_codes:
+            region_data = ssp_data [ssp_data ['r10_iamc'] == region]
+            
+            region_ssp_ginis = []
+            for year in range(start_year, 2101, 5):
+
+                year_data = region_data.loc[:, str(year)]
+                # convert to numpy array
+                year_data = np.array(year_data)
+                region_ssp_ginis.append(gini(year_data)) 
+
+            mean_region_gini = np.mean(region_ssp_ginis)
+            ssp_ginis.append(mean_region_gini)    
+
+        ssp_ginis.append(int(ssp))
+        ssp_ginis = pd.DataFrame(ssp_ginis).T
+        output_ginis = pd.concat([output_ginis, ssp_ginis], axis=0)
+
+    # columns as region codes
+    region_codes.append('ssp')
+    output_ginis.columns = region_codes
+    output_ginis.to_csv('outputs/within_region_gini.csv', index=False)
+
+
+
+
 
 
 

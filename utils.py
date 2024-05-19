@@ -56,9 +56,9 @@ class Data:
                            'Primary Energy|Biomass', 'Primary Energy|Non-Biomass Renewables','Carbon Sequestration|CCS|Biomass',
                             'GDP|MER', 'Land Cover|Forest','Land Cover']
 
-    mandatory_econ_variables = ['GDP|MER', 'Investment|Energy Supply']
-                                # 'AR6 climate diagnostics|Surface Temperature (GSAT)|MAGICCv7.5.3|50.0th Percentile',
-                                # 'AR6 climate diagnostics|Surface Temperature (GSAT)|MAGICCv7.5.3|95.0th Percentile']
+    mandatory_econ_variables = ['GDP|MER', 'Investment|Energy Supply',
+                                'AR6 climate diagnostics|Surface Temperature (GSAT)|MAGICCv7.5.3|50.0th Percentile',
+                                'AR6 climate diagnostics|Surface Temperature (GSAT)|MAGICCv7.5.3|95.0th Percentile']
 
     mandatory_CDR_variables = ['Carbon Sequestration|Direct Air Capture', 'Carbon Sequestration|Land Use','Carbon Sequestration|CCS|Biomass']
 
@@ -75,7 +75,8 @@ class Data:
     dollar_2022_2010 = 0.25 # reduction in value of 2022 dollars to 2010 dollars
     # categories = ''
     categories = ['C1', 'C2']
-    model_scenarios = pd.read_csv('Countries of Sub-Saharan Africa_mandatory_variables_scenarios' + str(categories) + '.csv')
+    # categories = ['C1', 'C2', 'C3', 'C4', 'C5','C6', 'C7', 'C8']
+    # model_scenarios = pd.read_csv('Countries of Sub-Saharan Africa_mandatory_variables_scenarios' + str(categories) + '.csv')
     dimensions_pyamdf = cat_df = pyam.IamDataFrame(data='cat_df' + str(categories) + '.csv')
     meta_df = pd.read_csv('cat_meta' + str(categories) + '.csv') 
 
@@ -297,18 +298,19 @@ class Utils:
                             creds=None, 
                             auth_url='https://api.manager.ece.iiasa.ac.at')    
 
+        print('Querying data')
         df = connAr6.query(model='*', scenario='*',
                 variable=variables, region=regions)
-
+        print(df)
         # ensure filtering by temperature category (subset or not)
         if subset == True:
-            df = df.filter(Category_subset=categories)        
+            cat_df = df.filter(Category_subset=categories)        
         elif subset == False:
-            df = df.filter(Category=categories)
+            cat_df = df.filter(Category=categories)
         else:
             raise ValueError('Subset must be a boolean')
         
-        cat_df = df.filter(Category_subset=categories)
+        # cat_df = df.filter(Category_subset=categories)
         if call_sub == None:
             
         # except:
@@ -332,7 +334,6 @@ class Utils:
             region_df = cat_df.filter(region=region)
             for model in region_df['model'].unique().tolist():
                 model_df = region_df.filter(model=model)
-                print(model_df)
                 # make list of available scenarios
                 model_scenarios = model_df['scenario'].unique().tolist()
                 for scenario in model_scenarios:
@@ -340,13 +341,11 @@ class Utils:
                     if scenario_df['variable'].nunique() == len(variables):
                         model_list.append(model)
                         scenario_list.append(scenario)
-                print(model_list)
-                print(scenario_list)
+
             output_df['model'] = model_list
             output_df['scenario'] = scenario_list
 
             if call_sub == None:
-                print(output_df)
                 if special_file_name != None:
                     output_df.to_csv(special_file_name + '_' + region + '.csv')
                 else:
@@ -434,6 +433,7 @@ class Utils:
         df = connAr6.query(model=models, scenario=scenarios,
             variable=variables, region=region, category=categories
             )
+
 
         df.to_csv(file_name + '.csv')
         

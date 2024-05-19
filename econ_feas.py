@@ -33,7 +33,7 @@ class EconFeas:
     # plotting_categories = ['C3']
     plotting_category_colours = {'C1':'#f57200', 'C3':'#6302d9', 'C5':'#1b9e77'}
     # violin_colours = ['#f57200','#6302d9','#1b9e77']
-    econ_scenarios = pd.read_csv('scenarios_investment_all_World.csv')
+    econ_scenarios = pd.read_csv('econ_world_World.csv')
     # econ_data = pyam.IamDataFrame(data="cat_meta['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8'].csv")
     run_mode = 'cat'
     alpha = -0.037
@@ -52,19 +52,19 @@ def main() -> None:
     # violin_plots()
     # assess_variable_data()
     # energy_supply_investment_score(Data.dimensions_pyamdf, 0.023, 2100, Data.model_scenarios, Data.categories)
-    # # energy_supply_investment_analysis(0.023, 2100, EconFeas.econ_scenarios)
+    energy_supply_investment_analysis(0.023, 2100, EconFeas.econ_scenarios, apply_damages=None)
     # map_countries_to_regions(EconFeas.iea_country_groupings, EconFeas.by_country_gdp)
-    scenarios_list = pd.read_csv('econ_regional_Countries of Sub-Saharan Africa.csv')
-    data = pyam.IamDataFrame(data="pyamdf_econ_data_R10['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8'].csv")
-    output_df = pd.DataFrame()
-    for region in Data.R10:
-        print(region)
-        try:
-            to_append = energy_supply_investment_score(data, 0.023, 2100, scenarios_list, Utils.categories, regional=region)
-            output_df = pd.concat([output_df, to_append], ignore_index=True, axis=0)
-        except:
-            print('Region not found')
-    output_df.to_csv('outputs/energy_supply_investment_score_regional' + str(Utils.categories) + '.csv')
+    # scenarios_list = pd.read_csv('econ_regional_Countries of Sub-Saharan Africa.csv')
+    # data = pyam.IamDataFrame(data="pyamdf_econ_data_R10['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8'].csv")
+    # output_df = pd.DataFrame()
+    # for region in Data.R10:
+    #     print(region)
+    #     try:
+    #         to_append = energy_supply_investment_score(data, 0.023, 2100, scenarios_list, Utils.categories, regional=region)
+    #         output_df = pd.concat([output_df, to_append], ignore_index=True, axis=0)
+    #     except:
+    #         print('Region not found')
+    # output_df.to_csv('outputs/energy_supply_investment_score_regional' + str(Utils.categories) + '.csv')
     # energy_supply_investment_score(Data.dimensions_pyamdf, 0.023, 2100, Data.model_scenarios, Data.categories, regional='World')
 
 
@@ -451,7 +451,7 @@ def energy_supply_investment_score(pyam_df, base_value, end_year, scenario_model
     
 
 def energy_supply_investment_analysis(base_value, end_year, scenario_model_list, 
-                                      apply_damages=True):
+                                      apply_damages=None):
 
     """
     Function similar to the above but that has additional indicator and different
@@ -461,14 +461,14 @@ def energy_supply_investment_analysis(base_value, end_year, scenario_model_list,
     #                 creds=None, 
     #                 auth_url='https://api.manager.ece.iiasa.ac.at') 
     # Filter out the data for the required variables
-    df = pyam.IamDataFrame(data="cat_df['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8'].csv")
+    df = pyam.IamDataFrame(data="cat_df['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8']econ_world.csv")
     
     df = df.filter(variable=['Investment|Energy Supply','GDP|MER', EconFeas.warming_variable], 
                         region='World', year=range(2020, end_year+1), 
                         scenario=scenario_model_list['scenario'], 
                         model=scenario_model_list['model'])
     
-    meta_data = pd.read_csv("cat_meta['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8'].csv")
+    meta_data = pd.read_csv("cat_meta['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8']econ_world.csv")
 
     # lists of the mean values and temp categories 
     # to be appended as columns to the dataframe
