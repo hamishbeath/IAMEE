@@ -14,28 +14,38 @@ class Resilience:
 
     gini_between_countries = pd.read_csv('inputs/gini_btw_6.csv')
     ssp_gini_data = pd.read_csv('inputs/ssp_population_gdp_projections.csv')
-
+    regional_gini = pd.read_csv('outputs/within_region_gini.csv')
 
 def main() -> None:
 
     # empty_df = pd.DataFrame()
+    # empty_df_shannon = pd.DataFrame()
     # for region in Data.R10:
     #     # to_append = shannon_index_energy_mix(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories, regional=region)
     #     to_append = final_energy_demand(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories, regional=region)
+    #     to_append_shannon = shannon_index_energy_mix(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories, regional=region)
     #     empty_df = pd.concat([empty_df, to_append], ignore_index=True, axis=0)
-    # # empty_df.to_csv('outputs/shannon_diversity_index_regional' + str(Data.categories) + '.csv')
+    #     empty_df_shannon = pd.concat([empty_df_shannon, to_append_shannon], ignore_index=True, axis=0)
+    # empty_df_shannon.to_csv('outputs/shannon_diversity_index_regional' + str(Data.categories) + '.csv')
     # empty_df.to_csv('outputs/final_energy_demand_regional' + str(Data.categories) + '.csv')
 
     # shannon_index_energy_mix(Data.dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories)
     # final_energy_demand(Data.dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories)
+    empty_df = pd.DataFrame()
+    for region in Data.R10:
+        to_append = gini_between_countries(Data.dimensions_pyamdf, Data.model_scenarios, 2100, Data.meta_df, Resilience.gini_between_countries, Data.categories, regional=region)
+        empty_df = pd.concat([empty_df, to_append], ignore_index=True, axis=0)
+
+    empty_df.to_csv('outputs/gini_coefficient_regional' + str(Data.categories) + '.csv')
+
     # gini_between_countries(Data.dimensions_pyamdf, 
     #                        Data.model_scenarios, 
     #                        2100, 
     #                        Data.meta_df,
     #                        Resilience.gini_between_countries,
     #                        Data.categories)
-    get_within_region_gini(Resilience.ssp_gini_data, Data.region_country_df, 
-                           Data.R10_codes, 2025)
+    # get_within_region_gini(Resilience.ssp_gini_data, Data.region_country_df, 
+    #                        Data.R10_codes, 2025)
 
 
 # Function that calculates the shannon index for the energy mix for each scenario
@@ -154,7 +164,8 @@ def final_energy_demand(pyam_df, scenario_model_list, end_year, categories, regi
 
     
 # Function that gives the gini coefficient and SSP population for each scenario
-def gini_between_countries(pyam_df, scenario_model_list, end_year, meta_df, gini_df, categories, regional=None):
+def gini_between_countries(pyam_df, scenario_model_list, end_year, meta_df, gini_df, categories, regional=None,
+                           regional_gini=None):
     
 
     if regional is not None:
@@ -171,21 +182,37 @@ def gini_between_countries(pyam_df, scenario_model_list, end_year, meta_df, gini
     
 
     if regional is not None:
-    # loop through the ssps and the gini data to get the between country 
-    # gini coefficients and the population for each ssp
-    ssp_ginis = {}
-    for ssp in range(1, 6):
         
-        ssp_string = 'SSP' + str(ssp)   
-        ssp_cells = gini_df[gini_df['scen'] == ssp_string]   
-        ssp_cells.set_index('period', inplace=True)
-        
-        # select the rows for the years 2020 to 2100
-        ssp_cells = ssp_cells.loc[2025:2100]
-        current_ssp_cells_gini = np.mean(ssp_cells['gini_world_mig'])
-        ssp_ginis[ssp_string] = current_ssp_cells_gini
-        
-    print(ssp_ginis)
+
+        gini_df = Resilience.regional_gini
+        # get list position for the region
+        region_position = Data.R10.index(region)
+        region_code = Data.R10_codes[region_position]
+        region_gini = gini_df[region_code]
+        print(region_gini)
+        region_ssp_dict = {}
+        count = 0
+        for row in region_gini:
+            region_ssp_dict['SSP' + str(count+1)] = region_gini[count]
+            count += 1
+        print(region_ssp_dict)
+        ssp_ginis = region_ssp_dict
+    else:
+        # loop through the ssps and the gini data to get the between country 
+        # gini coefficients and the population for each ssp
+        ssp_ginis = {}
+        for ssp in range(1, 6):
+            
+            ssp_string = 'SSP' + str(ssp)   
+            ssp_cells = gini_df[gini_df['scen'] == ssp_string]   
+            ssp_cells.set_index('period', inplace=True)
+            
+            # select the rows for the years 2020 to 2100
+            ssp_cells = ssp_cells.loc[2025:2100]
+            current_ssp_cells_gini = np.mean(ssp_cells['gini_world_mig'])
+            ssp_ginis[ssp_string] = current_ssp_cells_gini
+            
+        print(ssp_ginis)
 
     ssp_gini_coefficients = []
     ssps = []
@@ -193,11 +220,16 @@ def gini_between_countries(pyam_df, scenario_model_list, end_year, meta_df, gini
     for scenario, model in zip(scenario_model_list['scenario'], scenario_model_list['model']):
         
         # Filter out the data for the required scenario
-        scenario_df = df.filter(scenario=scenario)
-        scenario_model_df = scenario_df.filter(model=model)
+        # scenario_df = df.filter(scenario=scenario)
+        # scenario_model_df = scenario_df.filter(model=model)
         scenario_ssp = meta_df[meta_df['model'] == model]
-        scenario_ssp = scenario_ssp[scenario_ssp['scenario'] == scenario]    
-        scenario_ssp = int(scenario_ssp['Ssp_family'].values[0])
+        scenario_model_ssp = scenario_ssp[scenario_ssp['scenario'] == scenario]    
+        try:
+            scenario_ssp = int(scenario_model_ssp['Ssp_family'].values[0])
+        except ValueError:
+            print('No SSP family found for the scenario')
+            scenario_ssp = 2
+            
         ssps.append(scenario_ssp)
         scenario_ssp_gini = ssp_ginis['SSP' + str(scenario_ssp)]
         ssp_gini_coefficients.append(scenario_ssp_gini)
@@ -209,9 +241,15 @@ def gini_between_countries(pyam_df, scenario_model_list, end_year, meta_df, gini
                             'scenario': scenario_model_list['scenario'], 
                             'ssp_gini_coefficient': ssp_gini_coefficients,
                             'ssp': ssps})
-    gini_df.to_csv('outputs/gini_coefficient' + str(categories) +  '.csv', index=False)
-    ssp_gini_coefficients = pd.DataFrame({'ssp': list(ssp_ginis.keys()), 
-                                          'gini_coefficient': list(ssp_ginis.values())})
+    
+    if regional is not None:
+        gini_df['region'] = region
+        return gini_df
+    
+    else:
+        gini_df.to_csv('outputs/gini_coefficient' + str(categories) +  '.csv', index=False)
+        ssp_gini_coefficients = pd.DataFrame({'ssp': list(ssp_ginis.keys()), 
+                                            'gini_coefficient': list(ssp_ginis.values())})
 
 
 

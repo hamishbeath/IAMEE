@@ -21,6 +21,8 @@ class Robust:
                                             'Primary Energy|Non-Biomass Renewables']
     land_use_emissions_by_country = pd.read_csv('inputs/land_use_emissions_by_country.csv')
     territorial_emissions_by_country = pd.read_csv('inputs/export_emissions_by_country.csv')
+    R10_emissions_historical = pd.read_csv('inputs/R10_emissions_historical.csv')
+    R10_emissions_historical = R10_emissions_historical.set_index('Unnamed: 0')
 
 def main() -> None:
 
@@ -35,12 +37,25 @@ def main() -> None:
     #     to_append = calculate_total_CDR(Data.model_scenarios, Robust.cdr_df, Data.regional_dimensions_pyamdf, 2050, regional=region)
     #     empty_df = pd.concat([empty_df, to_append], ignore_index=True, axis=0)
     # empty_df.to_csv('outputs/total_CDR_regional' + str(Data.categories) + '.csv')
-    # shannon_index_low_carbon_mix(Data.dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories)
-    # get_regional_level_remaining_budgets(Robust.territorial_emissions_by_country, 
-    #                                      Robust.land_use_emissions_by_country,
-    #                                      Robust.historic_population, 
-    #                                      Data.region_country_df, 2023)
+    # # shannon_index_low_carbon_mix(Data.dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories)
+    # # get_regional_level_remaining_budgets(Robust.territorial_emissions_by_country, 
+    # #                                      Robust.land_use_emissions_by_country,
+    # #                                      Robust.historic_population, 
+    # #                                      Data.region_country_df, 2023)
+    # # run_regional_carbon_budgets()
+    # empty_df = pd.DataFrame()
+    # shannon_df = pd.DataFrame()
+    # for region in Data.R10:
+    #     to_append = flexibility_score(Data.regional_dimensions_pyamdf, Data.model_scenarios, 
+    #                   2100, Data.energy_variables, Robust.flexibility_data, Data.categories, regional=region)
+    #     to_append_shannon = shannon_index_low_carbon_mix(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories, regional=region)
+    #     empty_df = pd.concat([empty_df, to_append], ignore_index=True, axis=0)
+    #     shannon_df = pd.concat([shannon_df, to_append_shannon], ignore_index=True, axis=0)
+    # empty_df.to_csv('outputs/flexibility_scores_regional' + str(Data.categories) + '.csv', index=False)
+    # shannon_df.to_csv('outputs/low_carbon_shannon_diversity_index_regional' + str(Data.categories) + '.csv', index=False)
     run_regional_carbon_budgets()
+
+
 
 # calculate a flexibility score for the energy mix
 def flexibility_score(pyam_df, scenario_model_list, 
@@ -121,12 +136,12 @@ def run_regional_carbon_budgets():
     R10_hist = pd.read_csv('inputs/R10_emissions_historical.csv', index_col=0)
     R10_budgets = pd.read_csv('inputs/R10_carbon_budget_shares.csv')
     empty_df = pd.DataFrame()    
-    count = 0
-    for region in Data.R10:
-        historical_emissions = R10_hist[Data.R10_codes[count]]
+    
+    for region, region_code in zip(Data.R10, Data.R10_codes):
+        historical_emissions = R10_hist[region_code]
         # set column header to 'Emissions|CO2'
         historical_emissions.columns = ['Emissions|CO2']
-        region_remaining_carbon_budget = R10_budgets[Data.R10_codes[count]] * Robust.remaining_carbon_budget_2030
+        region_remaining_carbon_budget = R10_budgets[region_code] * Robust.remaining_carbon_budget_2030
         region_remaining_carbon_budget = region_remaining_carbon_budget.values[0]
         # print(historical_emissions)
         to_append = harmonize_emissions_calc_budgets(Data.regional_dimensions_pyamdf,
@@ -140,7 +155,6 @@ def run_regional_carbon_budgets():
                                             2050,
                                             regional=region)
         empty_df = pd.concat([empty_df, to_append], ignore_index=True, axis=0)
-        count += 1
     
     empty_df.to_csv('outputs/carbon_budget_shares_regional' + str(Data.categories) + '.csv', index=False)
 

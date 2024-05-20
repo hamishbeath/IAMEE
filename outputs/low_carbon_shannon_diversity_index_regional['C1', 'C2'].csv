@@ -1,0 +1,1221 @@
+model,scenario,shannon_index,region
+AIM/CGE 2.2,EN_NPi2020_300f,0.743074741716188,Countries of Latin America and the Caribbean
+AIM/CGE 2.2,EN_NPi2020_400f,0.7440340299919089,Countries of Latin America and the Caribbean
+AIM/CGE 2.2,EN_NPi2020_500f,0.742237534445897,Countries of Latin America and the Caribbean
+AIM/CGE 2.2,EN_NPi2020_600,0.7468936515841773,Countries of Latin America and the Caribbean
+AIM/CGE 2.2,EN_NPi2020_600f,0.7411746120242169,Countries of Latin America and the Caribbean
+GCAM 5.3,NGFS2_Divergent Net Zero Policies,0.7568578308879332,Countries of Latin America and the Caribbean
+GCAM 5.3,NGFS2_Net-Zero 2050,0.7377575951169355,Countries of Latin America and the Caribbean
+IMAGE 3.2,SSP1_SPA1_19I_D,0.7091766094193315,Countries of Latin America and the Caribbean
+IMAGE 3.2,SSP1_SPA1_19I_D_LB,0.6472754211919421,Countries of Latin America and the Caribbean
+IMAGE 3.2,SSP1_SPA1_19I_LI,0.7157257734272131,Countries of Latin America and the Caribbean
+IMAGE 3.2,SSP1_SPA1_19I_LIRE,0.7958203970901907,Countries of Latin America and the Caribbean
+IMAGE 3.2,SSP1_SPA1_19I_LIRE_LB,0.6610023721437956,Countries of Latin America and the Caribbean
+IMAGE 3.2,SSP1_SPA1_19I_RE,0.6951841970355119,Countries of Latin America and the Caribbean
+IMAGE 3.2,SSP1_SPA1_19I_RE_LB,0.6026035377904699,Countries of Latin America and the Caribbean
+IMAGE 3.2,SSP2_SPA1_19I_D_LB,0.9072746002902481,Countries of Latin America and the Caribbean
+IMAGE 3.2,SSP2_SPA1_19I_LIRE_LB,0.6942564572214851,Countries of Latin America and the Caribbean
+IMAGE 3.2,SSP2_SPA1_19I_RE_LB,0.6601405639292185,Countries of Latin America and the Caribbean
+IMAGE 3.2,SSP2_SPA2_19I_D,0.8145168676739131,Countries of Latin America and the Caribbean
+IMAGE 3.2,SSP2_SPA2_19I_LI,0.8505043528225086,Countries of Latin America and the Caribbean
+IMAGE 3.2,SSP2_SPA2_19I_LIRE,0.7862356745211238,Countries of Latin America and the Caribbean
+IMAGE 3.2,SSP2_SPA2_19I_RE,0.7545996415379269,Countries of Latin America and the Caribbean
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_600f_COV,0.706583246369368,Countries of Latin America and the Caribbean
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_600f_COV_NDCp,0.7065525587519339,Countries of Latin America and the Caribbean
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_700f,0.704701941785972,Countries of Latin America and the Caribbean
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_700f_COV,0.7067702896414131,Countries of Latin America and the Caribbean
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_700f_COV_NDCp,0.7067517784487378,Countries of Latin America and the Caribbean
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_700f_NDCp,0.7046447377284075,Countries of Latin America and the Caribbean
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_200f,0.7054810484414034,Countries of Latin America and the Caribbean
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_300f,0.6962774042536133,Countries of Latin America and the Caribbean
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_400f,0.6966723436565463,Countries of Latin America and the Caribbean
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_450,0.7151717234072332,Countries of Latin America and the Caribbean
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_450f,0.6967389335133174,Countries of Latin America and the Caribbean
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_500,0.7064658865205622,Countries of Latin America and the Caribbean
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_500f,0.6967850529745574,Countries of Latin America and the Caribbean
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600,0.7060924752708948,Countries of Latin America and the Caribbean
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_COV,0.6970916097973017,Countries of Latin America and the Caribbean
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR10p,0.6964846207684041,Countries of Latin America and the Caribbean
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR1p,0.7214547301342791,Countries of Latin America and the Caribbean
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR2p,0.7315187676533959,Countries of Latin America and the Caribbean
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR3p,0.7344079492028254,Countries of Latin America and the Caribbean
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR4p,0.7390228756827824,Countries of Latin America and the Caribbean
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f,0.6959868438345824,Countries of Latin America and the Caribbean
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_COV,0.6967310453061352,Countries of Latin America and the Caribbean
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR10p,0.6958728321119279,Countries of Latin America and the Caribbean
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR1p,0.7097242937383826,Countries of Latin America and the Caribbean
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR2p,0.7250652439590226,Countries of Latin America and the Caribbean
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR3p,0.7127652571574137,Countries of Latin America and the Caribbean
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR4p,0.6933558515610465,Countries of Latin America and the Caribbean
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_700,0.6968086177893724,Countries of Latin America and the Caribbean
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_700_COV,0.6973706236894786,Countries of Latin America and the Caribbean
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_700f,0.6947726135249666,Countries of Latin America and the Caribbean
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_700f_COV,0.6968003309234291,Countries of Latin America and the Caribbean
+MESSAGEix-GLOBIOM_1.1,NGFS2_Divergent Net Zero Policies,0.6938912557113635,Countries of Latin America and the Caribbean
+MESSAGEix-GLOBIOM_1.1,NGFS2_Net-Zero 2050,0.6964481149850532,Countries of Latin America and the Caribbean
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_int_mc_50,0.6549359799388821,Countries of Latin America and the Caribbean
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_noint_mc_50,0.6555108594134804,Countries of Latin America and the Caribbean
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_100,0.6482112208984883,Countries of Latin America and the Caribbean
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_120,0.649913430044119,Countries of Latin America and the Caribbean
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_80,0.6563096144895407,Countries of Latin America and the Caribbean
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB400,0.6406086345676644,Countries of Latin America and the Caribbean
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB450,0.639820484323187,Countries of Latin America and the Caribbean
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB500,0.640091321832142,Countries of Latin America and the Caribbean
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB550,0.6396069617995506,Countries of Latin America and the Caribbean
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB600,0.6398577077707526,Countries of Latin America and the Caribbean
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_mc_50,0.6543020484934554,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 1.7-3.0,CD-LINKS_INDC2030i_1000,0.701290847488339,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 1.7-3.0,CD-LINKS_INDC2030i_400,0.7009372672766545,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 1.7-3.0,CD-LINKS_NPi2020_1000,0.7006725070826666,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 1.7-3.0,CD-LINKS_NPi2020_400,0.7001991201084825,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 1.7-3.0,CO_2Deg2020,0.7008858821172288,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 1.7-3.0,CO_2Deg2030,0.7014667369714476,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 1.7-3.0,CO_Bridge,0.682759433840316,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_full_NDC,0.7008510218448332,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_full_eff,0.7006367265153192,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_full_goodpractice,0.7011525355017788,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_full_netzero,0.7013955803271217,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_red_eff,0.6000199832821347,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 1.7-3.0,PEP_2C_full_NDC,0.7014667369714476,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 1.7-3.0,PEP_2C_full_eff,0.7008858821172288,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 1.7-3.0,PEP_2C_full_goodpractice,0.7014748726455533,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 1.7-3.0,PEP_2C_full_netzero,0.7016653632212068,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 1.7-3.0,PEP_2C_red_NDC,0.6207595928074925,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 1.7-3.0,PEP_2C_red_eff,0.6612723263238706,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 1.7-3.0,PEP_2C_red_goodpractice,0.6366495742976692,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 1.7-3.0,PEP_2C_red_netzero,0.6434787926012665,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 2.1-4.2,CEMICS_SSP1-1p5C-fullCDR,0.7000725948416473,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 2.1-4.2,CEMICS_SSP1-1p5C-minCDR,0.6960866424791663,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 2.1-4.2,CEMICS_SSP2-1p5C-fullCDR,0.6837847965249289,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 2.1-4.2,CEMICS_SSP2-1p5C-minCDR,0.6583079497074134,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_300f,0.5323594428465684,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_400f,0.5410094050304534,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_500f,0.5324295260924448,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600_COV,0.6677834386605033,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600_COV_NDCp,0.6730764400327345,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600f,0.5286876838959099,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600f_COV,0.6892909978049487,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600f_COV_NDCp,0.68884409779874,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600f_NDCp,0.5291163453137953,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_200f,0.5704196450190555,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_300f,0.5712594571604677,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_400,0.6228599378411379,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_400f,0.5794707210843478,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_500,0.6088006367157752,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_500f,0.576144116916733,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_600,0.6035810054489011,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_600_COV,0.6643918389452226,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_600f,0.5686052994904294,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_600f_COV,0.6878800836478594,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 2.1-4.2,NGFS2_Divergent Net Zero Policies,0.7007841809159865,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 2.1-4.2,NGFS2_Net-Zero 2050,0.6587172952007572,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 2.1-4.2,SusDev_SDP-PkBudg1000,0.6868488355548616,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 2.1-4.2,SusDev_SSP1-PkBudg900,0.6993101613328268,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 2.1-4.2,SusDev_SSP2-PkBudg900,0.694481235928051,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 2.1-4.3,DeepElec_SSP2_ HighRE_Budg900,0.608004861784349,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 2.1-4.3,DeepElec_SSP2_def_Budg1100,0.6991233008650826,Countries of Latin America and the Caribbean
+REMIND-MAgPIE 2.1-4.3,DeepElec_SSP2_def_Budg900,0.6176745524730591,Countries of Latin America and the Caribbean
+WITCH 5.0,EN_INDCi2030_500f,0.7337758572766768,Countries of Latin America and the Caribbean
+WITCH 5.0,EN_NPi2020_400f,0.7318823596702099,Countries of Latin America and the Caribbean
+WITCH 5.0,EN_NPi2020_450,0.7283601898466905,Countries of Latin America and the Caribbean
+WITCH 5.0,EN_NPi2020_450f,0.7315957179939117,Countries of Latin America and the Caribbean
+WITCH 5.0,EN_NPi2020_500,0.7296297706145536,Countries of Latin America and the Caribbean
+WITCH 5.0,EN_NPi2020_500f,0.7315697446532791,Countries of Latin America and the Caribbean
+AIM/CGE 2.2,EN_NPi2020_300f,0.798289122282338,Countries of South Asia; primarily India
+AIM/CGE 2.2,EN_NPi2020_400f,0.7974352332921091,Countries of South Asia; primarily India
+AIM/CGE 2.2,EN_NPi2020_500f,0.7989260754186849,Countries of South Asia; primarily India
+AIM/CGE 2.2,EN_NPi2020_600,0.7945355630586775,Countries of South Asia; primarily India
+AIM/CGE 2.2,EN_NPi2020_600f,0.8008403553988102,Countries of South Asia; primarily India
+GCAM 5.3,NGFS2_Divergent Net Zero Policies,0.8301788212769752,Countries of South Asia; primarily India
+GCAM 5.3,NGFS2_Net-Zero 2050,0.8030712395415014,Countries of South Asia; primarily India
+IMAGE 3.2,SSP1_SPA1_19I_D,0.8056797511031839,Countries of South Asia; primarily India
+IMAGE 3.2,SSP1_SPA1_19I_D_LB,0.8195324278976315,Countries of South Asia; primarily India
+IMAGE 3.2,SSP1_SPA1_19I_LI,0.8153750320322743,Countries of South Asia; primarily India
+IMAGE 3.2,SSP1_SPA1_19I_LIRE,0.9616707005803595,Countries of South Asia; primarily India
+IMAGE 3.2,SSP1_SPA1_19I_LIRE_LB,0.9580874197673689,Countries of South Asia; primarily India
+IMAGE 3.2,SSP1_SPA1_19I_RE,0.8084054301188548,Countries of South Asia; primarily India
+IMAGE 3.2,SSP1_SPA1_19I_RE_LB,0.8135767555955422,Countries of South Asia; primarily India
+IMAGE 3.2,SSP2_SPA1_19I_D_LB,1.0426589058632931,Countries of South Asia; primarily India
+IMAGE 3.2,SSP2_SPA1_19I_LIRE_LB,0.9780035379059622,Countries of South Asia; primarily India
+IMAGE 3.2,SSP2_SPA1_19I_RE_LB,1.0212080335216789,Countries of South Asia; primarily India
+IMAGE 3.2,SSP2_SPA2_19I_D,1.0046861956566833,Countries of South Asia; primarily India
+IMAGE 3.2,SSP2_SPA2_19I_LI,0.9742915159501684,Countries of South Asia; primarily India
+IMAGE 3.2,SSP2_SPA2_19I_LIRE,0.9788605229350695,Countries of South Asia; primarily India
+IMAGE 3.2,SSP2_SPA2_19I_RE,0.9962829114944682,Countries of South Asia; primarily India
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_600f_COV,0.888660639467103,Countries of South Asia; primarily India
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_600f_COV_NDCp,0.8902967111380605,Countries of South Asia; primarily India
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_700f,0.8908073872981468,Countries of South Asia; primarily India
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_700f_COV,0.8987141427723795,Countries of South Asia; primarily India
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_700f_COV_NDCp,0.8975318204790392,Countries of South Asia; primarily India
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_700f_NDCp,0.890859836238943,Countries of South Asia; primarily India
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_200f,0.9625483077436627,Countries of South Asia; primarily India
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_300f,0.9448203449295087,Countries of South Asia; primarily India
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_400f,0.9492638247570347,Countries of South Asia; primarily India
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_450,0.8791340257160365,Countries of South Asia; primarily India
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_450f,0.9500330498978855,Countries of South Asia; primarily India
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_500,0.8719751114307268,Countries of South Asia; primarily India
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_500f,0.9513190314979549,Countries of South Asia; primarily India
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600,0.8603048492508643,Countries of South Asia; primarily India
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_COV,0.8610858990160498,Countries of South Asia; primarily India
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR10p,0.6287457811489277,Countries of South Asia; primarily India
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR1p,0.8853492260130066,Countries of South Asia; primarily India
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR2p,0.9033611912117108,Countries of South Asia; primarily India
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR3p,0.8970595541392334,Countries of South Asia; primarily India
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR4p,0.8922045518246269,Countries of South Asia; primarily India
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f,0.9513439845412217,Countries of South Asia; primarily India
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_COV,0.9253302134097936,Countries of South Asia; primarily India
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR10p,0.6658244023003874,Countries of South Asia; primarily India
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR1p,0.8985938288803714,Countries of South Asia; primarily India
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR2p,0.9131550280843537,Countries of South Asia; primarily India
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR3p,0.9202243148092968,Countries of South Asia; primarily India
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR4p,0.9420335318766633,Countries of South Asia; primarily India
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_700,0.8817838559073606,Countries of South Asia; primarily India
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_700_COV,0.8797356070904927,Countries of South Asia; primarily India
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_700f,0.9483691762533861,Countries of South Asia; primarily India
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_700f_COV,0.9363758982034146,Countries of South Asia; primarily India
+MESSAGEix-GLOBIOM_1.1,NGFS2_Divergent Net Zero Policies,0.8661327588022474,Countries of South Asia; primarily India
+MESSAGEix-GLOBIOM_1.1,NGFS2_Net-Zero 2050,0.8540491982857252,Countries of South Asia; primarily India
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_int_mc_50,1.013272203843464,Countries of South Asia; primarily India
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_noint_mc_50,1.0075491927365736,Countries of South Asia; primarily India
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_100,0.7751378268346556,Countries of South Asia; primarily India
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_120,0.8316355284247096,Countries of South Asia; primarily India
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_80,0.733771326544834,Countries of South Asia; primarily India
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB400,0.8712381665970631,Countries of South Asia; primarily India
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB450,0.87139572113044,Countries of South Asia; primarily India
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB500,0.8552962661751158,Countries of South Asia; primarily India
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB550,0.8553148205885441,Countries of South Asia; primarily India
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB600,0.8636856266352839,Countries of South Asia; primarily India
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_mc_50,1.0073609856158856,Countries of South Asia; primarily India
+REMIND-MAgPIE 1.7-3.0,CD-LINKS_INDC2030i_1000,0.7916188509714737,Countries of South Asia; primarily India
+REMIND-MAgPIE 1.7-3.0,CD-LINKS_INDC2030i_400,0.8042187069491042,Countries of South Asia; primarily India
+REMIND-MAgPIE 1.7-3.0,CD-LINKS_NPi2020_1000,0.7948286074275599,Countries of South Asia; primarily India
+REMIND-MAgPIE 1.7-3.0,CD-LINKS_NPi2020_400,0.808377817664683,Countries of South Asia; primarily India
+REMIND-MAgPIE 1.7-3.0,CO_2Deg2020,0.8024385632903113,Countries of South Asia; primarily India
+REMIND-MAgPIE 1.7-3.0,CO_2Deg2030,0.791246694483509,Countries of South Asia; primarily India
+REMIND-MAgPIE 1.7-3.0,CO_Bridge,0.8097073226382343,Countries of South Asia; primarily India
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_full_NDC,0.8006859651726443,Countries of South Asia; primarily India
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_full_eff,0.8086557330800617,Countries of South Asia; primarily India
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_full_goodpractice,0.8030798933138721,Countries of South Asia; primarily India
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_full_netzero,0.8077699007234724,Countries of South Asia; primarily India
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_red_eff,0.794261660158784,Countries of South Asia; primarily India
+REMIND-MAgPIE 1.7-3.0,PEP_2C_full_NDC,0.791246694483509,Countries of South Asia; primarily India
+REMIND-MAgPIE 1.7-3.0,PEP_2C_full_eff,0.8024385632903113,Countries of South Asia; primarily India
+REMIND-MAgPIE 1.7-3.0,PEP_2C_full_goodpractice,0.8008422977935892,Countries of South Asia; primarily India
+REMIND-MAgPIE 1.7-3.0,PEP_2C_full_netzero,0.8066620237361435,Countries of South Asia; primarily India
+REMIND-MAgPIE 1.7-3.0,PEP_2C_red_NDC,0.7961298613690444,Countries of South Asia; primarily India
+REMIND-MAgPIE 1.7-3.0,PEP_2C_red_eff,0.798966773506683,Countries of South Asia; primarily India
+REMIND-MAgPIE 1.7-3.0,PEP_2C_red_goodpractice,0.80131152225136,Countries of South Asia; primarily India
+REMIND-MAgPIE 1.7-3.0,PEP_2C_red_netzero,0.8137167786242325,Countries of South Asia; primarily India
+REMIND-MAgPIE 2.1-4.2,CEMICS_SSP1-1p5C-fullCDR,0.40405820290928435,Countries of South Asia; primarily India
+REMIND-MAgPIE 2.1-4.2,CEMICS_SSP1-1p5C-minCDR,0.5085971154352615,Countries of South Asia; primarily India
+REMIND-MAgPIE 2.1-4.2,CEMICS_SSP2-1p5C-fullCDR,0.6440978189673806,Countries of South Asia; primarily India
+REMIND-MAgPIE 2.1-4.2,CEMICS_SSP2-1p5C-minCDR,0.7988521232456566,Countries of South Asia; primarily India
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_300f,0.6137871405791652,Countries of South Asia; primarily India
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_400f,0.6006543591743052,Countries of South Asia; primarily India
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_500f,0.5959383977256116,Countries of South Asia; primarily India
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600_COV,0.587827162443834,Countries of South Asia; primarily India
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600_COV_NDCp,0.5868741150211596,Countries of South Asia; primarily India
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600f,0.5943299826361724,Countries of South Asia; primarily India
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600f_COV,0.6024912033596852,Countries of South Asia; primarily India
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600f_COV_NDCp,0.6023589391968057,Countries of South Asia; primarily India
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600f_NDCp,0.5924058172092626,Countries of South Asia; primarily India
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_200f,0.5964980589363891,Countries of South Asia; primarily India
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_300f,0.5919859846348077,Countries of South Asia; primarily India
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_400,0.6069995668971397,Countries of South Asia; primarily India
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_400f,0.5899084500098946,Countries of South Asia; primarily India
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_500,0.6169167884284265,Countries of South Asia; primarily India
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_500f,0.5934642583699385,Countries of South Asia; primarily India
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_600,0.6109573444544854,Countries of South Asia; primarily India
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_600_COV,0.5746279452607213,Countries of South Asia; primarily India
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_600f,0.588432814559574,Countries of South Asia; primarily India
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_600f_COV,0.6002225202905933,Countries of South Asia; primarily India
+REMIND-MAgPIE 2.1-4.2,NGFS2_Divergent Net Zero Policies,0.47508154293400684,Countries of South Asia; primarily India
+REMIND-MAgPIE 2.1-4.2,NGFS2_Net-Zero 2050,0.557697967009632,Countries of South Asia; primarily India
+REMIND-MAgPIE 2.1-4.2,SusDev_SDP-PkBudg1000,0.5041912488423475,Countries of South Asia; primarily India
+REMIND-MAgPIE 2.1-4.2,SusDev_SSP1-PkBudg900,0.4466561801216502,Countries of South Asia; primarily India
+REMIND-MAgPIE 2.1-4.2,SusDev_SSP2-PkBudg900,0.6212701027769635,Countries of South Asia; primarily India
+REMIND-MAgPIE 2.1-4.3,DeepElec_SSP2_ HighRE_Budg900,0.343204967944038,Countries of South Asia; primarily India
+REMIND-MAgPIE 2.1-4.3,DeepElec_SSP2_def_Budg1100,0.6137495908210908,Countries of South Asia; primarily India
+REMIND-MAgPIE 2.1-4.3,DeepElec_SSP2_def_Budg900,0.6225622469997008,Countries of South Asia; primarily India
+WITCH 5.0,EN_INDCi2030_500f,0.7036748378368811,Countries of South Asia; primarily India
+WITCH 5.0,EN_NPi2020_400f,0.6922026485034531,Countries of South Asia; primarily India
+WITCH 5.0,EN_NPi2020_450,0.7075629478119321,Countries of South Asia; primarily India
+WITCH 5.0,EN_NPi2020_450f,0.6931258550504025,Countries of South Asia; primarily India
+WITCH 5.0,EN_NPi2020_500,0.7019870125305077,Countries of South Asia; primarily India
+WITCH 5.0,EN_NPi2020_500f,0.691664051808715,Countries of South Asia; primarily India
+AIM/CGE 2.2,EN_NPi2020_300f,0.7516849797025771,Countries of Sub-Saharan Africa
+AIM/CGE 2.2,EN_NPi2020_400f,0.7521482122717198,Countries of Sub-Saharan Africa
+AIM/CGE 2.2,EN_NPi2020_500f,0.751875631241459,Countries of Sub-Saharan Africa
+AIM/CGE 2.2,EN_NPi2020_600,0.749782918135799,Countries of Sub-Saharan Africa
+AIM/CGE 2.2,EN_NPi2020_600f,0.751178704843087,Countries of Sub-Saharan Africa
+GCAM 5.3,NGFS2_Divergent Net Zero Policies,0.8551561292186051,Countries of Sub-Saharan Africa
+GCAM 5.3,NGFS2_Net-Zero 2050,0.8477184490610158,Countries of Sub-Saharan Africa
+IMAGE 3.2,SSP1_SPA1_19I_D,0.6958741783533936,Countries of Sub-Saharan Africa
+IMAGE 3.2,SSP1_SPA1_19I_D_LB,0.6762797996480088,Countries of Sub-Saharan Africa
+IMAGE 3.2,SSP1_SPA1_19I_LI,0.7081073726648348,Countries of Sub-Saharan Africa
+IMAGE 3.2,SSP1_SPA1_19I_LIRE,0.7136398015113736,Countries of Sub-Saharan Africa
+IMAGE 3.2,SSP1_SPA1_19I_LIRE_LB,0.6664358946808453,Countries of Sub-Saharan Africa
+IMAGE 3.2,SSP1_SPA1_19I_RE,0.6771147257666017,Countries of Sub-Saharan Africa
+IMAGE 3.2,SSP1_SPA1_19I_RE_LB,0.6109327440324404,Countries of Sub-Saharan Africa
+IMAGE 3.2,SSP2_SPA1_19I_D_LB,0.8640430767699694,Countries of Sub-Saharan Africa
+IMAGE 3.2,SSP2_SPA1_19I_LIRE_LB,0.6722158508349646,Countries of Sub-Saharan Africa
+IMAGE 3.2,SSP2_SPA1_19I_RE_LB,0.6552828359277736,Countries of Sub-Saharan Africa
+IMAGE 3.2,SSP2_SPA2_19I_D,0.767361220742862,Countries of Sub-Saharan Africa
+IMAGE 3.2,SSP2_SPA2_19I_LI,0.8225443134043715,Countries of Sub-Saharan Africa
+IMAGE 3.2,SSP2_SPA2_19I_LIRE,0.7020403906281505,Countries of Sub-Saharan Africa
+IMAGE 3.2,SSP2_SPA2_19I_RE,0.7018571157201146,Countries of Sub-Saharan Africa
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_600f_COV,0.9531899978377827,Countries of Sub-Saharan Africa
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_600f_COV_NDCp,0.9541379847928694,Countries of Sub-Saharan Africa
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_700f,0.9653962051629872,Countries of Sub-Saharan Africa
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_700f_COV,0.9599710245908044,Countries of Sub-Saharan Africa
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_700f_COV_NDCp,0.9607121176132194,Countries of Sub-Saharan Africa
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_700f_NDCp,0.9667876796005417,Countries of Sub-Saharan Africa
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_200f,0.7904059563279833,Countries of Sub-Saharan Africa
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_300f,0.7878441804482043,Countries of Sub-Saharan Africa
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_400f,0.8017432857544761,Countries of Sub-Saharan Africa
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_450,0.9642044750568368,Countries of Sub-Saharan Africa
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_450f,0.7954900938278396,Countries of Sub-Saharan Africa
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_500,0.9410373024423059,Countries of Sub-Saharan Africa
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_500f,0.7682003144942449,Countries of Sub-Saharan Africa
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600,0.9274044916515451,Countries of Sub-Saharan Africa
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_COV,0.9206673076818128,Countries of Sub-Saharan Africa
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR10p,0.6907879843460393,Countries of Sub-Saharan Africa
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR1p,0.9312007587908869,Countries of Sub-Saharan Africa
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR2p,0.9513649732757663,Countries of Sub-Saharan Africa
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR3p,0.9622751383128645,Countries of Sub-Saharan Africa
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR4p,0.9519402195544286,Countries of Sub-Saharan Africa
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f,0.7353107383593047,Countries of Sub-Saharan Africa
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_COV,0.858058748261489,Countries of Sub-Saharan Africa
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR10p,0.7174324455461695,Countries of Sub-Saharan Africa
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR1p,0.8393542385700328,Countries of Sub-Saharan Africa
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR2p,0.8202620957619202,Countries of Sub-Saharan Africa
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR3p,0.8023493175561256,Countries of Sub-Saharan Africa
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR4p,0.7644291337166654,Countries of Sub-Saharan Africa
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_700,0.9306991076471289,Countries of Sub-Saharan Africa
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_700_COV,0.9058605937828297,Countries of Sub-Saharan Africa
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_700f,0.7820936051356668,Countries of Sub-Saharan Africa
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_700f_COV,0.8504799572073043,Countries of Sub-Saharan Africa
+MESSAGEix-GLOBIOM_1.1,NGFS2_Divergent Net Zero Policies,0.9770204847626038,Countries of Sub-Saharan Africa
+MESSAGEix-GLOBIOM_1.1,NGFS2_Net-Zero 2050,0.9184963486845883,Countries of Sub-Saharan Africa
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_int_mc_50,1.0080908246690505,Countries of Sub-Saharan Africa
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_noint_mc_50,1.0094782458905607,Countries of Sub-Saharan Africa
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_100,0.9804010624721451,Countries of Sub-Saharan Africa
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_120,0.9850477496030301,Countries of Sub-Saharan Africa
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_80,0.9647317264006721,Countries of Sub-Saharan Africa
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB400,1.0018031706903128,Countries of Sub-Saharan Africa
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB450,0.9995940613534446,Countries of Sub-Saharan Africa
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB500,0.9984692918429141,Countries of Sub-Saharan Africa
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB550,0.9960412232519105,Countries of Sub-Saharan Africa
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB600,0.9944531225814288,Countries of Sub-Saharan Africa
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_mc_50,0.9913471513340413,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 1.7-3.0,CD-LINKS_INDC2030i_1000,0.5757955377165146,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 1.7-3.0,CD-LINKS_INDC2030i_400,0.5693661614012407,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 1.7-3.0,CD-LINKS_NPi2020_1000,0.5704491259421861,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 1.7-3.0,CD-LINKS_NPi2020_400,0.5670099543343409,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 1.7-3.0,CO_2Deg2020,0.5637654751329517,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 1.7-3.0,CO_2Deg2030,0.5704461953563537,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 1.7-3.0,CO_Bridge,0.5345609052944549,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_full_NDC,0.5622332473588592,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_full_eff,0.5573209109467686,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_full_goodpractice,0.5663852605262029,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_full_netzero,0.5643307602940284,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_red_eff,0.41709886078617764,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 1.7-3.0,PEP_2C_full_NDC,0.5704461953563537,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 1.7-3.0,PEP_2C_full_eff,0.5637654751329517,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 1.7-3.0,PEP_2C_full_goodpractice,0.5677467355616036,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 1.7-3.0,PEP_2C_full_netzero,0.5441054783969542,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 1.7-3.0,PEP_2C_red_NDC,0.4169895280735197,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 1.7-3.0,PEP_2C_red_eff,0.44358090233479874,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 1.7-3.0,PEP_2C_red_goodpractice,0.4288826006149916,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 1.7-3.0,PEP_2C_red_netzero,0.43375956645200076,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 2.1-4.2,CEMICS_SSP1-1p5C-fullCDR,0.5720303065135945,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 2.1-4.2,CEMICS_SSP1-1p5C-minCDR,0.6174856809363786,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 2.1-4.2,CEMICS_SSP2-1p5C-fullCDR,0.5292526925691464,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 2.1-4.2,CEMICS_SSP2-1p5C-minCDR,0.5148510305078776,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_300f,0.36116515926302817,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_400f,0.3779422847463957,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_500f,0.40934882803251066,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600_COV,0.5566178850637047,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600_COV_NDCp,0.5658789074476062,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600f,0.45864201424417106,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600f_COV,0.5435300934752963,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600f_COV_NDCp,0.5445106217743769,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600f_NDCp,0.4589040208082823,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_200f,0.3532816142179594,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_300f,0.3729575969095018,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_400,0.5023160717658257,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_400f,0.4125018480976865,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_500,0.5051164469205178,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_500f,0.4520099320725818,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_600,0.5067602194164307,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_600_COV,0.5584825400091932,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_600f,0.4797168783356607,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_600f_COV,0.5430850013393724,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 2.1-4.2,NGFS2_Divergent Net Zero Policies,0.5866869448948713,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 2.1-4.2,NGFS2_Net-Zero 2050,0.6428650980650732,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 2.1-4.2,SusDev_SDP-PkBudg1000,0.4885776641375271,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 2.1-4.2,SusDev_SSP1-PkBudg900,0.5239957492313503,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 2.1-4.2,SusDev_SSP2-PkBudg900,0.522223446880523,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 2.1-4.3,DeepElec_SSP2_ HighRE_Budg900,0.36787698126105794,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 2.1-4.3,DeepElec_SSP2_def_Budg1100,0.6350419655662606,Countries of Sub-Saharan Africa
+REMIND-MAgPIE 2.1-4.3,DeepElec_SSP2_def_Budg900,0.6371636983609461,Countries of Sub-Saharan Africa
+WITCH 5.0,EN_INDCi2030_500f,0.6982382268839367,Countries of Sub-Saharan Africa
+WITCH 5.0,EN_NPi2020_400f,0.6829882591710978,Countries of Sub-Saharan Africa
+WITCH 5.0,EN_NPi2020_450,0.636341356053179,Countries of Sub-Saharan Africa
+WITCH 5.0,EN_NPi2020_450f,0.6803949445673685,Countries of Sub-Saharan Africa
+WITCH 5.0,EN_NPi2020_500,0.6447414513605436,Countries of Sub-Saharan Africa
+WITCH 5.0,EN_NPi2020_500f,0.6772038394674639,Countries of Sub-Saharan Africa
+AIM/CGE 2.2,EN_NPi2020_300f,0.7321818303579044,Countries of centrally-planned Asia; primarily China
+AIM/CGE 2.2,EN_NPi2020_400f,0.7281417081649588,Countries of centrally-planned Asia; primarily China
+AIM/CGE 2.2,EN_NPi2020_500f,0.7265721801315117,Countries of centrally-planned Asia; primarily China
+AIM/CGE 2.2,EN_NPi2020_600,0.6321366848449719,Countries of centrally-planned Asia; primarily China
+AIM/CGE 2.2,EN_NPi2020_600f,0.7250366829934646,Countries of centrally-planned Asia; primarily China
+GCAM 5.3,NGFS2_Divergent Net Zero Policies,0.7783749687562445,Countries of centrally-planned Asia; primarily China
+GCAM 5.3,NGFS2_Net-Zero 2050,0.8614766695124918,Countries of centrally-planned Asia; primarily China
+IMAGE 3.2,SSP1_SPA1_19I_D,0.8656178085605906,Countries of centrally-planned Asia; primarily China
+IMAGE 3.2,SSP1_SPA1_19I_D_LB,0.6652166433561585,Countries of centrally-planned Asia; primarily China
+IMAGE 3.2,SSP1_SPA1_19I_LI,0.8329371051667915,Countries of centrally-planned Asia; primarily China
+IMAGE 3.2,SSP1_SPA1_19I_LIRE,0.9120861464808818,Countries of centrally-planned Asia; primarily China
+IMAGE 3.2,SSP1_SPA1_19I_LIRE_LB,0.8465831809599718,Countries of centrally-planned Asia; primarily China
+IMAGE 3.2,SSP1_SPA1_19I_RE,0.7823141487878449,Countries of centrally-planned Asia; primarily China
+IMAGE 3.2,SSP1_SPA1_19I_RE_LB,0.6531057090617249,Countries of centrally-planned Asia; primarily China
+IMAGE 3.2,SSP2_SPA1_19I_D_LB,0.91069327811232,Countries of centrally-planned Asia; primarily China
+IMAGE 3.2,SSP2_SPA1_19I_LIRE_LB,0.840381166826635,Countries of centrally-planned Asia; primarily China
+IMAGE 3.2,SSP2_SPA1_19I_RE_LB,0.8167655840331447,Countries of centrally-planned Asia; primarily China
+IMAGE 3.2,SSP2_SPA2_19I_D,0.9917695354291756,Countries of centrally-planned Asia; primarily China
+IMAGE 3.2,SSP2_SPA2_19I_LI,1.0432172423840989,Countries of centrally-planned Asia; primarily China
+IMAGE 3.2,SSP2_SPA2_19I_LIRE,0.9317382147660445,Countries of centrally-planned Asia; primarily China
+IMAGE 3.2,SSP2_SPA2_19I_RE,0.9223306891380522,Countries of centrally-planned Asia; primarily China
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_600f_COV,0.9347853550011846,Countries of centrally-planned Asia; primarily China
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_600f_COV_NDCp,0.9216115354813008,Countries of centrally-planned Asia; primarily China
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_700f,0.9069663354213631,Countries of centrally-planned Asia; primarily China
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_700f_COV,0.9182902801247866,Countries of centrally-planned Asia; primarily China
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_700f_COV_NDCp,0.9113556860860008,Countries of centrally-planned Asia; primarily China
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_700f_NDCp,0.9015820226409914,Countries of centrally-planned Asia; primarily China
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_200f,0.9330463258294772,Countries of centrally-planned Asia; primarily China
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_300f,0.9255979081198444,Countries of centrally-planned Asia; primarily China
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_400f,0.9231315658725154,Countries of centrally-planned Asia; primarily China
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_450,0.8855738496298894,Countries of centrally-planned Asia; primarily China
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_450f,0.9240137327313563,Countries of centrally-planned Asia; primarily China
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_500,0.8754299985795817,Countries of centrally-planned Asia; primarily China
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_500f,0.9222891738937029,Countries of centrally-planned Asia; primarily China
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600,0.8691052458381293,Countries of centrally-planned Asia; primarily China
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_COV,0.8880431635140262,Countries of centrally-planned Asia; primarily China
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR10p,0.6657033755684937,Countries of centrally-planned Asia; primarily China
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR1p,0.8817249359824175,Countries of centrally-planned Asia; primarily China
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR2p,0.8914499914022582,Countries of centrally-planned Asia; primarily China
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR3p,0.8960147556493943,Countries of centrally-planned Asia; primarily China
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR4p,0.8894176901850392,Countries of centrally-planned Asia; primarily China
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f,0.9183056481603621,Countries of centrally-planned Asia; primarily China
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_COV,0.9326910033358675,Countries of centrally-planned Asia; primarily China
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR10p,0.6021469976133973,Countries of centrally-planned Asia; primarily China
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR1p,0.8945805977862564,Countries of centrally-planned Asia; primarily China
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR2p,0.9022273990146668,Countries of centrally-planned Asia; primarily China
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR3p,0.9080059958113078,Countries of centrally-planned Asia; primarily China
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR4p,0.9167742666245187,Countries of centrally-planned Asia; primarily China
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_700,0.86995568636243,Countries of centrally-planned Asia; primarily China
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_700_COV,0.8943785429711513,Countries of centrally-planned Asia; primarily China
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_700f,0.9160927575767137,Countries of centrally-planned Asia; primarily China
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_700f_COV,0.9270301946768933,Countries of centrally-planned Asia; primarily China
+MESSAGEix-GLOBIOM_1.1,NGFS2_Divergent Net Zero Policies,0.9130797315759434,Countries of centrally-planned Asia; primarily China
+MESSAGEix-GLOBIOM_1.1,NGFS2_Net-Zero 2050,0.8884356837398489,Countries of centrally-planned Asia; primarily China
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_int_mc_50,0.9325286708307088,Countries of centrally-planned Asia; primarily China
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_noint_mc_50,0.9385248736429074,Countries of centrally-planned Asia; primarily China
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_100,0.6196756698561178,Countries of centrally-planned Asia; primarily China
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_120,0.6150551012507336,Countries of centrally-planned Asia; primarily China
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_80,0.6255880475775766,Countries of centrally-planned Asia; primarily China
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB400,0.7222440511189009,Countries of centrally-planned Asia; primarily China
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB450,0.6904560019305537,Countries of centrally-planned Asia; primarily China
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB500,0.6838957404973525,Countries of centrally-planned Asia; primarily China
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB550,0.6690512221623195,Countries of centrally-planned Asia; primarily China
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB600,0.643405300909558,Countries of centrally-planned Asia; primarily China
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_mc_50,0.9373609914855161,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 1.7-3.0,CD-LINKS_INDC2030i_1000,0.7542367264862899,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 1.7-3.0,CD-LINKS_INDC2030i_400,0.7460407592506721,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 1.7-3.0,CD-LINKS_NPi2020_1000,0.7560107143141992,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 1.7-3.0,CD-LINKS_NPi2020_400,0.734811927947046,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 1.7-3.0,CO_2Deg2020,0.724127794969446,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 1.7-3.0,CO_2Deg2030,0.7337908781966787,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 1.7-3.0,CO_Bridge,0.7266739795207984,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_full_NDC,0.7147555555066873,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_full_eff,0.7015524861101627,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_full_goodpractice,0.7366439015430302,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_full_netzero,0.7355489000961102,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_red_eff,0.6380952156913575,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 1.7-3.0,PEP_2C_full_NDC,0.7337908781966787,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 1.7-3.0,PEP_2C_full_eff,0.724127794969446,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 1.7-3.0,PEP_2C_full_goodpractice,0.7519371610770561,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 1.7-3.0,PEP_2C_full_netzero,0.7406043532336937,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 1.7-3.0,PEP_2C_red_NDC,0.6131466204896522,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 1.7-3.0,PEP_2C_red_eff,0.5991662032405429,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 1.7-3.0,PEP_2C_red_goodpractice,0.6187366229568008,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 1.7-3.0,PEP_2C_red_netzero,0.5868713219964032,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 2.1-4.2,CEMICS_SSP1-1p5C-fullCDR,0.7073462040638296,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 2.1-4.2,CEMICS_SSP1-1p5C-minCDR,0.6865156399254904,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 2.1-4.2,CEMICS_SSP2-1p5C-fullCDR,0.7810041607256797,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 2.1-4.2,CEMICS_SSP2-1p5C-minCDR,0.7463886719114228,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_300f,0.6611365932439865,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_400f,0.6618112286909097,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_500f,0.6645859031968165,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600_COV,0.7595528497448055,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600_COV_NDCp,0.7500636647009791,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600f,0.664106772474008,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600f_COV,0.7230995568891883,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600f_COV_NDCp,0.7219394201322525,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600f_NDCp,0.6629236673349279,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_200f,0.6867143036255258,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_300f,0.6875523930501134,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_400,0.6937544250256298,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_400f,0.6844285092966748,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_500,0.6792501157516456,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_500f,0.6769736700439798,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_600,0.6623556732733283,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_600_COV,0.7362787720420869,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_600f,0.6691708541855116,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_600f_COV,0.7399194947417885,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 2.1-4.2,NGFS2_Divergent Net Zero Policies,0.7554058882917416,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 2.1-4.2,NGFS2_Net-Zero 2050,0.7278984590861068,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 2.1-4.2,SusDev_SDP-PkBudg1000,0.7223162969877364,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 2.1-4.2,SusDev_SSP1-PkBudg900,0.7136891618567425,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 2.1-4.2,SusDev_SSP2-PkBudg900,0.7475761508931411,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 2.1-4.3,DeepElec_SSP2_ HighRE_Budg900,0.6515532658584938,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 2.1-4.3,DeepElec_SSP2_def_Budg1100,0.7845453837278766,Countries of centrally-planned Asia; primarily China
+REMIND-MAgPIE 2.1-4.3,DeepElec_SSP2_def_Budg900,0.7950331106651649,Countries of centrally-planned Asia; primarily China
+WITCH 5.0,EN_INDCi2030_500f,0.6746868690036836,Countries of centrally-planned Asia; primarily China
+WITCH 5.0,EN_NPi2020_400f,0.6681290902026887,Countries of centrally-planned Asia; primarily China
+WITCH 5.0,EN_NPi2020_450,0.6761706405867649,Countries of centrally-planned Asia; primarily China
+WITCH 5.0,EN_NPi2020_450f,0.6677518980344187,Countries of centrally-planned Asia; primarily China
+WITCH 5.0,EN_NPi2020_500,0.6737710999868395,Countries of centrally-planned Asia; primarily China
+WITCH 5.0,EN_NPi2020_500f,0.6643114389997723,Countries of centrally-planned Asia; primarily China
+AIM/CGE 2.2,EN_NPi2020_300f,0.6354346088102385,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+AIM/CGE 2.2,EN_NPi2020_400f,0.6296153957689079,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+AIM/CGE 2.2,EN_NPi2020_500f,0.6274075942528132,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+AIM/CGE 2.2,EN_NPi2020_600,0.6176874518413402,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+AIM/CGE 2.2,EN_NPi2020_600f,0.6261990908910611,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+GCAM 5.3,NGFS2_Divergent Net Zero Policies,0.9196022150334462,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+GCAM 5.3,NGFS2_Net-Zero 2050,0.8858577859684478,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+IMAGE 3.2,SSP1_SPA1_19I_D,0.7192662807771139,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+IMAGE 3.2,SSP1_SPA1_19I_D_LB,0.5577974422089765,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+IMAGE 3.2,SSP1_SPA1_19I_LI,0.6793886566452663,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+IMAGE 3.2,SSP1_SPA1_19I_LIRE,0.3998432517638552,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+IMAGE 3.2,SSP1_SPA1_19I_LIRE_LB,0.35516766507110764,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+IMAGE 3.2,SSP1_SPA1_19I_RE,0.6138021505434755,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+IMAGE 3.2,SSP1_SPA1_19I_RE_LB,0.39397001128808157,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+IMAGE 3.2,SSP2_SPA1_19I_D_LB,0.8963100510878619,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+IMAGE 3.2,SSP2_SPA1_19I_LIRE_LB,0.36734741465263687,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+IMAGE 3.2,SSP2_SPA1_19I_RE_LB,0.3601889442569515,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+IMAGE 3.2,SSP2_SPA2_19I_D,0.846586896199231,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+IMAGE 3.2,SSP2_SPA2_19I_LI,1.0022704091000958,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+IMAGE 3.2,SSP2_SPA2_19I_LIRE,0.5032270463490309,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+IMAGE 3.2,SSP2_SPA2_19I_RE,0.5932437036725845,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_600f_COV,0.25494869503552164,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_600f_COV_NDCp,0.2534314707815903,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_700f,0.22117348610005008,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_700f_COV,0.2418245176015863,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_700f_COV_NDCp,0.24194500860903365,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_700f_NDCp,0.22111789694351539,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_200f,0.2194806216703465,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_300f,0.18637165771537628,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_400f,0.18534022173767828,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_450,0.1666295307542013,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_450f,0.2152732398337669,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_500,0.15341476302065535,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_500f,0.21727253836308175,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600,0.15331704676638022,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_COV,0.15677555927366413,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR10p,0.09038396774345187,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR1p,0.17001900830687305,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR2p,0.1787223386798949,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR3p,0.18363324358146682,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR4p,0.18630825347561814,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f,0.14972607999528065,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_COV,0.13926969264247444,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR10p,0.07163609703502657,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR1p,0.17762146665407913,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR2p,0.2360420898674558,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR3p,0.26096820593165204,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR4p,0.20430078174499586,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_700,0.1499259498822728,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_700_COV,0.1380424195103797,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_700f,0.1371547569137865,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_700f_COV,0.12396682595782375,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+MESSAGEix-GLOBIOM_1.1,NGFS2_Divergent Net Zero Policies,0.20765676892635326,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+MESSAGEix-GLOBIOM_1.1,NGFS2_Net-Zero 2050,0.16343485061467355,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_int_mc_50,0.33610540269255773,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_noint_mc_50,0.346826972298221,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_100,0.26164451116700066,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_120,0.2724247076090617,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_80,0.24367773871306503,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB400,0.3009501357924463,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB450,0.29947115702317306,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB500,0.29862185751090886,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB550,0.3059410868360335,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB600,0.28726585237415625,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_mc_50,0.2541308254575171,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 1.7-3.0,CD-LINKS_INDC2030i_1000,0.6571496733581137,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 1.7-3.0,CD-LINKS_INDC2030i_400,0.6987245581228541,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 1.7-3.0,CD-LINKS_NPi2020_1000,0.5346051299559436,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 1.7-3.0,CD-LINKS_NPi2020_400,0.6807086437855595,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 1.7-3.0,CO_2Deg2020,0.4573466162534942,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 1.7-3.0,CO_2Deg2030,0.6581438613295026,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 1.7-3.0,CO_Bridge,0.3628621269688038,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_full_NDC,0.6965561237846436,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_full_eff,0.6847642838177179,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_full_goodpractice,0.6960874083301227,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_full_netzero,0.6953882539028089,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_red_eff,0.5638091024644845,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 1.7-3.0,PEP_2C_full_NDC,0.6581438613295026,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 1.7-3.0,PEP_2C_full_eff,0.4573466162534942,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 1.7-3.0,PEP_2C_full_goodpractice,0.6236079066016997,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 1.7-3.0,PEP_2C_full_netzero,0.5405562996188347,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 1.7-3.0,PEP_2C_red_NDC,0.5260683367537774,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 1.7-3.0,PEP_2C_red_eff,0.504147870252312,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 1.7-3.0,PEP_2C_red_goodpractice,0.5344038797317149,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 1.7-3.0,PEP_2C_red_netzero,0.5257460807680037,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 2.1-4.2,CEMICS_SSP1-1p5C-fullCDR,0.6553360630494687,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 2.1-4.2,CEMICS_SSP1-1p5C-minCDR,0.5815600972189003,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 2.1-4.2,CEMICS_SSP2-1p5C-fullCDR,0.5702074037787388,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 2.1-4.2,CEMICS_SSP2-1p5C-minCDR,0.5102500237583601,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_300f,0.2198889020699116,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_400f,0.24556399912544902,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_500f,0.24525261028667109,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600_COV,0.6120485115104785,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600_COV_NDCp,0.6100445116822619,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600f,0.24356089933294983,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600f_COV,0.5150525929963101,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600f_COV_NDCp,0.518549158289733,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600f_NDCp,0.24100401982438316,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_200f,0.2521246828706314,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_300f,0.26838207490195287,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_400,0.41413385353022736,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_400f,0.26060888815390043,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_500,0.3927366994955742,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_500f,0.27071985958957356,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_600,0.3922096916699502,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_600_COV,0.6114839046333009,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_600f,0.2930245679746324,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_600f_COV,0.5377548039830246,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 2.1-4.2,NGFS2_Divergent Net Zero Policies,0.6062655433521118,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 2.1-4.2,NGFS2_Net-Zero 2050,0.6251651679905164,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 2.1-4.2,SusDev_SDP-PkBudg1000,0.5343968744064385,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 2.1-4.2,SusDev_SSP1-PkBudg900,0.6678206437550582,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 2.1-4.2,SusDev_SSP2-PkBudg900,0.5289307460998509,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 2.1-4.3,DeepElec_SSP2_ HighRE_Budg900,0.25008892422895956,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 2.1-4.3,DeepElec_SSP2_def_Budg1100,0.6519871429217806,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+REMIND-MAgPIE 2.1-4.3,DeepElec_SSP2_def_Budg900,0.6964786823848161,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+WITCH 5.0,EN_INDCi2030_500f,0.11461038783205724,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+WITCH 5.0,EN_NPi2020_400f,0.11268470846213344,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+WITCH 5.0,EN_NPi2020_450,0.1315949027830662,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+WITCH 5.0,EN_NPi2020_450f,0.11293928316352315,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+WITCH 5.0,EN_NPi2020_500,0.11680583273622011,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+WITCH 5.0,EN_NPi2020_500f,0.1132081547099913,"Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc."
+AIM/CGE 2.2,EN_NPi2020_300f,1.02515538149044,"Eastern and Western Europe (i.e., the EU28)"
+AIM/CGE 2.2,EN_NPi2020_400f,1.0288611056059778,"Eastern and Western Europe (i.e., the EU28)"
+AIM/CGE 2.2,EN_NPi2020_500f,1.0325218217914038,"Eastern and Western Europe (i.e., the EU28)"
+AIM/CGE 2.2,EN_NPi2020_600,1.0345636154448319,"Eastern and Western Europe (i.e., the EU28)"
+AIM/CGE 2.2,EN_NPi2020_600f,1.0347149773481483,"Eastern and Western Europe (i.e., the EU28)"
+GCAM 5.3,NGFS2_Divergent Net Zero Policies,0.8330139114700597,"Eastern and Western Europe (i.e., the EU28)"
+GCAM 5.3,NGFS2_Net-Zero 2050,0.8386878846534543,"Eastern and Western Europe (i.e., the EU28)"
+IMAGE 3.2,SSP1_SPA1_19I_D,0.8260418205898545,"Eastern and Western Europe (i.e., the EU28)"
+IMAGE 3.2,SSP1_SPA1_19I_D_LB,0.8433100363951671,"Eastern and Western Europe (i.e., the EU28)"
+IMAGE 3.2,SSP1_SPA1_19I_LI,0.8024721052159254,"Eastern and Western Europe (i.e., the EU28)"
+IMAGE 3.2,SSP1_SPA1_19I_LIRE,0.9059395345409558,"Eastern and Western Europe (i.e., the EU28)"
+IMAGE 3.2,SSP1_SPA1_19I_LIRE_LB,0.8854452435538114,"Eastern and Western Europe (i.e., the EU28)"
+IMAGE 3.2,SSP1_SPA1_19I_RE,0.8026566142963529,"Eastern and Western Europe (i.e., the EU28)"
+IMAGE 3.2,SSP1_SPA1_19I_RE_LB,0.7946421029610832,"Eastern and Western Europe (i.e., the EU28)"
+IMAGE 3.2,SSP2_SPA1_19I_D_LB,1.0465470716500511,"Eastern and Western Europe (i.e., the EU28)"
+IMAGE 3.2,SSP2_SPA1_19I_LIRE_LB,0.8911326080908134,"Eastern and Western Europe (i.e., the EU28)"
+IMAGE 3.2,SSP2_SPA1_19I_RE_LB,0.8933010928328424,"Eastern and Western Europe (i.e., the EU28)"
+IMAGE 3.2,SSP2_SPA2_19I_D,0.9244498311744679,"Eastern and Western Europe (i.e., the EU28)"
+IMAGE 3.2,SSP2_SPA2_19I_LI,0.9501296915355939,"Eastern and Western Europe (i.e., the EU28)"
+IMAGE 3.2,SSP2_SPA2_19I_LIRE,0.8563186894669234,"Eastern and Western Europe (i.e., the EU28)"
+IMAGE 3.2,SSP2_SPA2_19I_RE,0.8183993948377069,"Eastern and Western Europe (i.e., the EU28)"
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_600f_COV,0.8880011252771249,"Eastern and Western Europe (i.e., the EU28)"
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_600f_COV_NDCp,0.8823221486293249,"Eastern and Western Europe (i.e., the EU28)"
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_700f,0.8949754877377974,"Eastern and Western Europe (i.e., the EU28)"
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_700f_COV,0.8753494285550244,"Eastern and Western Europe (i.e., the EU28)"
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_700f_COV_NDCp,0.8650842068937862,"Eastern and Western Europe (i.e., the EU28)"
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_700f_NDCp,0.8825426686914997,"Eastern and Western Europe (i.e., the EU28)"
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_200f,0.9519396820092046,"Eastern and Western Europe (i.e., the EU28)"
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_300f,0.94457887843941,"Eastern and Western Europe (i.e., the EU28)"
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_400f,0.9425405267121729,"Eastern and Western Europe (i.e., the EU28)"
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_450,0.8963192101881028,"Eastern and Western Europe (i.e., the EU28)"
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_450f,0.9354557143038771,"Eastern and Western Europe (i.e., the EU28)"
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_500,0.8536773237383974,"Eastern and Western Europe (i.e., the EU28)"
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_500f,0.9215941714861151,"Eastern and Western Europe (i.e., the EU28)"
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600,0.8583105191776996,"Eastern and Western Europe (i.e., the EU28)"
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_COV,0.8636647226544524,"Eastern and Western Europe (i.e., the EU28)"
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR10p,0.5918769196643974,"Eastern and Western Europe (i.e., the EU28)"
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR1p,0.9061121821995013,"Eastern and Western Europe (i.e., the EU28)"
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR2p,0.9064787969230041,"Eastern and Western Europe (i.e., the EU28)"
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR3p,0.9031280497429657,"Eastern and Western Europe (i.e., the EU28)"
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR4p,0.9004406090953163,"Eastern and Western Europe (i.e., the EU28)"
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f,0.9278845048852316,"Eastern and Western Europe (i.e., the EU28)"
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_COV,0.9024668750965588,"Eastern and Western Europe (i.e., the EU28)"
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR10p,0.7085153662840661,"Eastern and Western Europe (i.e., the EU28)"
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR1p,0.9344893445635861,"Eastern and Western Europe (i.e., the EU28)"
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR2p,0.9436939177314743,"Eastern and Western Europe (i.e., the EU28)"
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR3p,0.950840832664806,"Eastern and Western Europe (i.e., the EU28)"
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR4p,0.9487379739919688,"Eastern and Western Europe (i.e., the EU28)"
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_700,0.8781629688768104,"Eastern and Western Europe (i.e., the EU28)"
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_700_COV,0.8798970994337355,"Eastern and Western Europe (i.e., the EU28)"
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_700f,0.9378388006299714,"Eastern and Western Europe (i.e., the EU28)"
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_700f_COV,0.8899232340998211,"Eastern and Western Europe (i.e., the EU28)"
+MESSAGEix-GLOBIOM_1.1,NGFS2_Divergent Net Zero Policies,0.899387004545114,"Eastern and Western Europe (i.e., the EU28)"
+MESSAGEix-GLOBIOM_1.1,NGFS2_Net-Zero 2050,0.9443333941618186,"Eastern and Western Europe (i.e., the EU28)"
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_int_mc_50,0.7433405402230122,"Eastern and Western Europe (i.e., the EU28)"
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_noint_mc_50,0.7079264878964421,"Eastern and Western Europe (i.e., the EU28)"
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_100,0.5495667941854879,"Eastern and Western Europe (i.e., the EU28)"
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_120,0.5480490589204068,"Eastern and Western Europe (i.e., the EU28)"
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_80,0.5485821127903895,"Eastern and Western Europe (i.e., the EU28)"
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB400,0.5676798377551038,"Eastern and Western Europe (i.e., the EU28)"
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB450,0.5568095894943949,"Eastern and Western Europe (i.e., the EU28)"
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB500,0.5572854035600064,"Eastern and Western Europe (i.e., the EU28)"
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB550,0.5576170820722964,"Eastern and Western Europe (i.e., the EU28)"
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB600,0.5566686215150294,"Eastern and Western Europe (i.e., the EU28)"
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_mc_50,0.7482148152819184,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 1.7-3.0,CD-LINKS_INDC2030i_1000,0.6611173027595021,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 1.7-3.0,CD-LINKS_INDC2030i_400,0.6768283295943416,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 1.7-3.0,CD-LINKS_NPi2020_1000,0.6113303597799846,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 1.7-3.0,CD-LINKS_NPi2020_400,0.6444478075673163,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 1.7-3.0,CO_2Deg2020,0.5992575707466705,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 1.7-3.0,CO_2Deg2030,0.6537455863301797,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 1.7-3.0,CO_Bridge,0.6430813885797326,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_full_NDC,0.6663043494238287,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_full_eff,0.6293790555641376,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_full_goodpractice,0.6652790308351844,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_full_netzero,0.6687292818910497,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_red_eff,0.449358173358119,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 1.7-3.0,PEP_2C_full_NDC,0.6537455863301797,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 1.7-3.0,PEP_2C_full_eff,0.5992575707466705,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 1.7-3.0,PEP_2C_full_goodpractice,0.654806371168122,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 1.7-3.0,PEP_2C_full_netzero,0.6581237265719109,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 1.7-3.0,PEP_2C_red_NDC,0.497636978719927,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 1.7-3.0,PEP_2C_red_eff,0.48403517450008837,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 1.7-3.0,PEP_2C_red_goodpractice,0.5028598701297411,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 1.7-3.0,PEP_2C_red_netzero,0.5072121907504349,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 2.1-4.2,CEMICS_SSP1-1p5C-fullCDR,0.7324007445347824,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 2.1-4.2,CEMICS_SSP1-1p5C-minCDR,0.7207516154345397,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 2.1-4.2,CEMICS_SSP2-1p5C-fullCDR,0.6899828443181985,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 2.1-4.2,CEMICS_SSP2-1p5C-minCDR,0.6345823232041161,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_300f,0.5992539041103747,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_400f,0.6022496676328578,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_500f,0.606949794006914,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600_COV,0.6908178146485774,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600_COV_NDCp,0.6988929815570406,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600f,0.6072433450338592,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600f_COV,0.6866025922266281,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600f_COV_NDCp,0.6966363989948712,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600f_NDCp,0.6260108666877935,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_200f,0.6015287934868083,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_300f,0.603558777096054,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_400,0.6117573059475824,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_400f,0.6032818072849734,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_500,0.6200827370076087,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_500f,0.6027308667433824,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_600,0.6148100705986576,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_600_COV,0.6661821328142272,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_600f,0.6070425150630387,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_600f_COV,0.6794321213036475,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 2.1-4.2,NGFS2_Divergent Net Zero Policies,0.6573420389494695,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 2.1-4.2,NGFS2_Net-Zero 2050,0.6927243178549078,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 2.1-4.2,SusDev_SDP-PkBudg1000,0.7359090426570769,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 2.1-4.2,SusDev_SSP1-PkBudg900,0.7018586539635291,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 2.1-4.2,SusDev_SSP2-PkBudg900,0.6908853922845377,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 2.1-4.3,DeepElec_SSP2_ HighRE_Budg900,0.614886517152021,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 2.1-4.3,DeepElec_SSP2_def_Budg1100,0.7255024103810553,"Eastern and Western Europe (i.e., the EU28)"
+REMIND-MAgPIE 2.1-4.3,DeepElec_SSP2_def_Budg900,0.7266175294880444,"Eastern and Western Europe (i.e., the EU28)"
+WITCH 5.0,EN_INDCi2030_500f,0.7429116782544414,"Eastern and Western Europe (i.e., the EU28)"
+WITCH 5.0,EN_NPi2020_400f,0.7486329011203079,"Eastern and Western Europe (i.e., the EU28)"
+WITCH 5.0,EN_NPi2020_450,0.7438825881651352,"Eastern and Western Europe (i.e., the EU28)"
+WITCH 5.0,EN_NPi2020_450f,0.7473438712325459,"Eastern and Western Europe (i.e., the EU28)"
+WITCH 5.0,EN_NPi2020_500,0.7407251223612474,"Eastern and Western Europe (i.e., the EU28)"
+WITCH 5.0,EN_NPi2020_500f,0.7460792638554322,"Eastern and Western Europe (i.e., the EU28)"
+AIM/CGE 2.2,EN_NPi2020_300f,0.9441817342332336,Other countries of Asia
+AIM/CGE 2.2,EN_NPi2020_400f,0.9479431807372525,Other countries of Asia
+AIM/CGE 2.2,EN_NPi2020_500f,0.9527717187790008,Other countries of Asia
+AIM/CGE 2.2,EN_NPi2020_600,0.9539537578307355,Other countries of Asia
+AIM/CGE 2.2,EN_NPi2020_600f,0.9461979089645447,Other countries of Asia
+GCAM 5.3,NGFS2_Divergent Net Zero Policies,0.8715775401039387,Other countries of Asia
+GCAM 5.3,NGFS2_Net-Zero 2050,0.8647429942862235,Other countries of Asia
+IMAGE 3.2,SSP1_SPA1_19I_D,0.7997198354857075,Other countries of Asia
+IMAGE 3.2,SSP1_SPA1_19I_D_LB,0.8587298793956598,Other countries of Asia
+IMAGE 3.2,SSP1_SPA1_19I_LI,0.7770415792321195,Other countries of Asia
+IMAGE 3.2,SSP1_SPA1_19I_LIRE,1.0092100469379641,Other countries of Asia
+IMAGE 3.2,SSP1_SPA1_19I_LIRE_LB,0.991394125228082,Other countries of Asia
+IMAGE 3.2,SSP1_SPA1_19I_RE,0.8202445114999499,Other countries of Asia
+IMAGE 3.2,SSP1_SPA1_19I_RE_LB,0.8767347286389038,Other countries of Asia
+IMAGE 3.2,SSP2_SPA1_19I_D_LB,0.9639095129735438,Other countries of Asia
+IMAGE 3.2,SSP2_SPA1_19I_LIRE_LB,1.016634859533662,Other countries of Asia
+IMAGE 3.2,SSP2_SPA1_19I_RE_LB,1.019532616561347,Other countries of Asia
+IMAGE 3.2,SSP2_SPA2_19I_D,0.7794148260337866,Other countries of Asia
+IMAGE 3.2,SSP2_SPA2_19I_LI,0.8462383392506952,Other countries of Asia
+IMAGE 3.2,SSP2_SPA2_19I_LIRE,1.0383028441945727,Other countries of Asia
+IMAGE 3.2,SSP2_SPA2_19I_RE,1.0179035880922878,Other countries of Asia
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_600f_COV,1.011256300649146,Other countries of Asia
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_600f_COV_NDCp,1.009097646447439,Other countries of Asia
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_700f,0.9968761709478287,Other countries of Asia
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_700f_COV,0.998585976318658,Other countries of Asia
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_700f_COV_NDCp,0.9967764999907145,Other countries of Asia
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_700f_NDCp,0.9956602500040315,Other countries of Asia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_200f,1.0111905121652445,Other countries of Asia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_300f,1.0017833553725337,Other countries of Asia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_400f,0.9903592418919651,Other countries of Asia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_450,0.9382504227549808,Other countries of Asia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_450f,0.9850600974097548,Other countries of Asia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_500,0.9395953514384818,Other countries of Asia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_500f,0.9797158757190909,Other countries of Asia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600,0.9322176510166523,Other countries of Asia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_COV,0.940554774743857,Other countries of Asia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR10p,0.5988818107169095,Other countries of Asia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR1p,0.9735922076069061,Other countries of Asia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR2p,0.9758830756626429,Other countries of Asia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR3p,0.9625799360179987,Other countries of Asia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR4p,0.9513511741141276,Other countries of Asia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f,0.9813321491776952,Other countries of Asia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_COV,0.9709611467110173,Other countries of Asia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR10p,0.6924594220826017,Other countries of Asia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR1p,0.9690832448310436,Other countries of Asia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR2p,0.9726631189250798,Other countries of Asia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR3p,0.9798037726837172,Other countries of Asia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR4p,0.9739538040310985,Other countries of Asia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_700,0.9292035990943184,Other countries of Asia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_700_COV,0.9357095796779077,Other countries of Asia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_700f,0.9701679184163453,Other countries of Asia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_700f_COV,0.9718112788822066,Other countries of Asia
+MESSAGEix-GLOBIOM_1.1,NGFS2_Divergent Net Zero Policies,0.9495936302252488,Other countries of Asia
+MESSAGEix-GLOBIOM_1.1,NGFS2_Net-Zero 2050,0.9357988022837289,Other countries of Asia
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_int_mc_50,1.0913764305465712,Other countries of Asia
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_noint_mc_50,1.0922409313133814,Other countries of Asia
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_100,1.0324207975168815,Other countries of Asia
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_120,1.04797220005383,Other countries of Asia
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_80,1.0127773802513491,Other countries of Asia
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB400,1.080185854477552,Other countries of Asia
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB450,1.0727378651173964,Other countries of Asia
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB500,1.0718631089358837,Other countries of Asia
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB550,1.0678483912975776,Other countries of Asia
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB600,1.0644274443836725,Other countries of Asia
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_mc_50,1.092779127793121,Other countries of Asia
+REMIND-MAgPIE 1.7-3.0,CD-LINKS_INDC2030i_1000,0.587270463909335,Other countries of Asia
+REMIND-MAgPIE 1.7-3.0,CD-LINKS_INDC2030i_400,0.6066577401544005,Other countries of Asia
+REMIND-MAgPIE 1.7-3.0,CD-LINKS_NPi2020_1000,0.5413244396495597,Other countries of Asia
+REMIND-MAgPIE 1.7-3.0,CD-LINKS_NPi2020_400,0.5389783875371169,Other countries of Asia
+REMIND-MAgPIE 1.7-3.0,CO_2Deg2020,0.4939365495134556,Other countries of Asia
+REMIND-MAgPIE 1.7-3.0,CO_2Deg2030,0.5473403400005412,Other countries of Asia
+REMIND-MAgPIE 1.7-3.0,CO_Bridge,0.5222930439165603,Other countries of Asia
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_full_NDC,0.5635863486644507,Other countries of Asia
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_full_eff,0.5046138797936413,Other countries of Asia
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_full_goodpractice,0.5566788437922243,Other countries of Asia
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_full_netzero,0.5445343394209489,Other countries of Asia
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_red_eff,0.36498754804678757,Other countries of Asia
+REMIND-MAgPIE 1.7-3.0,PEP_2C_full_NDC,0.5473403400005412,Other countries of Asia
+REMIND-MAgPIE 1.7-3.0,PEP_2C_full_eff,0.4939365495134556,Other countries of Asia
+REMIND-MAgPIE 1.7-3.0,PEP_2C_full_goodpractice,0.5273634574613812,Other countries of Asia
+REMIND-MAgPIE 1.7-3.0,PEP_2C_full_netzero,0.5154105014027028,Other countries of Asia
+REMIND-MAgPIE 1.7-3.0,PEP_2C_red_NDC,0.4031165652827879,Other countries of Asia
+REMIND-MAgPIE 1.7-3.0,PEP_2C_red_eff,0.3957633977370314,Other countries of Asia
+REMIND-MAgPIE 1.7-3.0,PEP_2C_red_goodpractice,0.3996453770331163,Other countries of Asia
+REMIND-MAgPIE 1.7-3.0,PEP_2C_red_netzero,0.40412296957862504,Other countries of Asia
+REMIND-MAgPIE 2.1-4.2,CEMICS_SSP1-1p5C-fullCDR,0.6772671437100554,Other countries of Asia
+REMIND-MAgPIE 2.1-4.2,CEMICS_SSP1-1p5C-minCDR,0.6587959385136091,Other countries of Asia
+REMIND-MAgPIE 2.1-4.2,CEMICS_SSP2-1p5C-fullCDR,0.680165052947977,Other countries of Asia
+REMIND-MAgPIE 2.1-4.2,CEMICS_SSP2-1p5C-minCDR,0.6818827243262617,Other countries of Asia
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_300f,0.4778069575607015,Other countries of Asia
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_400f,0.47369114428553405,Other countries of Asia
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_500f,0.4728103911993049,Other countries of Asia
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600_COV,0.6323606239145187,Other countries of Asia
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600_COV_NDCp,0.6298298678375801,Other countries of Asia
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600f,0.4673290614901022,Other countries of Asia
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600f_COV,0.5688687673796569,Other countries of Asia
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600f_COV_NDCp,0.5682022702251439,Other countries of Asia
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600f_NDCp,0.4688591091116059,Other countries of Asia
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_200f,0.4818328050850397,Other countries of Asia
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_300f,0.48423475322626847,Other countries of Asia
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_400,0.5175862719708042,Other countries of Asia
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_400f,0.4875187857903456,Other countries of Asia
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_500,0.5187670751910662,Other countries of Asia
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_500f,0.49020080816715117,Other countries of Asia
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_600,0.521359691292927,Other countries of Asia
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_600_COV,0.5988978418797483,Other countries of Asia
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_600f,0.49273497988937626,Other countries of Asia
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_600f_COV,0.5684627227426297,Other countries of Asia
+REMIND-MAgPIE 2.1-4.2,NGFS2_Divergent Net Zero Policies,0.5563174013184059,Other countries of Asia
+REMIND-MAgPIE 2.1-4.2,NGFS2_Net-Zero 2050,0.5880792640147349,Other countries of Asia
+REMIND-MAgPIE 2.1-4.2,SusDev_SDP-PkBudg1000,0.608586148933717,Other countries of Asia
+REMIND-MAgPIE 2.1-4.2,SusDev_SSP1-PkBudg900,0.6373073078153234,Other countries of Asia
+REMIND-MAgPIE 2.1-4.2,SusDev_SSP2-PkBudg900,0.5544386320593495,Other countries of Asia
+REMIND-MAgPIE 2.1-4.3,DeepElec_SSP2_ HighRE_Budg900,0.4443168202239692,Other countries of Asia
+REMIND-MAgPIE 2.1-4.3,DeepElec_SSP2_def_Budg1100,0.7334471697428384,Other countries of Asia
+REMIND-MAgPIE 2.1-4.3,DeepElec_SSP2_def_Budg900,0.7305100370058206,Other countries of Asia
+WITCH 5.0,EN_INDCi2030_500f,0.7286688038638485,Other countries of Asia
+WITCH 5.0,EN_NPi2020_400f,0.7193502692699587,Other countries of Asia
+WITCH 5.0,EN_NPi2020_450,0.6983621570139469,Other countries of Asia
+WITCH 5.0,EN_NPi2020_450f,0.7189468444551125,Other countries of Asia
+WITCH 5.0,EN_NPi2020_500,0.7301184520160959,Other countries of Asia
+WITCH 5.0,EN_NPi2020_500f,0.7173803869042465,Other countries of Asia
+AIM/CGE 2.2,EN_NPi2020_300f,0.7724979595800938,Pacific OECD
+AIM/CGE 2.2,EN_NPi2020_400f,0.775691420577165,Pacific OECD
+AIM/CGE 2.2,EN_NPi2020_500f,0.7786433193495681,Pacific OECD
+AIM/CGE 2.2,EN_NPi2020_600,0.8187540906889674,Pacific OECD
+AIM/CGE 2.2,EN_NPi2020_600f,0.7805038366635093,Pacific OECD
+GCAM 5.3,NGFS2_Divergent Net Zero Policies,0.6749253194547347,Pacific OECD
+GCAM 5.3,NGFS2_Net-Zero 2050,0.7725172017257054,Pacific OECD
+IMAGE 3.2,SSP1_SPA1_19I_D,0.769679751327818,Pacific OECD
+IMAGE 3.2,SSP1_SPA1_19I_D_LB,1.0502798199346612,Pacific OECD
+IMAGE 3.2,SSP1_SPA1_19I_LI,0.7112508175847301,Pacific OECD
+IMAGE 3.2,SSP1_SPA1_19I_LIRE,0.8883546829745194,Pacific OECD
+IMAGE 3.2,SSP1_SPA1_19I_LIRE_LB,1.0569746693369493,Pacific OECD
+IMAGE 3.2,SSP1_SPA1_19I_RE,0.8450310737390012,Pacific OECD
+IMAGE 3.2,SSP1_SPA1_19I_RE_LB,1.0253202427101475,Pacific OECD
+IMAGE 3.2,SSP2_SPA1_19I_D_LB,1.0861900846588246,Pacific OECD
+IMAGE 3.2,SSP2_SPA1_19I_LIRE_LB,1.047061927850444,Pacific OECD
+IMAGE 3.2,SSP2_SPA1_19I_RE_LB,1.042713869042303,Pacific OECD
+IMAGE 3.2,SSP2_SPA2_19I_D,0.9647942092438682,Pacific OECD
+IMAGE 3.2,SSP2_SPA2_19I_LI,0.9837391120972185,Pacific OECD
+IMAGE 3.2,SSP2_SPA2_19I_LIRE,1.0236506372650265,Pacific OECD
+IMAGE 3.2,SSP2_SPA2_19I_RE,1.0257741355937644,Pacific OECD
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_600f_COV,0.9631774616151401,Pacific OECD
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_600f_COV_NDCp,0.9617745245869889,Pacific OECD
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_700f,0.949853960163632,Pacific OECD
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_700f_COV,0.9549286766049352,Pacific OECD
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_700f_COV_NDCp,0.9534339676897527,Pacific OECD
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_700f_NDCp,0.9532740304381082,Pacific OECD
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_200f,1.0089871809512108,Pacific OECD
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_300f,1.0105968647234826,Pacific OECD
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_400f,1.0096471657716934,Pacific OECD
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_450,0.9535920077730368,Pacific OECD
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_450f,1.0096828487206384,Pacific OECD
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_500,0.9430193453006974,Pacific OECD
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_500f,1.0155049108324181,Pacific OECD
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600,0.9530064623021424,Pacific OECD
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_COV,0.9711251720006453,Pacific OECD
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR10p,0.665534033362726,Pacific OECD
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR1p,0.9116724832116888,Pacific OECD
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR2p,0.9369497823959143,Pacific OECD
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR3p,0.937169602130044,Pacific OECD
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR4p,0.9520487912161611,Pacific OECD
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f,1.0144951999084713,Pacific OECD
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_COV,0.9997009129205536,Pacific OECD
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR10p,0.7663380400460861,Pacific OECD
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR1p,0.9501362002550329,Pacific OECD
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR2p,1.0032484765776617,Pacific OECD
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR3p,1.0048876244890559,Pacific OECD
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR4p,1.008447719667179,Pacific OECD
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_700,0.9614808946722907,Pacific OECD
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_700_COV,0.9604544527646627,Pacific OECD
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_700f,1.0133322092657808,Pacific OECD
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_700f_COV,0.9985452958161115,Pacific OECD
+MESSAGEix-GLOBIOM_1.1,NGFS2_Divergent Net Zero Policies,1.0002912217439712,Pacific OECD
+MESSAGEix-GLOBIOM_1.1,NGFS2_Net-Zero 2050,0.9759781216159766,Pacific OECD
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_int_mc_50,0.9569306727125046,Pacific OECD
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_noint_mc_50,0.9543609468742225,Pacific OECD
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_100,0.8080671547028306,Pacific OECD
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_120,0.8420089157935841,Pacific OECD
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_80,0.7836680303939806,Pacific OECD
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB400,0.9129061617728702,Pacific OECD
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB450,0.9021110694283669,Pacific OECD
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB500,0.8793781156969115,Pacific OECD
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB550,0.8786444941451834,Pacific OECD
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB600,0.8583594408727857,Pacific OECD
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_mc_50,0.9647623957876563,Pacific OECD
+REMIND-MAgPIE 1.7-3.0,CD-LINKS_INDC2030i_1000,1.080780163169775,Pacific OECD
+REMIND-MAgPIE 1.7-3.0,CD-LINKS_INDC2030i_400,1.0721476954940425,Pacific OECD
+REMIND-MAgPIE 1.7-3.0,CD-LINKS_NPi2020_1000,1.046656664974222,Pacific OECD
+REMIND-MAgPIE 1.7-3.0,CD-LINKS_NPi2020_400,1.0874416898376136,Pacific OECD
+REMIND-MAgPIE 1.7-3.0,CO_2Deg2020,1.0738184223089782,Pacific OECD
+REMIND-MAgPIE 1.7-3.0,CO_2Deg2030,1.08358589999207,Pacific OECD
+REMIND-MAgPIE 1.7-3.0,CO_Bridge,1.0663153535332808,Pacific OECD
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_full_NDC,1.0737793274064016,Pacific OECD
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_full_eff,1.0893125837837538,Pacific OECD
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_full_goodpractice,1.0684564353523869,Pacific OECD
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_full_netzero,1.0767301721820006,Pacific OECD
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_red_eff,1.0543804304583422,Pacific OECD
+REMIND-MAgPIE 1.7-3.0,PEP_2C_full_NDC,1.08358589999207,Pacific OECD
+REMIND-MAgPIE 1.7-3.0,PEP_2C_full_eff,1.0738184223089782,Pacific OECD
+REMIND-MAgPIE 1.7-3.0,PEP_2C_full_goodpractice,1.0764513092141965,Pacific OECD
+REMIND-MAgPIE 1.7-3.0,PEP_2C_full_netzero,1.08024728838785,Pacific OECD
+REMIND-MAgPIE 1.7-3.0,PEP_2C_red_NDC,1.0496053955706188,Pacific OECD
+REMIND-MAgPIE 1.7-3.0,PEP_2C_red_eff,1.0528000071536154,Pacific OECD
+REMIND-MAgPIE 1.7-3.0,PEP_2C_red_goodpractice,1.0451097689991826,Pacific OECD
+REMIND-MAgPIE 1.7-3.0,PEP_2C_red_netzero,1.040102457351068,Pacific OECD
+REMIND-MAgPIE 2.1-4.2,CEMICS_SSP1-1p5C-fullCDR,0.8177215545686607,Pacific OECD
+REMIND-MAgPIE 2.1-4.2,CEMICS_SSP1-1p5C-minCDR,0.8076088579844233,Pacific OECD
+REMIND-MAgPIE 2.1-4.2,CEMICS_SSP2-1p5C-fullCDR,0.8513285386168381,Pacific OECD
+REMIND-MAgPIE 2.1-4.2,CEMICS_SSP2-1p5C-minCDR,0.9203558013806294,Pacific OECD
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_300f,0.9263531943404324,Pacific OECD
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_400f,0.9074962489330886,Pacific OECD
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_500f,0.8937953895703246,Pacific OECD
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600_COV,0.8647880834052173,Pacific OECD
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600_COV_NDCp,0.8660268991041187,Pacific OECD
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600f,0.8694919976715467,Pacific OECD
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600f_COV,0.8679358657677266,Pacific OECD
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600f_COV_NDCp,0.8683167839823929,Pacific OECD
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600f_NDCp,0.8673369464702685,Pacific OECD
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_200f,0.8999599131446163,Pacific OECD
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_300f,0.8813394548934279,Pacific OECD
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_400,0.8462413526560177,Pacific OECD
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_400f,0.8618781965173252,Pacific OECD
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_500,0.8500653214447444,Pacific OECD
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_500f,0.8455179182881756,Pacific OECD
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_600,0.8469576165296393,Pacific OECD
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_600_COV,0.8575227543595979,Pacific OECD
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_600f,0.8375077783643325,Pacific OECD
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_600f_COV,0.8596627828660124,Pacific OECD
+REMIND-MAgPIE 2.1-4.2,NGFS2_Divergent Net Zero Policies,0.8561619902468911,Pacific OECD
+REMIND-MAgPIE 2.1-4.2,NGFS2_Net-Zero 2050,0.8549744352122306,Pacific OECD
+REMIND-MAgPIE 2.1-4.2,SusDev_SDP-PkBudg1000,0.8596274134355006,Pacific OECD
+REMIND-MAgPIE 2.1-4.2,SusDev_SSP1-PkBudg900,0.8468406382696113,Pacific OECD
+REMIND-MAgPIE 2.1-4.2,SusDev_SSP2-PkBudg900,0.8726309243238894,Pacific OECD
+REMIND-MAgPIE 2.1-4.3,DeepElec_SSP2_ HighRE_Budg900,0.8276966515426212,Pacific OECD
+REMIND-MAgPIE 2.1-4.3,DeepElec_SSP2_def_Budg1100,0.8801356559974676,Pacific OECD
+REMIND-MAgPIE 2.1-4.3,DeepElec_SSP2_def_Budg900,0.860593725755075,Pacific OECD
+WITCH 5.0,EN_INDCi2030_500f,0.9000318046413587,Pacific OECD
+WITCH 5.0,EN_NPi2020_400f,0.9217647964744066,Pacific OECD
+WITCH 5.0,EN_NPi2020_450,0.9223455793099735,Pacific OECD
+WITCH 5.0,EN_NPi2020_450f,0.9215713207166067,Pacific OECD
+WITCH 5.0,EN_NPi2020_500,0.9085962145897435,Pacific OECD
+WITCH 5.0,EN_NPi2020_500f,0.921486647420678,Pacific OECD
+AIM/CGE 2.2,EN_NPi2020_300f,0.923716825664175,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+AIM/CGE 2.2,EN_NPi2020_400f,0.9222355822864532,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+AIM/CGE 2.2,EN_NPi2020_500f,0.9252630575211137,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+AIM/CGE 2.2,EN_NPi2020_600,0.8985587477209895,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+AIM/CGE 2.2,EN_NPi2020_600f,0.9288882643574279,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+GCAM 5.3,NGFS2_Divergent Net Zero Policies,0.86513935558367,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+GCAM 5.3,NGFS2_Net-Zero 2050,0.8560155655590493,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+IMAGE 3.2,SSP1_SPA1_19I_D,0.8201085633368599,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+IMAGE 3.2,SSP1_SPA1_19I_D_LB,0.708174203465848,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+IMAGE 3.2,SSP1_SPA1_19I_LI,0.8366543944960898,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+IMAGE 3.2,SSP1_SPA1_19I_LIRE,0.7308011248912427,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+IMAGE 3.2,SSP1_SPA1_19I_LIRE_LB,0.6197069963617619,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+IMAGE 3.2,SSP1_SPA1_19I_RE,0.7693479143077089,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+IMAGE 3.2,SSP1_SPA1_19I_RE_LB,0.6394945602510952,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+IMAGE 3.2,SSP2_SPA1_19I_D_LB,0.8849801506852581,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+IMAGE 3.2,SSP2_SPA1_19I_LIRE_LB,0.6366321998015156,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+IMAGE 3.2,SSP2_SPA1_19I_RE_LB,0.5760080461578423,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+IMAGE 3.2,SSP2_SPA2_19I_D,0.9366544610238878,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+IMAGE 3.2,SSP2_SPA2_19I_LI,0.9123019192334172,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+IMAGE 3.2,SSP2_SPA2_19I_LIRE,0.7843228064639154,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+IMAGE 3.2,SSP2_SPA2_19I_RE,0.7148336099734284,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_600f_COV,0.9592246215886473,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_600f_COV_NDCp,0.9621104527972,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_700f,0.9464605976414209,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_700f_COV,0.9307474309822963,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_700f_COV_NDCp,0.9315747719923808,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_700f_NDCp,0.9490208697627396,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_200f,0.9571039334002839,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_300f,0.9448864772108445,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_400f,0.9330397900748285,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_450,0.8577275866497303,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_450f,0.9265124462832768,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_500,0.8384013341040383,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_500f,0.9189116461589588,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600,0.8138621180045714,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_COV,0.7914062748017696,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR10p,0.5371644908409279,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR1p,0.8108258211810873,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR2p,0.81098637712205,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR3p,0.8132880203356068,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR4p,0.8298797457335907,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f,0.9053747133383792,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_COV,0.9182277020979269,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR10p,0.7086535422383282,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR1p,0.7921185096919582,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR2p,0.8167769244736861,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR3p,0.838175270846379,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR4p,0.8650378521317652,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_700,0.8020856329747088,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_700_COV,0.8052690440766497,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_700f,0.8924504125293822,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_700f_COV,0.8948041280161837,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+MESSAGEix-GLOBIOM_1.1,NGFS2_Divergent Net Zero Policies,0.8491343878308066,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+MESSAGEix-GLOBIOM_1.1,NGFS2_Net-Zero 2050,0.7896071369142643,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_int_mc_50,0.8178726907424808,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_noint_mc_50,0.8411381879001916,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_100,0.8890029960955257,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_120,0.8912771864039002,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_80,0.8972692192230932,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB400,0.9785016451311159,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB450,0.9736452139837837,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB500,0.9692595106700256,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB550,0.9657537335983,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB600,0.9515544844119722,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_mc_50,0.8247446480497842,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 1.7-3.0,CD-LINKS_INDC2030i_1000,0.6626530602568643,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 1.7-3.0,CD-LINKS_INDC2030i_400,0.7603571038755148,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 1.7-3.0,CD-LINKS_NPi2020_1000,0.6221960488068139,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 1.7-3.0,CD-LINKS_NPi2020_400,0.7281055251930921,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 1.7-3.0,CO_2Deg2020,0.6062643862396506,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 1.7-3.0,CO_2Deg2030,0.6692596219910654,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 1.7-3.0,CO_Bridge,0.603040475089145,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_full_NDC,0.7599540227893875,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_full_eff,0.7170721116144867,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_full_goodpractice,0.7681735604836222,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_full_netzero,0.771666658169625,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_red_eff,0.7580806636205999,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 1.7-3.0,PEP_2C_full_NDC,0.6692596219910654,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 1.7-3.0,PEP_2C_full_eff,0.6062643862396506,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 1.7-3.0,PEP_2C_full_goodpractice,0.6550373603129735,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 1.7-3.0,PEP_2C_full_netzero,0.6421470768147284,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 1.7-3.0,PEP_2C_red_NDC,0.6911491220996331,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 1.7-3.0,PEP_2C_red_eff,0.5563479354662673,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 1.7-3.0,PEP_2C_red_goodpractice,0.6267083448392742,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 1.7-3.0,PEP_2C_red_netzero,0.6317765964259574,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 2.1-4.2,CEMICS_SSP1-1p5C-fullCDR,0.7300024708734949,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 2.1-4.2,CEMICS_SSP1-1p5C-minCDR,0.7827455610216801,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 2.1-4.2,CEMICS_SSP2-1p5C-fullCDR,0.7733461524401857,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 2.1-4.2,CEMICS_SSP2-1p5C-minCDR,0.7755953648186682,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_300f,0.5130760566761567,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_400f,0.5221056361464749,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_500f,0.5735521248599666,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600_COV,0.7520985216533413,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600_COV_NDCp,0.7495435685642164,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600f,0.5997906829254789,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600f_COV,0.7370641965440008,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600f_COV_NDCp,0.7372137098120923,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600f_NDCp,0.6017389759605909,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_200f,0.5312796831511898,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_300f,0.5810308327726539,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_400,0.734990401454555,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_400f,0.6035443743768094,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_500,0.7303824072694476,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_500f,0.6468780535095932,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_600,0.7260025276170987,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_600_COV,0.7707139508422449,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_600f,0.6771950386673833,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_600f_COV,0.7673011594213568,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 2.1-4.2,NGFS2_Divergent Net Zero Policies,0.7472552905604606,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 2.1-4.2,NGFS2_Net-Zero 2050,0.7655723832751096,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 2.1-4.2,SusDev_SDP-PkBudg1000,0.7715267668666124,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 2.1-4.2,SusDev_SSP1-PkBudg900,0.7200217034037812,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 2.1-4.2,SusDev_SSP2-PkBudg900,0.7597867303852224,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 2.1-4.3,DeepElec_SSP2_ HighRE_Budg900,0.7457110086030616,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 2.1-4.3,DeepElec_SSP2_def_Budg1100,0.6651669876456482,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+REMIND-MAgPIE 2.1-4.3,DeepElec_SSP2_def_Budg900,0.6178802286953275,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+WITCH 5.0,EN_INDCi2030_500f,0.7766060782566981,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+WITCH 5.0,EN_NPi2020_400f,0.7804040970985048,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+WITCH 5.0,EN_NPi2020_450,0.8177548556752616,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+WITCH 5.0,EN_NPi2020_450f,0.7817107195065607,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+WITCH 5.0,EN_NPi2020_500,0.8056535175847335,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+WITCH 5.0,EN_NPi2020_500f,0.7814581591365335,Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia
+AIM/CGE 2.2,EN_NPi2020_300f,0.9872819749486552,North America; primarily the United States of America and Canada
+AIM/CGE 2.2,EN_NPi2020_400f,0.9946026776883189,North America; primarily the United States of America and Canada
+AIM/CGE 2.2,EN_NPi2020_500f,0.9987021746087158,North America; primarily the United States of America and Canada
+AIM/CGE 2.2,EN_NPi2020_600,1.0077941702750268,North America; primarily the United States of America and Canada
+AIM/CGE 2.2,EN_NPi2020_600f,1.0002666773059168,North America; primarily the United States of America and Canada
+GCAM 5.3,NGFS2_Divergent Net Zero Policies,0.7681516798459938,North America; primarily the United States of America and Canada
+GCAM 5.3,NGFS2_Net-Zero 2050,0.7949201542713765,North America; primarily the United States of America and Canada
+IMAGE 3.2,SSP1_SPA1_19I_D,0.7855103169023196,North America; primarily the United States of America and Canada
+IMAGE 3.2,SSP1_SPA1_19I_D_LB,0.7596123438869393,North America; primarily the United States of America and Canada
+IMAGE 3.2,SSP1_SPA1_19I_LI,0.7957088164558939,North America; primarily the United States of America and Canada
+IMAGE 3.2,SSP1_SPA1_19I_LIRE,0.8249941142588446,North America; primarily the United States of America and Canada
+IMAGE 3.2,SSP1_SPA1_19I_LIRE_LB,0.7385277760526003,North America; primarily the United States of America and Canada
+IMAGE 3.2,SSP1_SPA1_19I_RE,0.7576536567454888,North America; primarily the United States of America and Canada
+IMAGE 3.2,SSP1_SPA1_19I_RE_LB,0.6876014173197722,North America; primarily the United States of America and Canada
+IMAGE 3.2,SSP2_SPA1_19I_D_LB,0.9564659148507466,North America; primarily the United States of America and Canada
+IMAGE 3.2,SSP2_SPA1_19I_LIRE_LB,0.7591297444165268,North America; primarily the United States of America and Canada
+IMAGE 3.2,SSP2_SPA1_19I_RE_LB,0.7317276077731791,North America; primarily the United States of America and Canada
+IMAGE 3.2,SSP2_SPA2_19I_D,0.8405151774425987,North America; primarily the United States of America and Canada
+IMAGE 3.2,SSP2_SPA2_19I_LI,0.8543540547261468,North America; primarily the United States of America and Canada
+IMAGE 3.2,SSP2_SPA2_19I_LIRE,0.8007394429550867,North America; primarily the United States of America and Canada
+IMAGE 3.2,SSP2_SPA2_19I_RE,0.7932679737936288,North America; primarily the United States of America and Canada
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_600f_COV,1.0177238510928177,North America; primarily the United States of America and Canada
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_600f_COV_NDCp,1.0123359742889264,North America; primarily the United States of America and Canada
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_700f,1.014406726723783,North America; primarily the United States of America and Canada
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_700f_COV,1.0165279783461694,North America; primarily the United States of America and Canada
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_700f_COV_NDCp,1.0160505784388922,North America; primarily the United States of America and Canada
+MESSAGEix-GLOBIOM_1.1,EN_INDCi2030_700f_NDCp,1.013825259972771,North America; primarily the United States of America and Canada
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_200f,1.042637018391474,North America; primarily the United States of America and Canada
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_300f,1.0485895709831259,North America; primarily the United States of America and Canada
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_400f,1.0463637434807946,North America; primarily the United States of America and Canada
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_450,0.9968993303629186,North America; primarily the United States of America and Canada
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_450f,1.0478686886629407,North America; primarily the United States of America and Canada
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_500,0.9748150524978074,North America; primarily the United States of America and Canada
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_500f,1.0441611987389576,North America; primarily the United States of America and Canada
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600,0.9676662070697377,North America; primarily the United States of America and Canada
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_COV,0.9803308208228416,North America; primarily the United States of America and Canada
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR10p,0.7138326422775404,North America; primarily the United States of America and Canada
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR1p,0.9764449716054268,North America; primarily the United States of America and Canada
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR2p,0.9661816797812696,North America; primarily the United States of America and Canada
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR3p,0.9730702220340951,North America; primarily the United States of America and Canada
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600_DR4p,0.9863974407412779,North America; primarily the United States of America and Canada
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f,1.0389543585797947,North America; primarily the United States of America and Canada
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_COV,1.0428642878476388,North America; primarily the United States of America and Canada
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR10p,0.7509629161435779,North America; primarily the United States of America and Canada
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR1p,1.0101462924263613,North America; primarily the United States of America and Canada
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR2p,1.0164402826039616,North America; primarily the United States of America and Canada
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR3p,1.02815531124787,North America; primarily the United States of America and Canada
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_600f_DR4p,1.0380585541518335,North America; primarily the United States of America and Canada
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_700,0.9809904893391626,North America; primarily the United States of America and Canada
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_700_COV,0.9872134721651056,North America; primarily the United States of America and Canada
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_700f,1.0402108752525856,North America; primarily the United States of America and Canada
+MESSAGEix-GLOBIOM_1.1,EN_NPi2020_700f_COV,1.0368874264053685,North America; primarily the United States of America and Canada
+MESSAGEix-GLOBIOM_1.1,NGFS2_Divergent Net Zero Policies,1.0302568009785693,North America; primarily the United States of America and Canada
+MESSAGEix-GLOBIOM_1.1,NGFS2_Net-Zero 2050,0.9883774257359557,North America; primarily the United States of America and Canada
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_int_mc_50,0.9474871680920229,North America; primarily the United States of America and Canada
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_noint_mc_50,0.9437793859023091,North America; primarily the United States of America and Canada
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_100,0.7863562191945668,North America; primarily the United States of America and Canada
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_120,0.8248428438858623,North America; primarily the United States of America and Canada
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_80,0.726733814167853,North America; primarily the United States of America and Canada
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB400,0.9679927633789978,North America; primarily the United States of America and Canada
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB450,0.9686733977667468,North America; primarily the United States of America and Canada
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB500,0.9517236261488526,North America; primarily the United States of America and Canada
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB550,0.9205430268252923,North America; primarily the United States of America and Canada
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_lc_CB600,0.9207045437859643,North America; primarily the United States of America and Canada
+MESSAGEix-GLOBIOM_GEI 1.0,SSP2_openres_mc_50,0.9816714946157876,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 1.7-3.0,CD-LINKS_INDC2030i_1000,0.735057212191535,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 1.7-3.0,CD-LINKS_INDC2030i_400,0.7335270917398459,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 1.7-3.0,CD-LINKS_NPi2020_1000,0.7282773249150236,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 1.7-3.0,CD-LINKS_NPi2020_400,0.7301621594378365,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 1.7-3.0,CO_2Deg2020,0.7260188968542833,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 1.7-3.0,CO_2Deg2030,0.7398379695370203,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 1.7-3.0,CO_Bridge,0.7333103579694578,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_full_NDC,0.7337696299539984,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_full_eff,0.7306389245682521,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_full_goodpractice,0.7377010639917457,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_full_netzero,0.7386185648657695,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 1.7-3.0,PEP_1p5C_red_eff,0.614495325911778,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 1.7-3.0,PEP_2C_full_NDC,0.7398379695370203,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 1.7-3.0,PEP_2C_full_eff,0.7260188968542833,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 1.7-3.0,PEP_2C_full_goodpractice,0.7393181950858865,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 1.7-3.0,PEP_2C_full_netzero,0.7399202123324975,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 1.7-3.0,PEP_2C_red_NDC,0.6263364919645884,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 1.7-3.0,PEP_2C_red_eff,0.6485133019645113,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 1.7-3.0,PEP_2C_red_goodpractice,0.6420732079603946,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 1.7-3.0,PEP_2C_red_netzero,0.6537883038453016,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 2.1-4.2,CEMICS_SSP1-1p5C-fullCDR,0.7074136237011722,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 2.1-4.2,CEMICS_SSP1-1p5C-minCDR,0.6600082131609772,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 2.1-4.2,CEMICS_SSP2-1p5C-fullCDR,0.6439966798751813,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 2.1-4.2,CEMICS_SSP2-1p5C-minCDR,0.5485568266846067,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_300f,0.39243408736299507,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_400f,0.3977850481791261,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_500f,0.40976977200009096,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600_COV,0.6575186519872884,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600_COV_NDCp,0.6451036373032655,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600f,0.42358633608150653,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600f_COV,0.5921322501720393,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600f_COV_NDCp,0.5921723243110395,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 2.1-4.2,EN_INDCi2030_600f_NDCp,0.4174930867320425,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_200f,0.3860436460439278,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_300f,0.39563065248602436,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_400,0.5060635179177462,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_400f,0.4057233726939282,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_500,0.5073919886218037,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_500f,0.42448956521691766,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_600,0.48918931557831785,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_600_COV,0.6257682699320651,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_600f,0.4341343746756321,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 2.1-4.2,EN_NPi2020_600f_COV,0.6028095666362681,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 2.1-4.2,NGFS2_Divergent Net Zero Policies,0.596161021140472,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 2.1-4.2,NGFS2_Net-Zero 2050,0.6648073696344393,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 2.1-4.2,SusDev_SDP-PkBudg1000,0.683264827477134,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 2.1-4.2,SusDev_SSP1-PkBudg900,0.7197241927352445,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 2.1-4.2,SusDev_SSP2-PkBudg900,0.6149547839429337,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 2.1-4.3,DeepElec_SSP2_ HighRE_Budg900,0.5038168575354686,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 2.1-4.3,DeepElec_SSP2_def_Budg1100,0.7208096603743313,North America; primarily the United States of America and Canada
+REMIND-MAgPIE 2.1-4.3,DeepElec_SSP2_def_Budg900,0.7256903739953618,North America; primarily the United States of America and Canada
+WITCH 5.0,EN_INDCi2030_500f,0.8133429018804348,North America; primarily the United States of America and Canada
+WITCH 5.0,EN_NPi2020_400f,0.811339904988263,North America; primarily the United States of America and Canada
+WITCH 5.0,EN_NPi2020_450,0.7993100732301256,North America; primarily the United States of America and Canada
+WITCH 5.0,EN_NPi2020_450f,0.8080693328522459,North America; primarily the United States of America and Canada
+WITCH 5.0,EN_NPi2020_500,0.7864648553917564,North America; primarily the United States of America and Canada
+WITCH 5.0,EN_NPi2020_500f,0.8057089018366881,North America; primarily the United States of America and Canada

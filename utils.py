@@ -76,7 +76,7 @@ class Data:
     # categories = ''
     categories = ['C1', 'C2']
     # categories = ['C1', 'C2', 'C3', 'C4', 'C5','C6', 'C7', 'C8']
-    # model_scenarios = pd.read_csv('Countries of Sub-Saharan Africa_mandatory_variables_scenarios' + str(categories) + '.csv')
+    model_scenarios = pd.read_csv('Countries of Sub-Saharan Africa_mandatory_variables_scenarios' + str(categories) + '.csv')
     dimensions_pyamdf = cat_df = pyam.IamDataFrame(data='cat_df' + str(categories) + '.csv')
     meta_df = pd.read_csv('cat_meta' + str(categories) + '.csv') 
 

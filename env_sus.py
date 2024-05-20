@@ -111,6 +111,7 @@ def forest_cover_change(pyam_df, end_year, scenario_model_list, beccs_threshold,
                         model=scenario_model_list['model'])
         world_land_cover = np.mean(df['value'][df['region'] == 'World'].values)
         region_land_cover = np.mean(df['value'][df['region'] == region].values)
+        share_of_beccs = int(region_land_cover) / int(world_land_cover)
         beccs_threshold = (region_land_cover / world_land_cover) * beccs_threshold
         
     else:
