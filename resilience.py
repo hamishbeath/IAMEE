@@ -29,21 +29,23 @@ def main() -> None:
     # empty_df_shannon.to_csv('outputs/shannon_diversity_index_regional' + str(Data.categories) + '.csv')
     # empty_df.to_csv('outputs/final_energy_demand_regional' + str(Data.categories) + '.csv')
 
-    # shannon_index_energy_mix(Data.dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories)
-    # final_energy_demand(Data.dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories)
-    empty_df = pd.DataFrame()
-    for region in Data.R10:
-        to_append = gini_between_countries(Data.dimensions_pyamdf, Data.model_scenarios, 2100, Data.meta_df, Resilience.gini_between_countries, Data.categories, regional=region)
-        empty_df = pd.concat([empty_df, to_append], ignore_index=True, axis=0)
+    shannon_index_energy_mix(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories, regional=None)
+    final_energy_demand(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories, regional=None)
+    # empty_df = pd.DataFrame()
+    # for region in Data.R10:
+    #     to_append = gini_between_countries(Data.dimensions_pyamdf, Data.model_scenarios, 2100, Data.meta_df, Resilience.gini_between_countries, Data.categories, regional=region)
+    #     empty_df = pd.concat([empty_df, to_append], ignore_index=True, axis=0)
 
-    empty_df.to_csv('outputs/gini_coefficient_regional' + str(Data.categories) + '.csv')
+    # empty_df.to_csv('outputs/gini_coefficient_regional' + str(Data.categories) + '.csv')
 
-    # gini_between_countries(Data.dimensions_pyamdf, 
-    #                        Data.model_scenarios, 
-    #                        2100, 
-    #                        Data.meta_df,
-    #                        Resilience.gini_between_countries,
-    #                        Data.categories)
+    gini_between_countries(Data.regional_dimensions_pyamdf,
+                           Data.model_scenarios, 
+                           2100, 
+                           Data.meta_df,
+                           Resilience.gini_between_countries,
+                           Data.categories, regional=None)
+    
+
     # get_within_region_gini(Resilience.ssp_gini_data, Data.region_country_df, 
     #                        Data.R10_codes, 2025)
 
@@ -164,8 +166,7 @@ def final_energy_demand(pyam_df, scenario_model_list, end_year, categories, regi
 
     
 # Function that gives the gini coefficient and SSP population for each scenario
-def gini_between_countries(pyam_df, scenario_model_list, end_year, meta_df, gini_df, categories, regional=None,
-                           regional_gini=None):
+def gini_between_countries(pyam_df, scenario_model_list, end_year, meta_df, gini_df, categories, regional=None):
     
 
     if regional is not None:

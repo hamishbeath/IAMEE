@@ -16,7 +16,7 @@ class Robust:
     flexibility_data = pd.read_csv('inputs/build_life_times.csv')
     cdr_variables = ['Carbon Sequestration|CCS|Biomass', 'Carbon Sequestration|Land Use',
                      'Carbon Sequestration|Direct Air Capture']
-    cdr_df = pyam.IamDataFrame("cat_df['C1', 'C2']CDR_Robustness.csv")
+    cdr_df = pyam.IamDataFrame("CDR_Robustness['C1', 'C2'].csv")
     low_carbon_energy_variables = variable=['Primary Energy|Nuclear','Primary Energy|Biomass', 
                                             'Primary Energy|Non-Biomass Renewables']
     land_use_emissions_by_country = pd.read_csv('inputs/land_use_emissions_by_country.csv')
@@ -26,16 +26,26 @@ class Robust:
 
 def main() -> None:
 
-    # harmonize_emissions_calc_budgets(Data.dimensions_pyamdf, 'Emissions|CO2', Data.model_scenarios,
-    #                      Robust.historic_emissions, 2023, Data.categories, False, 2050)
-    # flexibility_score(Data.dimensions_pyamdf, Data.model_scenarios, 
-    #                   2100, Data.energy_variables, Robust.flexibility_data, Data.categories)
-    # calculate_total_CDR(Data.model_scenarios, Robust.cdr_df, 2051)
-    # shannon_index_low_carbon_mix(Data.dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories)
+    # print(Robust.historic_emissions)
+    # harmonize_emissions_calc_budgets(Data.regional_dimensions_pyamdf, 
+    #                                  'Emissions|CO2', 
+    #                                  Data.model_scenarios,
+    #                                 Robust.historic_emissions, 
+    #                                 2023, 
+    #                                 Data.categories,
+    #                                 Robust.remaining_carbon_budget_2030, 
+    #                                 False, 
+    #                                 unity_year=2050, 
+    #                                 regional=None)
+    # flexibility_score(Data.regional_dimensions_pyamdf, Data.model_scenarios, 
+    #                   2100, Data.energy_variables, Robust.flexibility_data, Data.categories, regional=None)
+    # calculate_total_CDR(Data.model_scenarios, Robust.cdr_df, Data.regional_dimensions_pyamdf, 2051, regional=None)
+    # shannon_index_low_carbon_mix(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories)
     # empty_df = pd.DataFrame()
-    # for region in Data.R10:
-    #     to_append = calculate_total_CDR(Data.model_scenarios, Robust.cdr_df, Data.regional_dimensions_pyamdf, 2050, regional=region)
-    #     empty_df = pd.concat([empty_df, to_append], ignore_index=True, axis=0)
+    for region in Data.R10:
+        to_append = calculate_total_CDR(Data.model_scenarios, Robust.cdr_df, Data.regional_dimensions_pyamdf, 2050, regional=region)
+        empty_df = pd.concat([empty_df, to_append], ignore_index=True, axis=0)
+        break
     # empty_df.to_csv('outputs/total_CDR_regional' + str(Data.categories) + '.csv')
     # # shannon_index_low_carbon_mix(Data.dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories)
     # # get_regional_level_remaining_budgets(Robust.territorial_emissions_by_country, 
@@ -53,7 +63,7 @@ def main() -> None:
     #     shannon_df = pd.concat([shannon_df, to_append_shannon], ignore_index=True, axis=0)
     # empty_df.to_csv('outputs/flexibility_scores_regional' + str(Data.categories) + '.csv', index=False)
     # shannon_df.to_csv('outputs/low_carbon_shannon_diversity_index_regional' + str(Data.categories) + '.csv', index=False)
-    run_regional_carbon_budgets()
+    # run_regional_carbon_budgets()
 
 
 
@@ -168,19 +178,20 @@ def harmonize_emissions_calc_budgets(df, var, scenario_model_list,
         region = regional
 
     else:
-        region = 'World'
+        region = ['World']
 
     # Harmonises the variable var in the dataframe df to be equal to the values in the dataframe harmdf
     # for years before startyear up until unity_year. If offset is true, uses a linear offset tailing to 0 in unity_year.
     # If offset is false, uses a ratio correction that tends to 1 in unity_year
     harm_years = np.array([y for y in df.year if y>2005 and y<unity_year])
-
+    print(harm_years)
     carbon_budget_shares = []
     for scenario, model in zip(scenario_model_list['scenario'], scenario_model_list['model']): 
+        
         ret = df.filter(variable=var, region=region, model=model, scenario=scenario, year=range(2005, 2100+1))
-
        # interpolate the data so that we have values for all years
-        ret = ret.interpolate(range(2005, unity_year+1))        
+        ret = ret.interpolate(range(2005, unity_year+1))
+        print(max(harm_years))     
         assert unity_year >= max(harm_years)
         canon2015 = harm_df.loc[startyear]
         ret = ret.timeseries()
@@ -205,11 +216,13 @@ def harmonize_emissions_calc_budgets(df, var, scenario_model_list,
             for year in [y for y in harm_years if y > startyear]:
                 ret[year] += offset_val * (1 - (year - startyear) / (unity_year-startyear))
         
+
         output = pyam.IamDataFrame(ret)
         # calculate the sum of emissions between 2023 and 2030 and the share of the remaining carbon budget
         sum_emissions = output.filter(year=range(2023, 2031)).timeseries().sum().sum()
+        carbon_budget_share = sum_emissions / budget
         carbon_budget_shares.append(sum_emissions / budget)
-    
+
     # create a new dataframe with the carbon budget shares
     carbon_budget_df = pd.DataFrame({'model': scenario_model_list['model'], 
                                      'scenario': scenario_model_list['scenario'], 
@@ -244,6 +257,7 @@ def calculate_total_CDR(scenario_model_list, cdr_df, pyam_df,
             gdp_values.append(gdp_cumulative)
             land_scenario_df = division_df.filter(scenario=scenario, model=model, variable='Land Cover')
             land_values.append(land_scenario_df['value'][0])
+        
         # create a new dataframe with the land values
         division_basis_df = pd.DataFrame({'model': scenario_model_list['model'], 
                             'scenario': scenario_model_list['scenario'], 
@@ -280,7 +294,6 @@ def calculate_total_CDR(scenario_model_list, cdr_df, pyam_df,
                                                      year=range(2020, end_year+1), region='World')
             land_use = land_use.filter(variable='Imputed|Carbon Sequestration|Land Use')
             # land_use = land_use.as_pandas()
-            
             if land_use.empty:
                 print("No land based CDR data in imputed file")
         if land_use.empty:

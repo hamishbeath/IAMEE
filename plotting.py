@@ -46,14 +46,14 @@ def main() -> None:
     # Plotting.box_plot_variables(Plotting, 'variable_categories.csv', 'robust', 'C1a_NZGHGs', [2050, 2100])
     # Plotting.single_variable_box_line(Plotting, Data.c1aR10_scenarios, 'Land Cover|Forest', 'C1a_NZGHGs', 'World',years=range(2020, 2101))
     # Plotting.plot_metrics(Plotting, Plotting.bright_modern_colors, Data.model_scenarios)
-    Plotting.create_radar_plots(Plotting, 
-                                Data.model_scenarios, 
-                                Selection.economic_scores, 
-                                Selection.environment_scores, 
-                                Selection.resource_scores, 
-                                Selection.resilience_scores, 
-                                Selection.robustness_scores, 
-                                Plotting.bright_modern_colors)      
+    # Plotting.create_radar_plots(Plotting, 
+    #                             Data.model_scenarios, 
+    #                             Selection.economic_scores, 
+    #                             Selection.environment_scores, 
+    #                             Selection.resource_scores, 
+    #                             Selection.resilience_scores, 
+    #                             Selection.robustness_scores, 
+    #                             Plotting.bright_modern_colors)      
     
     # Plotting.radar_plot_scenario_archetypes(Plotting, Data.model_scenarios, Selection.archetypes, Plotting.bright_modern_colors,
     #                                         Plotting.selected_scenarios)
@@ -63,7 +63,7 @@ def main() -> None:
     # Plotting.land_use_stacked_shares(Plotting, Data.c1a_scenarios_selected, Data.c1a_models_selected, Plotting.c1a_data)
     # Plotting.CDR_stacked_shares(Plotting, Data.c1a_scenarios_selected, Data.c1a_models_selected, Plotting.c1a_data)
     # Plotting.radar_plot_model_fingerprint(Plotting, Data.model_scenarios, Plotting.model_families, Plotting.model_colours, Plotting.clustered_scores)
-
+    Plotting.regional_differences_across_scenarios(Plotting, Plotting.normalised_scores, Plotting.regional_normalised_scores, Data.model_scenarios)
 class Plotting:
 
     dimensions = ['economic', 'environment', 'resilience', 'resource', 'robust']
@@ -144,6 +144,8 @@ class Plotting:
 
     model_colours = {'IMAGE': '#777C01', 'AIM':'#090059','GCAM':'#D57501', 'MESSAGE':'#02589D', 'REMIND':'#006D77', 'WITCH':'#502591'}
 
+    regional_normalised_scores = pd.read_csv('outputs/regional_normalised_dimension_scores' + str(Data.categories) + '.csv')
+    normalised_scores = pd.read_csv('outputs/normalised_scores' + str(Data.categories) + '.csv')
 
 
     # Create a detailed polar bar plot that categorises 
@@ -1110,6 +1112,52 @@ class Plotting:
         fig.legend(handles=swatches, labels=labels, loc='lower center', ncol=2, frameon=False)
 
         plt.show()
+
+
+    def regional_differences_across_scenarios(self, dimension_scores_global, dimension_scores_regional, scenarios_list):
+
+        dimensions_list = ['economic','resilience','robustness']
+        
+        output_df = pd.DataFrame() 
+        
+        for region in Data.R10:
+            
+            region_df = pd.DataFrame()
+            print(region)
+            dimension_scores_regional_selected = dimension_scores_regional[dimension_scores_regional['region'] == region]
+            dimension_scores_regional_selected = dimension_scores_regional_selected.reset_index(drop=True)
+            print(dimension_scores_regional_selected)
+            region_df['scenario'] = dimension_scores_regional_selected['scenario']
+            region_df['model'] = dimension_scores_regional_selected['model']
+            region_df['region'] = dimension_scores_regional_selected['region']
+            region_df['economic_diff'] = dimension_scores_regional_selected['economic_dimension_score'] - dimension_scores_global['economic_score']
+            region_df['environmental_diff'] = dimension_scores_regional_selected['environmental_dimension_score'] - dimension_scores_global['environmental_score']
+            region_df['resource_diff'] = dimension_scores_regional_selected['resource_dimension_score'] - dimension_scores_global['resource_score']
+            region_df['resilience_diff'] = dimension_scores_regional_selected['resilience_dimension_score'] - dimension_scores_global['resilience_score']
+            region_df['robustness_diff'] = dimension_scores_regional_selected['robustness_dimension_score'] - dimension_scores_global['robustness_score']
+            print(region_df)
+            output_df = pd.concat([output_df, region_df], axis=0)
+
+        output_df.to_csv('regional_differences.csv')
+        # set up the figure so that it is a Overlapping densities (‘ridge plot’) from seaborn
+        # with the regions on the y axis and the distribution of the differences on the x axis
+        fig, axs = plt.subplots(1, 3, figsize=(15, 5), sharey=True)
+
+        for i, dimension in enumerate(dimensions_list):
+            sns.violinplot(x=dimension + '_diff', y='region', data=output_df, ax=axs[i], palette='hsv', linewidth=0.4)
+            axs[i].set_title(dimension)
+            axs[i].set_ylabel('')
+            axs[i].set_xlabel('Difference in score')
+            axs[i].set_xlim(-0.75, 0.75)
+
+        # set the y axis labels as data.R10_codes
+        axs[0].set_yticklabels(Data.R10_codes)
+
+        plt.show()
+
+        
+
+
 
 
 if __name__ == "__main__":

@@ -73,12 +73,15 @@ def main() -> None:
 
     # make_scenario_project_list()
     # Utils.manadory_variables_scenarios(Utils, ['C1','C2'], EnvSus.regions, Data.mandatory_variables, subset=False)
-    empty_df = pd.DataFrame()
-    for region in Data.R10:
-        to_append = forest_cover_change(Data.regional_dimensions_pyamdf, 2100, Data.model_scenarios, EnvSus.beccs_threshold, Data.categories, regional=region)    
-        empty_df = pd.concat([empty_df, to_append], ignore_index=True, axis=0)
-    empty_df.to_csv('outputs/environmental_metrics_regional' + str(Data.categories) + '.csv')
-    # Utils.filter_data_sheet_variable_prevelance(Utils, 'C1a_NZGHGs', EnvSus.region, Data.mandatory_variables)
+    # empty_df = pd.DataFrame()
+    # for region in Data.R10:
+    #     to_append = forest_cover_change(Data.regional_dimensions_pyamdf, 2100, Data.model_scenarios, EnvSus.beccs_threshold, Data.categories, regional=region)    
+    #     empty_df = pd.concat([empty_df, to_append], ignore_index=True, axis=0)
+    # print(empty_df)
+    
+    # empty_df.to_csv('outputs/environmental_metrics_regional' + str(Data.categories) + '.csv')
+    
+    forest_cover_change(Data.regional_dimensions_pyamdf, 2100, Data.model_scenarios, EnvSus.beccs_threshold, Data.categories, regional=None)
 
 
 def forest_cover_change(pyam_df, end_year, scenario_model_list, beccs_threshold, categories, regional=None):
@@ -105,12 +108,12 @@ def forest_cover_change(pyam_df, end_year, scenario_model_list, beccs_threshold,
         
         # calculate the beccs threshold for the region
         print('Calculating the BECCS threshold for the region: ', region)
-        df = pyam_df.filter(variable='Land Cover',region=[region,'World'],
+        threshold_df = pyam_df.filter(variable='Land Cover',region=[region,'World'],
                         year=2020,
                         scenario=scenario_model_list['scenario'], 
                         model=scenario_model_list['model'])
-        world_land_cover = np.mean(df['value'][df['region'] == 'World'].values)
-        region_land_cover = np.mean(df['value'][df['region'] == region].values)
+        world_land_cover = np.mean(threshold_df['value'][threshold_df['region'] == 'World'].values)
+        region_land_cover = np.mean(threshold_df['value'][threshold_df['region'] == region].values)
         share_of_beccs = int(region_land_cover) / int(world_land_cover)
         beccs_threshold = (region_land_cover / world_land_cover) * beccs_threshold
         

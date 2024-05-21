@@ -42,7 +42,7 @@ def main() -> None:
     defaults manually at the moment. To-do item, automate this step within the 
     function from the wind_default intensity values.
     """
-    scenario_assessment_minerals(Data.dimensions_pyamdf, 
+    scenario_assessment_minerals(Data.regional_dimensions_pyamdf, 
                                  NaturalResources.minerals, 
                                  Data.model_scenarios, 
                                  NaturalResources.material_thresholds, 
@@ -277,7 +277,7 @@ def scenario_assessment_minerals(pyam_df, minerals, scenario_model_list, base_th
         
         # Filter out the data for the required scenario
         scenario_df = df.filter(scenario=scenario)
-        scenario__model_df = scenario_df.filter(model=model)
+        scenario_model_df = scenario_df.filter(model=model)
 
         print(scenario, model)
         # filter for model 
@@ -303,12 +303,13 @@ def scenario_assessment_minerals(pyam_df, minerals, scenario_model_list, base_th
 
             # calculate the total capacity added for solar and wind. Capacity additions variable has lower coverage so is necessary
             # Note, could switch to using Pyam built in functionality for this.
-            solar_capacity_current = scenario__model_df.filter(variable='Capacity|Electricity|Solar|PV', year=year).data['value'].values
-            wind_capacity_current = scenario__model_df.filter(variable='Capacity|Electricity|Wind', year=year).data['value'].values
-            solar_capacity_previous = scenario__model_df.filter(variable='Capacity|Electricity|Solar|PV', year=year-10).data['value'].values
-            wind_capacity_previous = scenario__model_df.filter(variable='Capacity|Electricity|Wind', year=year-10).data['value'].values
+            solar_capacity_current = scenario_model_df.filter(variable='Capacity|Electricity|Solar|PV', year=year).data['value'].values
+            wind_capacity_current = scenario_model_df.filter(variable='Capacity|Electricity|Wind', year=year).data['value'].values
+            solar_capacity_previous = scenario_model_df.filter(variable='Capacity|Electricity|Solar|PV', year=year-10).data['value'].values
+            wind_capacity_previous = scenario_model_df.filter(variable='Capacity|Electricity|Wind', year=year-10).data['value'].values
             solar_capacity_added = solar_capacity_current - solar_capacity_previous
             wind_capacity_added = wind_capacity_current - wind_capacity_previous
+            print(solar_capacity_added, wind_capacity_added)
             solar_capacity_added = solar_capacity_added[0]
             wind_capacity_added = wind_capacity_added[0]
             
@@ -365,20 +366,20 @@ def calculate_base_shares_minerals():
     # read in the mineral availability data
     mineral_availaiblility = pd.read_csv('outputs/mineral_availability.csv')
     mineral_availaiblility = mineral_availaiblility.set_index('Unnamed: 0')
-    material_intensities = NaturalResouces.material_intensities
+    material_intensities = NaturalResources.material_intensities
     material_intensities_wind = material_intensities.loc['wind_neu']
-    material_intensities_solar = NaturalResouces.material_intensities.loc['solar_neu']
+    material_intensities_solar = NaturalResources.material_intensities.loc['solar_neu']
 
     # calculate the mineral quantities for 2022
-    mineral_quantities_2022_wind = material_intensities_wind * NaturalResouces.wind_base_capacity_added
-    mineral_quantities_2022_solar = material_intensities_solar * (NaturalResouces.solar_base_capacity_added * NaturalResouces.thin_film_share)
+    mineral_quantities_2022_wind = material_intensities_wind * NaturalResources.wind_base_capacity_added
+    mineral_quantities_2022_solar = material_intensities_solar * (NaturalResources.solar_base_capacity_added * NaturalResources.thin_film_share)
     mineral_quantities = mineral_quantities_2022_wind + mineral_quantities_2022_solar
 
     # empty dictionary to store the mineral shares
     mineral_renewables_amounts = {}
 
     # loop through and calculate 2022 shares
-    for mineral in NaturalResouces.minerals:
+    for mineral in NaturalResources.minerals:
         
         mineral_amount = mineral_availaiblility.loc[2022, mineral]
         renewables_amount = mineral_quantities[mineral + ' (g/kW)']
