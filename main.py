@@ -70,29 +70,30 @@ class Selection:
 
 def main() -> None:
 
-    # economic_score(IndexBuilder.investment_metrics)
-    # environment_score(IndexBuilder.environment_metrics)
-    # resource_score(NaturalResources.minerals, IndexBuilder.resource_metrics)
-    # resilience_score(IndexBuilder.final_energy_demand,
-    #                 IndexBuilder.energy_diversity,
-    #                 IndexBuilder.gini_coefficient)
-    # calculate_robustness_score(IndexBuilder.energy_system_flexibility, 
-    #                            IndexBuilder.low_carbon_diversity, 
-    #                            IndexBuilder.carbon_budgets,
-    #                            IndexBuilder.CDR_2050)
-    # select_most_dissimilar_scenarios(Data.model_scenarios)
+    economic_score(IndexBuilder.investment_metrics)
+    environment_score(IndexBuilder.environment_metrics)
+    resource_score(NaturalResources.minerals, IndexBuilder.resource_metrics)
+    resilience_score(IndexBuilder.final_energy_demand,
+                    IndexBuilder.energy_diversity,
+                    IndexBuilder.gini_coefficient)
+    calculate_robustness_score(IndexBuilder.energy_system_flexibility, 
+                               IndexBuilder.low_carbon_diversity, 
+                               IndexBuilder.carbon_budgets,
+                               IndexBuilder.CDR_2050)
+    select_most_dissimilar_scenarios(Data.model_scenarios)
     find_scenario_archetypes(Data.model_scenarios, 4)
     # scenarios_list = pd.read_csv('scenarios_investment_all_Countries of Sub-Saharan Africa.csv')
     # models = scenarios_list['model'].unique()
     # scenarios = scenarios_list['scenario'].unique()
     # Utils.data_download(Data.mandatory_variables,'*', '*', Data.R10, Data.categories, file_name='pyamdf_dimensions_data_R10' + str(Data.categories))
-    # Utils.data_download(Data.mandatory_CDR_variables,'*', '*', 'World', Data.categories, file_name='CDR_Robustness' + str(Data.categories))
+    # Utils.data_download(Data.mandatory_CDR_variables,'*', '*', Data.R10, Data.categories, file_name='CDR_Robustness' + str(Data.categories))
     # regions = ['World']
     # Utils().manadory_variables_scenarios(Data.categories, 
-    #                                      Data.econ_regions, 
-    #                                      Data.mandatory_variables, 
-    #                                      subset=False, special_file_name=None, call_sub=None)
-    # get_regional_scores()
+    #                                     Data.econ_regions, 
+    #                                     Data.mandatory_variables, 
+    #                                     subset=False, special_file_name=None, call_sub=None)
+
+    get_regional_scores()
 
 
 # calculate the economic score (higher score = more economic challenges)

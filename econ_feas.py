@@ -56,12 +56,12 @@ def main() -> None:
     # map_countries_to_regions(EconFeas.iea_country_groupings, EconFeas.by_country_gdp)
     # scenarios_list = pd.read_csv('econ_regional_Countries of Sub-Saharan Africa.csv')
     # data = pyam.IamDataFrame(data="pyamdf_econ_data_R10['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8'].csv")
-    # output_df = pd.DataFrame()
-    # for region in Data.R10:
-    #     print(region)
-    #     to_append = energy_supply_investment_score(Data.regional_dimensions_pyamdf, 0.023, 2100, Data.model_scenarios, Utils.categories, regional=region)
-    #     output_df = pd.concat([output_df, to_append], ignore_index=True, axis=0)
-    # output_df.to_csv('outputs/energy_supply_investment_score_regional' + str(Utils.categories) + '.csv')
+    output_df = pd.DataFrame()
+    for region in Data.R10:
+        print(region)
+        to_append = energy_supply_investment_score(Data.regional_dimensions_pyamdf, 0.023, 2100, Data.model_scenarios, Utils.categories, regional=region)
+        output_df = pd.concat([output_df, to_append], ignore_index=True, axis=0)
+    output_df.to_csv('outputs/energy_supply_investment_score_regional' + str(Utils.categories) + '.csv')
     energy_supply_investment_score(Data.regional_dimensions_pyamdf, 0.023, 2100, Data.model_scenarios, Data.categories, regional=None)
 
 

@@ -54,7 +54,7 @@ class Data:
                            'Capacity|Electricity|Solar|PV', 'Final Energy',
                            'Primary Energy|Coal', 'Primary Energy|Oil', 'Primary Energy|Gas', 'Primary Energy|Nuclear',
                            'Primary Energy|Biomass', 'Primary Energy|Non-Biomass Renewables','Carbon Sequestration|CCS|Biomass',
-                            'GDP|MER', 'Land Cover|Forest','Land Cover']
+                            'GDP|MER', 'Land Cover|Forest','Land Cover', 'Carbon Sequestration|Land Use']
 
     mandatory_econ_variables = ['GDP|MER', 'Investment|Energy Supply',
                                 'AR6 climate diagnostics|Surface Temperature (GSAT)|MAGICCv7.5.3|50.0th Percentile',

@@ -18,33 +18,32 @@ class Resilience:
 
 def main() -> None:
 
-    # empty_df = pd.DataFrame()
-    # empty_df_shannon = pd.DataFrame()
-    # for region in Data.R10:
-    #     # to_append = shannon_index_energy_mix(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories, regional=region)
-    #     to_append = final_energy_demand(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories, regional=region)
-    #     to_append_shannon = shannon_index_energy_mix(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories, regional=region)
-    #     empty_df = pd.concat([empty_df, to_append], ignore_index=True, axis=0)
-    #     empty_df_shannon = pd.concat([empty_df_shannon, to_append_shannon], ignore_index=True, axis=0)
-    # empty_df_shannon.to_csv('outputs/shannon_diversity_index_regional' + str(Data.categories) + '.csv')
-    # empty_df.to_csv('outputs/final_energy_demand_regional' + str(Data.categories) + '.csv')
-
+    # Run global indicators
     shannon_index_energy_mix(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories, regional=None)
     final_energy_demand(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories, regional=None)
-    # empty_df = pd.DataFrame()
-    # for region in Data.R10:
-    #     to_append = gini_between_countries(Data.dimensions_pyamdf, Data.model_scenarios, 2100, Data.meta_df, Resilience.gini_between_countries, Data.categories, regional=region)
-    #     empty_df = pd.concat([empty_df, to_append], ignore_index=True, axis=0)
-
-    # empty_df.to_csv('outputs/gini_coefficient_regional' + str(Data.categories) + '.csv')
-
     gini_between_countries(Data.regional_dimensions_pyamdf,
-                           Data.model_scenarios, 
-                           2100, 
-                           Data.meta_df,
-                           Resilience.gini_between_countries,
-                           Data.categories, regional=None)
-    
+                        Data.model_scenarios, 
+                        2100, 
+                        Data.meta_df,
+                        Resilience.gini_between_countries,
+                        Data.categories, regional=None)
+
+    # Run regional indicators
+    final_energy = pd.DataFrame()
+    shannon = pd.DataFrame()
+    gini = pd.DataFrame()
+    for region in Data.R10:
+        # to_append = shannon_index_energy_mix(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories, regional=region)
+        to_append_energy = final_energy_demand(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories, regional=region)
+        to_append_shannon = shannon_index_energy_mix(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories, regional=region)
+        to_append_gini = gini_between_countries(Data.dimensions_pyamdf, Data.model_scenarios, 2100, Data.meta_df, Resilience.gini_between_countries, Data.categories, regional=region)
+        final_energy = pd.concat([final_energy, to_append_energy], ignore_index=True, axis=0)
+        shannon = pd.concat([shannon, to_append_shannon], ignore_index=True, axis=0)
+        gini = pd.concat([gini, to_append_gini], ignore_index=True, axis=0)
+    shannon.to_csv('outputs/shannon_diversity_index_regional' + str(Data.categories) + '.csv')
+    final_energy.to_csv('outputs/final_energy_demand_regional' + str(Data.categories) + '.csv')
+    gini.to_csv('outputs/gini_coefficient_regional' + str(Data.categories) + '.csv')
+
 
     # get_within_region_gini(Resilience.ssp_gini_data, Data.region_country_df, 
     #                        Data.R10_codes, 2025)

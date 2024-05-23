@@ -73,13 +73,13 @@ def main() -> None:
 
     # make_scenario_project_list()
     # Utils.manadory_variables_scenarios(Utils, ['C1','C2'], EnvSus.regions, Data.mandatory_variables, subset=False)
-    # empty_df = pd.DataFrame()
-    # for region in Data.R10:
-    #     to_append = forest_cover_change(Data.regional_dimensions_pyamdf, 2100, Data.model_scenarios, EnvSus.beccs_threshold, Data.categories, regional=region)    
-    #     empty_df = pd.concat([empty_df, to_append], ignore_index=True, axis=0)
-    # print(empty_df)
+    empty_df = pd.DataFrame()
+    for region in Data.R10:
+        to_append = forest_cover_change(Data.regional_dimensions_pyamdf, 2100, Data.model_scenarios, EnvSus.beccs_threshold, Data.categories, regional=region)    
+        empty_df = pd.concat([empty_df, to_append], ignore_index=True, axis=0)
+    print(empty_df)
     
-    # empty_df.to_csv('outputs/environmental_metrics_regional' + str(Data.categories) + '.csv')
+    empty_df.to_csv('outputs/environmental_metrics_regional' + str(Data.categories) + '.csv')
     
     forest_cover_change(Data.regional_dimensions_pyamdf, 2100, Data.model_scenarios, EnvSus.beccs_threshold, Data.categories, regional=None)
 
