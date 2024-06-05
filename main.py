@@ -65,35 +65,42 @@ class Selection:
 
     try:
         archetypes = pd.read_csv('outputs/scenario_archetypes' + str(Data.categories) + '.csv')
+        selected_scenarios = pd.read_csv('outputs/selected_scenarios' + str(Data.categories) + '.csv', index_col=0)
     except:
         print('find_scenario_archetypes function has not been run yet')
 
+
+
+
 def main() -> None:
 
-    economic_score(IndexBuilder.investment_metrics)
-    environment_score(IndexBuilder.environment_metrics)
-    resource_score(NaturalResources.minerals, IndexBuilder.resource_metrics)
-    resilience_score(IndexBuilder.final_energy_demand,
-                    IndexBuilder.energy_diversity,
-                    IndexBuilder.gini_coefficient)
-    calculate_robustness_score(IndexBuilder.energy_system_flexibility, 
-                               IndexBuilder.low_carbon_diversity, 
-                               IndexBuilder.carbon_budgets,
-                               IndexBuilder.CDR_2050)
-    select_most_dissimilar_scenarios(Data.model_scenarios)
-    find_scenario_archetypes(Data.model_scenarios, 4)
+    # economic_score(IndexBuilder.investment_metrics)
+    # environment_score(IndexBuilder.environment_metrics)
+    # resource_score(NaturalResources.minerals, IndexBuilder.resource_metrics)
+    # resilience_score(IndexBuilder.final_energy_demand,
+    #                 IndexBuilder.energy_diversity,
+    #                 IndexBuilder.gini_coefficient)
+    # calculate_robustness_score(IndexBuilder.energy_system_flexibility, 
+    #                            IndexBuilder.low_carbon_diversity, 
+    #                            IndexBuilder.carbon_budgets,
+    #                            IndexBuilder.CDR_2050)
+    # select_most_dissimilar_scenarios(Data.model_scenarios)
+    # find_scenario_archetypes(Data.model_scenarios, 4)
     # scenarios_list = pd.read_csv('scenarios_investment_all_Countries of Sub-Saharan Africa.csv')
     # models = scenarios_list['model'].unique()
     # scenarios = scenarios_list['scenario'].unique()
-    # Utils.data_download(Data.mandatory_variables,'*', '*', Data.R10, Data.categories, file_name='pyamdf_dimensions_data_R10' + str(Data.categories))
+    # Utils.data_download(Data.paola_variables,'*', '*', Data.R10, Data.categories, file_name='CDR_data_R10' + str(Data.categories))
     # Utils.data_download(Data.mandatory_CDR_variables,'*', '*', Data.R10, Data.categories, file_name='CDR_Robustness' + str(Data.categories))
     # regions = ['World']
-    # Utils().manadory_variables_scenarios(Data.categories, 
-    #                                     Data.econ_regions, 
-    #                                     Data.mandatory_variables, 
-    #                                     subset=False, special_file_name=None, call_sub=None)
+    Utils().manadory_variables_scenarios(Data.categories, 
+                                        Data.econ_regions, 
+                                        Data.paola_variables, 
+                                        subset=False, 
+                                        special_file_name='CDR_scenarios_R10_all' + str(Data.categories), 
+                                        call_sub=None, 
+                                        save_data=False)
 
-    get_regional_scores()
+    # get_regional_scores()
 
 
 # calculate the economic score (higher score = more economic challenges)
@@ -454,14 +461,21 @@ def find_scenario_archetypes(model_scenarios_list, cluster_number=int):
     # selected_scenarios = [scenario for scenario in most_dissimilar_combination]
         # Extract the selected scenarios into a new DataFrame
     selected_scenarios_df = pd.DataFrame()
-
+    models = []
+    scenario = []
     for index, scenario_row in most_dissimilar_combination:
+        
+        models.append(index[0])
+        scenario.append(index[1])
         # Extract the row (as a DataFrame) and append it to the new DataFrame
-        scenario_df = pd.DataFrame([scenario_row], index=[index])
+        scenario_df = pd.DataFrame([scenario_row])
         selected_scenarios_df = pd.concat([selected_scenarios_df, scenario_df])
     
+    selected_scenarios_df['model'] = models
+    selected_scenarios_df['scenario'] = scenario
+
     # Reset index if necessary, to include 'model' and 'scenario' in the columns
-    selected_scenarios_df.reset_index(inplace=True)
+    # selected_scenarios_df.reset_index(inplace=True)
     
     # Save the selected scenarios to a CSV file
     selected_scenarios_df.to_csv('outputs/selected_scenarios' + str(Data.categories) + '.csv', index=False)

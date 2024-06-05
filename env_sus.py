@@ -49,8 +49,7 @@ class EnvSus:
     region = ['Countries of Sub-Saharan Africa']
     checked_variables = pd.read_csv('variable_categories.csv')
 
-    # beccs_threshold = 20500 # in mtCO2 / year
-    beccs_threshold = 13000 # in mtCO2 / year
+    beccs_threshold = 2800 # in mtCO2 / year medium threshold, high conversion efficiency value from deprez et al 2024
 
 def main() -> None:
 

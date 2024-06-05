@@ -35,7 +35,7 @@ class Data:
                         'EN_NPi2020_200f', 'EN_NPi2020_400f', 'SusDev_SDP-PkBudg1000', 'SusDev_SSP1-PkBudg900', 
                         'DeepElec_SSP2_def_Budg900', 'DISCRATE_cb400_cdrno_dr5p', 'EN_NPi2020_450f', 'EN_NPi2020_500f']
 
-    R10 = ['Countries of Latin America and the Caribbean','Countries of South Asia; primarily India',
+    R10 = ['World','Countries of Latin America and the Caribbean','Countries of South Asia; primarily India',
         'Countries of Sub-Saharan Africa', 'Countries of centrally-planned Asia; primarily China',
         'Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc.',
         'Eastern and Western Europe (i.e., the EU28)',
@@ -61,8 +61,8 @@ class Data:
                                 'AR6 climate diagnostics|Surface Temperature (GSAT)|MAGICCv7.5.3|95.0th Percentile']
 
     mandatory_CDR_variables = ['Carbon Sequestration|Direct Air Capture', 'Carbon Sequestration|Land Use','Carbon Sequestration|CCS|Biomass']
-
-
+    paola_variables = ['Carbon Sequestration|Direct Air Capture', 'Carbon Sequestration|Land Use','Carbon Sequestration|CCS|Biomass', 'Carbon Sequestration|Enhanced Weathering']
+    # paola_variables = ['Carbon Sequestration|Land Use','Carbon Sequestration|CCS|Biomass']
     narrative_variables = ['Final Energy|Transportation', 'Final Energy|Transportation|Liquids', 'Final Energy|Transportation|Liquids|Oil', 
                            'Primary Energy|Fossil', 'Land Cover|Pasture', 'Land Cover|Cropland', 'Land Cover|Forest', 'Land Cover',  'Carbon Sequestration|CCS|Biomass', 
                            'Carbon Sequestration|CCS|Fossil', 'Primary Energy|Non-Biomass Renewables', 'Primary Energy|Fossil|w/ CCS', 'Carbon Sequestration|Direct Air Capture',
@@ -84,7 +84,11 @@ class Data:
                         'Primary Energy|Gas', 'Primary Energy|Nuclear',
                         'Primary Energy|Biomass', 'Primary Energy|Non-Biomass Renewables']
     econ_regions = ['Countries of Sub-Saharan Africa']
-    
+    try:
+        narrative_data = pyam.IamDataFrame(data='narrative_data' + str(categories) + '.csv')
+    except FileNotFoundError:
+        print('No narrative data found')
+
     try:
         regional_dimensions_pyamdf = pyam.IamDataFrame(data='pyamdf_dimensions_data_R10' + str(categories) + '.csv')
     except FileNotFoundError:
@@ -278,7 +282,7 @@ class Utils:
     # function that takes as an input a list of mandatory variables and regional coverage and 
     # provides a list of scenarios that report on all of the mandatory variables for the given region
     def manadory_variables_scenarios(self, categories, regions, variables, subset=False, special_file_name=None
-                                     ,call_sub=None):
+                                     ,call_sub=None, save_data=False):
 
         """
         Function that takes as an input a list of mandatory variables and regional coverage and 
@@ -313,16 +317,17 @@ class Utils:
         # cat_df = df.filter(Category_subset=categories)
         if call_sub == None:
             
+            if save_data == True:
         # except:
         # cat_df = df.filter(Category=categories)
-            if special_file_name != None:
-                cat_df.to_csv('cat_df' + str(categories) + special_file_name + '.csv')
-                cat_meta = cat_df.as_pandas(meta_cols=True)
-                cat_meta.to_csv('cat_meta' + str(categories) + special_file_name + '.csv')
-            else:    
-                cat_df.to_csv('cat_df' + str(categories) + '.csv')
-                cat_meta = cat_df.as_pandas(meta_cols=True)
-                cat_meta.to_csv('cat_meta' + str(categories) + '.csv')
+                if special_file_name != None:
+                    cat_df.to_csv('cat_df' + str(categories) + special_file_name + '.csv')
+                    cat_meta = cat_df.as_pandas(meta_cols=True)
+                    cat_meta.to_csv('cat_meta' + str(categories) + special_file_name + '.csv')
+                else:    
+                    cat_df.to_csv('cat_df' + str(categories) + '.csv')
+                    cat_meta = cat_df.as_pandas(meta_cols=True)
+                    cat_meta.to_csv('cat_meta' + str(categories) + '.csv')
 
         # cat_df = pyam.IamDataFrame(data='cat_df.csv')
 
@@ -347,7 +352,7 @@ class Utils:
 
             if call_sub == None:
                 if special_file_name != None:
-                    output_df.to_csv(special_file_name + '_' + region + '.csv')
+                    output_df.to_csv(special_file_name + '.csv')
                 else:
                     output_df.to_csv(region + '_mandatory_variables_scenarios' + str(categories) + '.csv')
             elif call_sub != None:
