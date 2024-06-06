@@ -84,21 +84,18 @@ def main() -> None:
     #                            IndexBuilder.low_carbon_diversity, 
     #                            IndexBuilder.carbon_budgets,
     #                            IndexBuilder.CDR_2050)
-    # select_most_dissimilar_scenarios(Data.model_scenarios)
-    # find_scenario_archetypes(Data.model_scenarios, 4)
-    # scenarios_list = pd.read_csv('scenarios_investment_all_Countries of Sub-Saharan Africa.csv')
-    # models = scenarios_list['model'].unique()
-    # scenarios = scenarios_list['scenario'].unique()
+    select_most_dissimilar_scenarios(Data.model_scenarios)
+    find_scenario_archetypes(Data.model_scenarios, 4)
     # Utils.data_download(Data.paola_variables,'*', '*', Data.R10, Data.categories, file_name='CDR_data_R10' + str(Data.categories))
     # Utils.data_download(Data.mandatory_CDR_variables,'*', '*', Data.R10, Data.categories, file_name='CDR_Robustness' + str(Data.categories))
     # regions = ['World']
-    Utils().manadory_variables_scenarios(Data.categories, 
-                                        Data.econ_regions, 
-                                        Data.paola_variables, 
-                                        subset=False, 
-                                        special_file_name='CDR_scenarios_R10_all' + str(Data.categories), 
-                                        call_sub=None, 
-                                        save_data=False)
+    # Utils().manadory_variables_scenarios(Data.categories, 
+    #                                     Data.econ_regions, 
+    #                                     Data.paola_variables, 
+    #                                     subset=False, 
+    #                                     special_file_name='CDR_scenarios_R10_all' + str(Data.categories), 
+    #                                     call_sub=None, 
+    #                                     save_data=False)
 
     # get_regional_scores()
 
@@ -159,18 +156,32 @@ def resource_score(minerals, resource_metrics, regional=None):
     output_df['model'] = resource_metrics['model']
     output_df['scenario'] = resource_metrics['scenario']
    
+    """
+    Weighting scheme:
+
+    If a mineral has a score less than the threshold then it doesnt count:
+    0-1 0 X mineral score
+
+
+    """
+    
     # loop through the materials and normalise the scores
     for mineral in minerals:
        
         mineral_score = resource_metrics[mineral]
-        mineral_score_normalised = (mineral_score - mineral_score.min()) / (mineral_score.max() - mineral_score.min())
-        output_df[mineral] = mineral_score_normalised
+        # make any values in the column that are less than 1 equal to 0
+        mineral_score[mineral_score < 1] = 0
+    #     mineral_score_normalised = (mineral_score - mineral_score.min()) / (mineral_score.max() - mineral_score.min())
+    #     output_df[mineral] = mineral_score_normalised
+        # try:
+        #     output_df['total'] += mineral_score
+        # except:
+        #     output_df['total'] = mineral_score
         try:
-            output_df['total'] += mineral_score_normalised
+            output_df['resource_score'] += mineral_score
         except:
-            output_df['total'] = mineral_score_normalised
-    
-    output_df['resource_score'] = output_df['total'] / len(minerals)
+            output_df['resource_score'] = mineral_score
+    # output_df['resource_score'] = output_df['total'] / len(minerals)
     if regional != None:
         output_df['Region'] = regional
         return output_df
@@ -346,7 +357,7 @@ def get_regional_scores():
     for region in Data.R10:
 
         region_data = data[data['region'] == region]
-        region_data['economic_dimension_score'] = (region_data['economic_score'] ) / region_data['economic_score'].max() 
+        region_data['economic_dimension_score'] = (region_data['economic_score'] ) #/ region_data['economic_score'].max() 
         region_data['environmental_dimension_score'] = (region_data['environmental_score'] ) / region_data['environmental_score'].max()
         region_data['resource_dimension_score'] = (region_data['resource_score'] ) / region_data['resource_score'].max()
         region_data['resilience_dimension_score'] = (region_data['resilience_score'] ) / region_data['resilience_score'].max()
@@ -355,6 +366,7 @@ def get_regional_scores():
         dimension_scores = pd.concat([dimension_scores, region_data], axis=0)
 
     dimension_scores.to_csv('outputs/regional_normalised_dimension_scores' + str(Data.categories) + '.csv', index=False)
+
 
 # select most dissimilar scenarios
 def select_most_dissimilar_scenarios(model_scenarios_list):
@@ -374,7 +386,7 @@ def select_most_dissimilar_scenarios(model_scenarios_list):
                         'robustness_score': Selection.robustness_scores['robustness_score']}, index=None)
 
     # normalise the scores
-    data['economic_score'] = (data['economic_score'] ) / data['economic_score'].max() 
+    data['economic_score'] = (data['economic_score'] ) #/ data['economic_score'].max() 
     data['environmental_score'] = (data['environmental_score'] ) / data['environmental_score'].max()
     data['resource_score'] = (data['resource_score'] ) / data['resource_score'].max()
     data['resilience_score'] = (data['resilience_score'] ) / data['resilience_score'].max()

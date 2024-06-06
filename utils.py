@@ -35,7 +35,7 @@ class Data:
                         'EN_NPi2020_200f', 'EN_NPi2020_400f', 'SusDev_SDP-PkBudg1000', 'SusDev_SSP1-PkBudg900', 
                         'DeepElec_SSP2_def_Budg900', 'DISCRATE_cb400_cdrno_dr5p', 'EN_NPi2020_450f', 'EN_NPi2020_500f']
 
-    R10 = ['World','Countries of Latin America and the Caribbean','Countries of South Asia; primarily India',
+    R10 = ['Countries of Latin America and the Caribbean','Countries of South Asia; primarily India',
         'Countries of Sub-Saharan Africa', 'Countries of centrally-planned Asia; primarily China',
         'Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc.',
         'Eastern and Western Europe (i.e., the EU28)',

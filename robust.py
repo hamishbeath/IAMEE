@@ -28,20 +28,20 @@ def main() -> None:
 
     # print(Robust.historic_emissions)
     # 
-    harmonize_emissions_calc_budgets(Data.regional_dimensions_pyamdf, 
-                                     'Emissions|CO2', 
-                                     Data.model_scenarios,
-                                    Robust.historic_emissions, 
-                                    2023, 
-                                    Data.categories,
-                                    Robust.remaining_carbon_budget_2030, 
-                                    False, 
-                                    unity_year=2050, 
-                                    regional=None)
+    # harmonize_emissions_calc_budgets(Data.regional_dimensions_pyamdf, 
+    #                                  'Emissions|CO2', 
+    #                                  Data.model_scenarios,
+    #                                 Robust.historic_emissions, 
+    #                                 2023, 
+    #                                 Data.categories,
+    #                                 Robust.remaining_carbon_budget_2030, 
+    #                                 False, 
+    #                                 unity_year=2050, 
+    #                                 regional=None)
     flexibility_score(Data.regional_dimensions_pyamdf, Data.model_scenarios, 
-                      2100, Data.energy_variables, Robust.flexibility_data, Data.categories, regional=None)
-    calculate_total_CDR(Data.model_scenarios, Robust.cdr_df, Data.regional_dimensions_pyamdf, 2051, regional=None)
-    shannon_index_low_carbon_mix(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories)
+                      2050, Data.energy_variables, Robust.flexibility_data, Data.categories, regional=None)
+    # calculate_total_CDR(Data.model_scenarios, Robust.cdr_df, Data.regional_dimensions_pyamdf, 2051, regional=None)
+    shannon_index_low_carbon_mix(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2050, Data.categories)
     # empty_df = pd.DataFrame()
     # for region in Data.R10:
     #     to_append = calculate_total_CDR(Data.model_scenarios, Robust.cdr_df, Data.regional_dimensions_pyamdf, 2050, regional=region)
@@ -53,13 +53,13 @@ def main() -> None:
     # #                                      Robust.land_use_emissions_by_country,
     # #                                      Robust.historic_population, 
     # #                                      Data.region_country_df, 2023)
-    run_regional_carbon_budgets()
+    # run_regional_carbon_budgets()
     empty_df = pd.DataFrame()
     shannon_df = pd.DataFrame()
     for region in Data.R10:
         to_append = flexibility_score(Data.regional_dimensions_pyamdf, Data.model_scenarios, 
-                      2100, Data.energy_variables, Robust.flexibility_data, Data.categories, regional=region)
-        to_append_shannon = shannon_index_low_carbon_mix(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories, regional=region)
+                      2050, Data.energy_variables, Robust.flexibility_data, Data.categories, regional=region)
+        to_append_shannon = shannon_index_low_carbon_mix(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2050, Data.categories, regional=region)
         empty_df = pd.concat([empty_df, to_append], ignore_index=True, axis=0)
         shannon_df = pd.concat([shannon_df, to_append_shannon], ignore_index=True, axis=0)
     empty_df.to_csv('outputs/flexibility_scores_regional' + str(Data.categories) + '.csv', index=False)
@@ -109,7 +109,7 @@ def flexibility_score(pyam_df, scenario_model_list,
             # make pandas series with the values and years as index
             variable_df = variable_df.data
             variable_series = pd.Series(variable_df['value'].values, index=variable_df['year'])
-            cumulative_interpolated = pyam.timeseries.cumulative(variable_series, 2020, 2100)
+            cumulative_interpolated = pyam.timeseries.cumulative(variable_series, 2020, end_year)
             energy_summed[variable] = cumulative_interpolated
             total += cumulative_interpolated
         
@@ -392,7 +392,7 @@ def shannon_index_low_carbon_mix(pyam_df, scenario_model_list, end_year, categor
             # make pandas series with the values and years as index
             variable_df = variable_df.data
             variable_series = pd.Series(variable_df['value'].values, index=variable_df['year'])
-            cumulative_interpolated = pyam.timeseries.cumulative(variable_series, 2020, 2100)
+            cumulative_interpolated = pyam.timeseries.cumulative(variable_series, 2020, end_year)
             energy_summed[variable] = cumulative_interpolated
             total += cumulative_interpolated
         
