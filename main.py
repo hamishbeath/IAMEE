@@ -100,6 +100,8 @@ def main() -> None:
     # get_regional_scores()
 
 
+
+
 # calculate the economic score (higher score = more economic challenges)
 def economic_score(investment_scores, regional=None):
     

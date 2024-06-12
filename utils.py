@@ -85,7 +85,7 @@ class Data:
                         'Primary Energy|Biomass', 'Primary Energy|Non-Biomass Renewables']
     econ_regions = ['Countries of Sub-Saharan Africa']
     try:
-        narrative_data = pyam.IamDataFrame(data='narrative_data' + str(categories) + '.csv')
+        narrative_data = pyam.IamDataFrame(data='outputs/narrative_data' + str(categories) + '.csv')
     except FileNotFoundError:
         print('No narrative data found')
 
@@ -442,7 +442,7 @@ class Utils:
 
         df.to_csv(file_name + '.csv')
         
-    def data_download_sub(variables, models, scenarios, region, end_year):
+    def data_download_sub(variables, models, scenarios, categories, region, end_year):
 
         connAr6 = pyam.iiasa.Connection(name='ar6-public', 
                     creds=None, 

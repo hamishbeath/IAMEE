@@ -8,7 +8,6 @@ from scipy.spatial import ConvexHull, Delaunay
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
-import networkx as nx
 from itertools import product, combinations
 import pandas as pd
 import mplcyberpunk
@@ -68,13 +67,13 @@ def main() -> None:
     # Plotting.transport_stackplot(Plotting, Data.c1a_scenarios_selected, Data.c1a_models_selected, Plotting.c1a_data)
     # Plotting.land_use_stacked_shares(Plotting, Data.c1a_scenarios_selected, Data.c1a_models_selected, Plotting.c1a_data)
     Plotting.CDR_stacked_shares(Plotting, Selection.selected_scenarios)
-    # Plotting.radar_plot_model_fingerprint(Plotting, Data.model_scenarios, Plotting.model_families, Plotting.model_colours, Plotting.clustered_scores)
+    # Plotting.radar_plot_model_fingerprint_single_panel(Plotting, Data.model_scenarios, Plotting.model_families, Plotting.model_colours, Plotting.clustered_scores)
     # Plotting.regional_differences_across_scenarios(Plotting, Plotting.normalised_scores, Plotting.regional_normalised_scores, Data.model_scenarios)
-    # Plotting.radar_plot_ssp(Plotting, Data.model_scenarios, IndexBuilder.gini_coefficient, Plotting.clustered_scores)
+    # Plotting.radar_plot_ssp_pairs(Plotting, Data.model_scenarios, IndexBuilder.gini_coefficient, Plotting.clustered_scores)
     # Plotting.radar_plot(Plotting, Data.model_scenarios, Plotting.clustered_scores)
     # Plotting.convex_hull(Plotting, Plotting.clustered_scores, 10)
     # Plotting.duplicate_scenarios_plot(Plotting, Plotting.clustered_scores)
-    # Plotting.count_pairwise_low_scores(Plotting, Plotting.clustered_scores, low_score_threshold=0.2)
+    # Plotting.count_pairwise_low_scores(Plotting, Plotting.clustered_scores, low_score_threshold=0.3)
 class Plotting:
 
     dimensions = ['economic', 'environment', 'resilience', 'resource', 'robust']
@@ -604,12 +603,13 @@ class Plotting:
             #     colour = colours[model_families.index(model_family)]
             #     model_family_info = investment_info[investment_info['model_family'] == model_family]
             #     ax.scatter(x=model_family_info['x'], y=model_family_info[investment_column], c=colour, marker='o', s=50, alpha=0.65)
-            for model in models:
-
-                colour = colours[models.index(model)]
-                model_info = investment_info[investment_info['model'] == model]
+            count = 0
+            for model in model_families:
+                
+                colour = colours[count]
+                model_info = investment_info[investment_info['model_family'] == model]
                 ax.scatter(x=model_info['x'], y=model_info[investment_column], c=colour, marker='o', s=40, alpha=0.35)
-            
+                count += 1
             # ax.scatter(x=investment_info['x'], y=investment_info[investment_column], marker='o',c=colours[:len(investment_info)], s=50, alpha=0.5)
             # ax.scatter(y=investment_info['x'], x=investment_info[investment_column] + np.random.normal(0, 0.02, len(investment_info)), marker='o', s=50, alpha=0.5)
             ax.set_title(y_labels[count])
@@ -627,13 +627,13 @@ class Plotting:
         #     label_names.append(investment_info['model'][label])
         
         # make a list of the colors
-        colors = colours[:len(models)]
+        colors = colours[:len(model_families)]
         # make a list of the markers
-        markers = ['o'] * len(models)
+        markers = ['o'] * len(model_families)
         # make a list of the sizes
-        sizes = [50] * len(models)
+        sizes = [50] * len(model_families)
         # # make a list of the labels
-        labels = models
+        labels = model_families
         swatches = [mpatches.Patch(color=colors[i], label=labels[i]) for i in range(len(labels))]
         # #create a legend
         fig.legend(handles=swatches, labels=labels, loc='lower center', ncol=3, fontsize=7, frameon=False)
@@ -872,9 +872,9 @@ class Plotting:
 
             #set the y limit
             ax.set_ylim(0, 1)
-
+            title = archetype_names[archetype] + selected_scenarios[selected_scenarios['cluster'] == archetype]['scenario'].values[0]
             # Title for each subplot with the archetype name
-            ax.set_title(archetype_names[archetype],size=14, y=1.1, fontweight='bold')
+            ax.set_title(title,size=14, y=1.1, fontweight='bold')
 
         # Show the figure
         plt.tight_layout()
@@ -980,6 +980,103 @@ class Plotting:
         plt.show()
 
 
+    def radar_plot_model_fingerprint_single_panel(self, scenario_model_list, model_families, model_colours, scenario_scores):
+
+        """
+        Model Fingerprint Radar Plot
+        
+        This function takes all the scenarios and their respective dimension scores, and 
+        sorts them into model families. There is then one radar per model family with the 
+        median value for each dimension plotted in bold, with every other scenario in the 
+        family plotted in a lighter color to demonstrate variation within the model 
+        family. 
+        
+        Inputs: 
+        - scenario_model_list: a dataframe containing the scenario names and model names
+        - model_families: a dataframe containing the model names and the model family they belong to
+        - colours: a list of colors to use for the radar plots
+        
+        Outputs: 
+        - Radar plots for each model family, showing the median value for each dimension in bold
+
+        """
+
+
+        # add a column to the scenario scores with the model family
+        scenario_scores['model_family'] = scenario_scores['model'].map(model_families.set_index('model')['model_family'])
+        scenario_scores.to_csv('outputs/model_families' +  str(Data.categories) + '.csv')
+
+
+        # get the unique model families
+        model_families = scenario_scores['model_family'].unique().tolist()
+
+        print(model_families, len(model_families))
+
+        # Number of variables we're plotting.
+        categories = list(scenario_scores)[2:7]
+
+        # make a fig with 6 subplots, 2 rows
+        fig, ax = plt.subplots(1, 1, figsize=(10, 10), subplot_kw=dict(polar=True))
+
+        N = len(categories)
+
+        # ax = axs.flatten()
+        count = 0
+        for model_family in model_families:
+        
+            angles = np.linspace(0, 2 * np.pi, N, endpoint=False).tolist()
+            stats = scenario_scores.loc[scenario_scores['model_family'] == model_family, categories].median().values.flatten().tolist()
+            stats += stats[:1]
+            angles += angles[:1]
+
+            print(model_family)
+            
+            model_colour = Plotting.bright_modern_colors[count]
+
+            # Draw the outline of our data.
+            # ax.fill(angles, stats, color=colours[i], alpha=0.25)
+            ax.plot(angles, stats, color=model_colour, linewidth=2, zorder=10, alpha=0.9)
+
+            # # Labels for each point
+            ax.set_xticks(angles[:-1])
+            ax.set_xticklabels(categories)
+
+            #set the y limit
+            ax.set_ylim(0, 1)
+
+            # Title for each subplot with the model family name
+            ax.set_title(model_family,size=10, y=1.1, fontweight='bold')
+
+            model_family_data = scenario_scores.loc[scenario_scores['model_family'] == model_family]
+
+
+            # add the outlines for the other scenarios in the model family
+            for scenario in model_family_data.loc[model_family_data['model_family'] == model_family, 'scenario']:
+
+                print(scenario, model_family)
+                scenario_stats = model_family_data.loc[model_family_data['scenario'] == scenario, categories].values.flatten().tolist()
+                scenario_angle = np.linspace(0, 2 * np.pi, N, endpoint=False).tolist()
+                print(scenario_stats)
+                scenario_stats += scenario_stats[:1]  # Fix: Use scenario_stats instead of stats
+                scenario_angle += scenario_angle[:1]
+                ax.plot(scenario_angle, scenario_stats, color=model_colour, alpha=0.2, zorder=9)
+
+            count += 1
+        # # Labels for each point
+        ax.set_xticks(angles[:-1])
+        ax.set_xticklabels(Plotting.dimension_names)
+
+        #set the y limit
+        ax.set_ylim(0, 1)
+
+        # Title for each subplot with the model family name
+        ax.set_title(model_family,size=12, y=1.1, fontweight='bold')
+
+        # Show the figure
+        plt.tight_layout()
+        plt.show()
+
+
     def radar_plot_ssp(self, scenario_model_list, ssps, scenario_scores):
 
         """
@@ -996,6 +1093,14 @@ class Plotting:
         """
 
         ssp_colours = {1:'#4ADEB5',2:'#8596FC' }
+        scenario_pairs = {'IMAGE':{'SSP1_SPA1_19I_D_LB':'SSP2_SPA1_19I_D_LB',
+                                   'SSP1_SPA1_19I_LIRE_LB':'SSP2_SPA1_19I_LIRE_LB',
+                                   'SSP1_SPA1_19I_RE_LB':'SSP2_SPA1_19I_RE_LB'},
+                            'REMIND':{'SusDev_SSP1-PkBudg900':'SusDev_SSP2-PkBudg900',
+                                      'CEMICS_SSP1-1p5C-fullCDR':'CEMICS_SSP2-1p5C-fullCDR',
+                                      'CEMICS_SSP1-1p5C-minCDR':'CEMICS_SSP2-1p5C-minCDR'}}
+
+
 
         scenario_scores['ssp'] = ssps['ssp']
 
@@ -1049,6 +1154,94 @@ class Plotting:
         # Show the figure
         plt.tight_layout()
         plt.show()
+
+
+    def radar_plot_ssp_pairs(self, scenario_model_list, ssps, scenario_scores):
+
+        """
+        SSP fingerprint radar plot (Pairs)
+        This plot is as above, but instead of model families, the scenarios are grouped by SSP
+
+        Inputs:
+        - scenario_model_list: a dataframe containing the scenario names and model names
+        - ssps: a dataframe containing the scenario names and the SSP they belong to
+        - scenario_scores: a dataframe containing the scenario names and the dimension scores
+
+        Outputs:
+        - Radar plots for each SSP, showing the median value for each dimension in bold
+        """
+
+        ssp_colours = {1:'#4ADEB5',2:'#8596FC' }
+        # scenario_pairs = {'IMAGE':{'SSP1_SPA1_19I_D_LB':'SSP2_SPA1_19I_D_LB',
+        #                            'SSP1_SPA1_19I_LIRE_LB':'SSP2_SPA1_19I_LIRE_LB',
+        #                            'SSP1_SPA1_19I_RE_LB':'SSP2_SPA1_19I_RE_LB'},
+        #                     'REMIND':{'SusDev_SSP1-PkBudg900':'SusDev_SSP2-PkBudg900',
+        #                               'CEMICS_SSP1-1p5C-fullCDR':'CEMICS_SSP2-1p5C-fullCDR',
+        #                               'CEMICS_SSP1-1p5C-minCDR':'CEMICS_SSP2-1p5C-minCDR'}}
+        scenario_pairs = {'IMAGE':{'SSP1_SPA1_19I_D_LB':'SSP2_SPA1_19I_D_LB'},
+                    'REMIND':{'CEMICS_SSP1-1p5C-minCDR':'CEMICS_SSP2-1p5C-minCDR'}}
+        
+        colours = {'IMAGE':["#FF4500", "#FF6347", "#FF0000"], 'REMIND':["#00DD00"]}
+        model_families = ['IMAGE', 'REMIND']
+
+        # list of green colours
+        greens = ['#00FF00', '#00EE00', '#00DD00', '#00CC00', '#00BB00', '#00AA00', '#009900', '#008800', '#007700', '#006600', '#005500', '#004400', '#003300', '#002200', '#001100', '#000000']
+        oranges = ['#FFA500', '#FF9F00', '#FF9E00', '#FF9D00', '#FF9C00', '#FF9B00', '#FF9A00', '#FF9900', '#FF9800', '#FF9700', '#FF9600', '#FF9500', '#FF9400', '#FF9300', '#FF9200', '#FF9100']
+        # scenario_scores['ssp'] = ssps['ssp']
+
+        # # get the unique SSPs
+        # ssps = scenario_scores['ssp'].unique().tolist()
+
+        # Number of variables we're plotting.
+        categories = list(scenario_scores)[2:7]
+
+        # make a fig with 2 subplots, 1 row
+        fig, ax = plt.subplots(1, 1, figsize=(10, 10), subplot_kw=dict(polar=True))
+
+        N = len(categories)
+        
+
+        for i in model_families:
+
+            scenario_pairs_model = scenario_pairs[i]
+            
+            count = 0
+            for ssp1, ssp2 in scenario_pairs_model.items():
+                
+                colour = colours[i][count]      
+
+                ssp1_stats = scenario_scores.loc[scenario_scores['scenario'] == ssp1, categories].values.flatten().tolist()
+                ssp2_stats = scenario_scores.loc[scenario_scores['scenario'] == ssp2, categories].values.flatten().tolist()
+
+                angles = np.linspace(0, 2 * np.pi, N, endpoint=False).tolist()
+                # stats = scenario_scores.loc[scenario_scores['ssp'] == ssp, categories].median().values.flatten().tolist()
+                ssp1_stats += ssp1_stats[:1]
+                ssp2_stats += ssp2_stats[:1]
+                angles += angles[:1]
+
+                # Draw the outline of our data.
+                # ax.fill(angles, stats, color=ssp_colours[ssp], alpha=0.25)
+                ax.plot(angles, ssp1_stats, color=colour, linewidth=2, alpha=0.5)
+                ax.plot(angles, ssp2_stats, color=colour, linewidth=2, alpha=0.5, linestyle='dashed')
+
+                count += 1
+        # # Labels for each point
+        ax.set_xticks(angles[:-1])
+        ax.set_xticklabels(categories)
+
+        #set the y limit
+        ax.set_ylim(0, 1)
+
+        # # Title for each subplot with the SSP name
+        # ax.set_title(ssp,size=10, y=1.1, fontweight='bold')
+
+        # ssp_data = scenario_scores.loc[scenario_scores['ssp'] == ssp]
+        # print(ssp_data)
+
+        # Show the figure
+        plt.tight_layout()
+        plt.show()
+
 
     def radar_plot(self, scenario_model_list, scenario_scores):
 
@@ -1222,7 +1415,7 @@ class Plotting:
                 plotting_df[variable] = interpolated_variable['value']
 
             # make a stack plot for the scenario
-            axs.flatten()[i].stackplot(range(2020, 2101), plotting_df.T, labels=energy_variables, colors=colours, alpha=0.45, edgecolor=colours)
+            axs.flatten()[i].stackplot(range(2020, 2101), plotting_df.T, labels=energy_variables, colors=colours, alpha=0.45, edgecolor=colours, linewidth=0.25)
             
             # # add line plot over the top
             # for variable in energy_variables:
@@ -1444,7 +1637,7 @@ class Plotting:
                         Plotting.plotting_df[variable] = interpolated_variable['value']
                 
             # make a stack plot for the scenario
-            axs.flatten()[i].stackplot(range(2020, 2101), Plotting.plotting_df.T, labels=CDR_variables, colors=colours, alpha=0.4, edgecolor='darkgrey')
+            axs.flatten()[i].stackplot(range(2020, 2101), Plotting.plotting_df.T, labels=CDR_variables, colors=colours, alpha=0.4, edgecolor='darkgrey', linewidth=0.25)
 
             # title = names[i] + ' (' + scenario + ')'
             title = scenario
@@ -1685,7 +1878,7 @@ class Plotting:
         plt.show()
 
 
-    def count_pairwise_low_scores(self, scenario_scores, low_score_threshold=0.1):
+    def count_pairwise_low_scores(self, scenario_scores, low_score_threshold=float):
         """
         Function to count the number of scenarios scoring low on pairs of dimensions.
         
@@ -1701,16 +1894,18 @@ class Plotting:
         scenario_scores = scenario_scores.drop(columns=['cluster'])
         
         # Define the low score threshold for each dimension (assuming a percentile for simplicity)
-        thresholds = scenario_scores.quantile(low_score_threshold)
-        
+        # thresholds = scenario_scores.quantile(low_score_threshold)
+        # print(thresholds)
+        thresholds = low_score_threshold
+
         # Initialize a DataFrame to store the counts
         dimensions = scenario_scores.columns
         pairwise_counts = pd.DataFrame(0, index=dimensions, columns=dimensions)
         
         # Calculate the pairwise counts
         for dim1, dim2 in combinations(dimensions, 2):
-            low_dim1 = scenario_scores[dim1] < thresholds[dim1]
-            low_dim2 = scenario_scores[dim2] < thresholds[dim2]
+            low_dim1 = scenario_scores[dim1] < thresholds #thresholds[dim1]
+            low_dim2 = scenario_scores[dim2] < thresholds #thresholds[dim2]
             count = np.sum(low_dim1 & low_dim2)
             pairwise_counts.loc[dim1, dim2] = count
             pairwise_counts.loc[dim2, dim1] = count
@@ -1724,10 +1919,11 @@ class Plotting:
         heatmap = sns.heatmap(
             pairwise_counts, 
             annot=True, 
-            cmap="hot_r", 
-            cbar_kws={'label': 'Count of Low Scores'},
+            cmap="YlGnBu_r", 
+            cbar_kws={'label': 'Count of Low Scores', 'format': '%.0f'},
             linewidths=0.2,
-            square=True,  # Add lines between squares for clarity
+            square=True,
+            vmax=18,  # Add lines between squares for clarity
               # Ensures each cell is square square=True
         )
 
