@@ -17,6 +17,7 @@ from utils import Data, Utils
 # rcParams['font.sans-serif'] = ['Arial']
 from main import Selection
 from main import IndexBuilder
+import matplotlib.lines as mlines
 # plt.rcParams['font.size'] = 7
 # plt.rcParams['axes.titlesize'] = 7
 # plt.rcParams['figure.dpi'] = 150
@@ -66,14 +67,17 @@ def main() -> None:
     # Plotting.energy_system_stackplot(Plotting, Selection.selected_scenarios, Data.regional_dimensions_pyamdf, Plotting.energy_shares_variables)
     # Plotting.transport_stackplot(Plotting, Data.c1a_scenarios_selected, Data.c1a_models_selected, Plotting.c1a_data)
     # Plotting.land_use_stacked_shares(Plotting, Data.c1a_scenarios_selected, Data.c1a_models_selected, Plotting.c1a_data)
-    Plotting.CDR_stacked_shares(Plotting, Selection.selected_scenarios)
+    # Plotting.CDR_stacked_shares(Plotting, Selection.selected_scenarios)
     # Plotting.radar_plot_model_fingerprint_single_panel(Plotting, Data.model_scenarios, Plotting.model_families, Plotting.model_colours, Plotting.clustered_scores)
-    # Plotting.regional_differences_across_scenarios(Plotting, Plotting.normalised_scores, Plotting.regional_normalised_scores, Data.model_scenarios)
+    Plotting.regional_differences_across_scenarios(Plotting, Plotting.normalised_scores, Plotting.regional_normalised_scores, Data.model_scenarios, Plotting.selected_scenarios)
     # Plotting.radar_plot_ssp_pairs(Plotting, Data.model_scenarios, IndexBuilder.gini_coefficient, Plotting.clustered_scores)
     # Plotting.radar_plot(Plotting, Data.model_scenarios, Plotting.clustered_scores)
     # Plotting.convex_hull(Plotting, Plotting.clustered_scores, 10)
     # Plotting.duplicate_scenarios_plot(Plotting, Plotting.clustered_scores)
     # Plotting.count_pairwise_low_scores(Plotting, Plotting.clustered_scores, low_score_threshold=0.3)
+    # Plotting.radar_plot_temp_category(Plotting, Data.meta_df, Plotting.clustered_scores)
+
+
 class Plotting:
 
     dimensions = ['economic', 'environment', 'resilience', 'resource', 'robust']
@@ -1243,6 +1247,79 @@ class Plotting:
         plt.show()
 
 
+    def radar_plot_temp_category(self, meta_data, scenario_scores):
+        
+        """
+        Temperature category radar plot
+        Here all the scenarios are grouped by temperature category, with the median value for each dimension
+        plotted in bold, and every other scenario in the category plotted in a lighter color to demonstrate
+
+        Inputs:
+        - scenario_model_list: a dataframe containing the scenario names and model names, temp category
+        - scenario_scores: a dataframe containing the scenario names and the dimension scores
+
+        Outputs:
+        - a single radar plot with scenarios plotted based on their temperature category
+
+        """
+        category_colours = {'C1':'#96CFE3', 'C2':'#778664'}
+
+        # plt.rcParams['font.size'] = 7
+        # Number of variables we're plotting.
+        categories = list(scenario_scores)[2:7]
+
+        # make a fig with 3 subplots, 1 row
+        fig, ax = plt.subplots(1, 1, figsize=(10, 10), subplot_kw=dict(polar=True))
+
+        N = len(categories)
+
+        # get the unique temperature categories
+        temp_categories = meta_data['Category'].unique().tolist()
+
+        # filter the metadata for world and emissions co2
+        meta_data = meta_data[(meta_data['region'] == 'Countries of Sub-Saharan Africa') & (meta_data['variable'] == 'Emissions|CO2') & (meta_data['year'] == 2030)]
+        print(meta_data)
+        # set the index as the scenario and model
+        meta_data.set_index(['scenario', 'model'], inplace=True)
+        scenario_scores.set_index(['scenario', 'model'], inplace=True)
+        
+        # merge the scenario scores with the temperature category
+        scenario_scores = scenario_scores.merge(meta_data['Category'], on=['scenario', 'model'], how='left')
+        print(scenario_scores)
+        scenario_scores.reset_index(inplace=True)
+
+        for i, temp_category in enumerate(temp_categories):
+
+            angles = np.linspace(0, 2 * np.pi, N, endpoint=False).tolist()
+            stats = scenario_scores.loc[scenario_scores['Category'] == temp_category, categories].median().values.flatten().tolist()
+            stats += stats[:1]
+            angles += angles[:1]
+
+            # Draw the outline of our data.
+            # ax.fill(angles, stats, color='black', alpha=0.25)
+            ax.plot(angles, stats, color=category_colours[temp_category], linewidth=3)
+
+            # # Labels for each point
+            ax.set_xticks(angles[:-1])
+            ax.set_xticklabels(categories)
+
+            #set the y limit
+            ax.set_ylim(0, 1)
+
+            temp_category_data = scenario_scores.loc[scenario_scores['Category'] == temp_category]
+            for scenario, model in zip(temp_category_data['scenario'], temp_category_data['model']):
+                
+                scenario_stats = temp_category_data.loc[temp_category_data['scenario'] == scenario]
+                model_scenario_stats = scenario_stats.loc[scenario_stats['model'] == model, categories].values.flatten().tolist() 
+                scenario_angle = np.linspace(0, 2 * np.pi, N, endpoint=False).tolist()
+                model_scenario_stats += model_scenario_stats[:1]
+                scenario_angle += scenario_angle[:1]
+                ax.plot(scenario_angle, model_scenario_stats, color=category_colours[temp_category], alpha=0.3)
+        # Show the figure
+        plt.tight_layout()
+        plt.show()
+
+
     def radar_plot(self, scenario_model_list, scenario_scores):
 
         """
@@ -1664,7 +1741,7 @@ class Plotting:
         plt.show()
 
 
-    def regional_differences_across_scenarios(self, dimension_scores_global, dimension_scores_regional, scenarios_list):
+    def regional_differences_across_scenarios(self, dimension_scores_global, dimension_scores_regional, scenarios_list, selected_scenarios):
 
         dimensions_list = ['economic','resilience','robustness']
         
@@ -1694,121 +1771,70 @@ class Plotting:
         fig, axs = plt.subplots(1, 3, figsize=(15, 5), sharey=True)
 
         for i, dimension in enumerate(dimensions_list):
-            sns.violinplot(x=dimension + '_diff', y='region', data=output_df, ax=axs[i], palette='hsv', linewidth=0.4)
+            sns.violinplot(x=dimension + '_diff', y='region', data=output_df, ax=axs[i], palette='hsv', linewidth=0.4, inner='box')
             axs[i].set_title(dimension)
             axs[i].set_ylabel('')
             axs[i].set_xlabel('Difference in score')
             axs[i].set_xlim(-0.75, 0.75)
+            icon_list = ['v', 'o', 's', 'p']
+            
+            # # Extract the y values of the middle of the violin plots
+            # y_coords_list = []
+            # collections = axs[i].collections  # Collection from the correct axs[i]
+            
+            # # Process each collection which corresponds to each region's violin plot
+            # for j in range(len(output_df['region'].unique())):
+            #     # Assuming each region corresponds to two paths (left and right of the violin)
+            #     path = collections[j].get_paths()[0]  # Typically, each collection will have one path, but this might need adjusting
+            #     vertices = path.vertices
+            #     y_coords = vertices[:, 1]  # Extract y-coordinates
+            #     # Find the y-coordinate of the middle of the plot
+            #     y_mid = np.mean(y_coords)
+            #     y_coords_list.append(y_mid)
+
+                        # Extract y values of the middle of the violin plots
+            y_coords_list = []
+            region_order = axs[i].get_yticklabels() # Get the order of regions as displayed
+            y_coords_list = axs[i].get_yticks() # Get the y-position of each region
+
+            # y_coords_list.append((region, region_position))
+                    
+            print(y_coords_list)
+            
+            
+            marker_colours = ['black', 'red', 'grey', 'lightgrey']
+            # Add an icon for each selected scenario
+            for j, scenario in enumerate(selected_scenarios['scenario']):
+                scenario_diff = output_df[(output_df['scenario'] == scenario) & 
+                                        (output_df['model'] == selected_scenarios['model'][j])]
+                scenario_diff_values = scenario_diff[dimension + '_diff'].values.flatten()
+                # Ensure that there's a y-coordinate for each value to plot
+                if len(scenario_diff_values) == len(y_coords_list):
+                    axs[i].scatter(scenario_diff_values, y_coords_list, marker=icon_list[j], s=50, color=marker_colours[j], alpha=0.9, edgecolor='grey', linewidth=0.3)
+                else:
+                    print("Mismatch in number of points to plot")
+                #         Plot each scenario value at the corresponding y-coordinate
+                # for val, region in zip(scenario_diff_values, scenario_regions):
+                #     for region_name, y_mid in y_coords_list:
+                #         if region == region_name:
+                #             axs[i].scatter(val, y_mid, marker=icon_list[j], s=100, color='black')
 
         # set the y axis labels as data.R10_codes
         axs[0].set_yticklabels(Data.R10_codes)
 
+        # make a list of the markers
+        markers = icon_list
+        # # make a list of the labels
+        labels = selected_scenarios['scenario'].tolist()
+        # Create a list of Line2D objects for the legend
+        swatches = [mlines.Line2D([], [], color=marker_colours[i], marker=icon_list[i], linestyle='None',
+                                markersize=10, label=labels[i]) for i in range(len(labels))]
+
+        # #create a legend
+        fig.legend(handles=swatches, labels=labels, loc='lower center', ncol=4, fontsize=10, frameon=False)
+        # make legends for markers for the icons and their colours for the scenarios
+
         plt.show()
-
-
-    def convex_hull(self, scenario_scores, num_examples):
-
-        """
-        Function that provides the convex hull for the scenario scores
-
-        Inputs: scenario_scores - a dataframe containing the scenario scores for each dimension
-
-        Outputs: a plot showing the convex hull for the scenario scores
-
-        """    
-        print(scenario_scores)
-        # set index to scenario and model
-        scenario_scores = scenario_scores.set_index(['scenario', 'model'], drop=True)
-        scenario_scores = scenario_scores.drop(columns=['cluster'])
-
-        X = scenario_scores.values
-            # Check if the number of points is sufficient to construct the convex hull in 5D
-        if len(X) < 6:
-            raise ValueError("Not enough points to construct a 5-dimensional convex hull. Need at least 6 points.")
-
-        hull = ConvexHull(X)
-
-        # Function to check if points are inside the convex hull
-        def in_hull(points, hull):
-            """
-            Test if points in `points` are in `hull`
-            `points` should be a NxK coordinates of N points in K dimensions
-            `hull` is a scipy.spatial.Delaunay object
-            """
-            if not isinstance(hull, Delaunay):
-                hull = Delaunay(hull.points[hull.vertices])
-            return hull.find_simplex(points) >= 0
-
-        # Generate a grid of points within the range of your dimensions
-        grid_density = 3
-        min_values = X.min(axis=0)
-        max_values = X.max(axis=0)
-        grid_ranges = [np.linspace(min_val, max_val, grid_density) for min_val, max_val in zip(min_values, max_values)]
-        grid_points = np.array(list(product(*grid_ranges)))
-
-        # Check which points are inside the hull
-        in_hull_mask = in_hull(grid_points, hull)
-
-        # Points outside the hull are the potential missing scenarios
-        missing_scenarios = grid_points[~in_hull_mask]
-        # print("Missing scenarios (standardized):", missing_scenarios)
-
-        # Convert to DataFrame for better visualization
-        missing_scenarios_df = pd.DataFrame(missing_scenarios, columns=scenario_scores.columns)
-
-
-        kmeans = KMeans(n_clusters=num_examples, random_state=0).fit(missing_scenarios)
-        representative_missing_scenarios = kmeans.cluster_centers_
-        representative_missing_scenarios_df = pd.DataFrame(representative_missing_scenarios, columns=scenario_scores.columns)
-        
-        # plot on the radar plot
-        fig, ax = plt.subplots(1, 1, figsize=(10, 10), subplot_kw=dict(polar=True))
-        N = len(representative_missing_scenarios_df.columns)
-        angles = np.linspace(0, 2 * np.pi, N, endpoint=False).tolist()
-        for i in range(num_examples):
-            stats = representative_missing_scenarios_df.loc[representative_missing_scenarios_df.index[i], :].values.flatten().tolist()
-            angles = np.linspace(0, 2 * np.pi, N, endpoint=False).tolist()
-            stats += stats[:1]
-            angles += angles[:1]
-            # ax.fill(angles, stats, color='black', alpha=0.25)
-            ax.plot(angles, stats, color='black', linewidth=1, alpha=0.5)
-        
-        # Labels for each point
-        ax.set_xticks(angles[:-1])
-        ax.set_xticklabels(Plotting.dimension_names)
-
-        #set the y limit
-        ax.set_ylim(0, 1)
-
-        plt.tight_layout()
-        plt.show()
-        # print(representative_missing_scenarios_df)
-
-        # print(hull.vertices)
-        # # hull_points = hull.vertices
-
-        # # Function to check if points are inside the convex hull
-        # def in_hull(points, hull):
-        #     """
-        #     Test if points in `points` are in `hull`
-        #     `points` should be a NxK coordinates of N points in K dimensions
-        #     `hull` is a scipy.spatial.Delaunay object
-        #     """
-        #     if not isinstance(hull, Delaunay):
-        #         hull = Delaunay(hull)
-        #     return hull.find_simplex(points) >= 0
-
-        # # Generate a grid of points within the range of your dimensions
-        # # For simplicity, let's assume each dimension ranges from -3 to 3 after standardization
-        # grid_points = np.array(list(product(np.linspace(0, 1, 10), repeat=5)))
-        # print(grid_points)
-        # # Check which points are inside the hull
-        # hull_points = [hull.vertices]
-        # in_hull_mask = in_hull(grid_points, hull_points)
-
-        # # Points outside the hull are the potential missing scenarios
-        # missing_scenarios = grid_points[~in_hull_mask]
-        print(missing_scenarios)
 
 
     def duplicate_scenarios_plot(self, scenario_scores):

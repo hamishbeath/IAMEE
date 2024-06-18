@@ -19,14 +19,14 @@ class Resilience:
 def main() -> None:
 
     # Run global indicators
-    shannon_index_energy_mix(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories, regional=None)
-    final_energy_demand(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories, regional=None)
-    gini_between_countries(Data.regional_dimensions_pyamdf,
-                        Data.model_scenarios, 
-                        2100, 
-                        Data.meta_df,
-                        Resilience.gini_between_countries,
-                        Data.categories, regional=None)
+    # shannon_index_energy_mix(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories, regional=None)
+    # final_energy_demand(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories, regional=None)
+    # gini_between_countries(Data.regional_dimensions_pyamdf,
+    #                     Data.model_scenarios, 
+    #                     2100, 
+    #                     Data.meta_df,
+    #                     Resilience.gini_between_countries,
+    #                     Data.categories, regional=None)
 
     # Run regional indicators
     final_energy = pd.DataFrame()

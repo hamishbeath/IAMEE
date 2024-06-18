@@ -84,8 +84,8 @@ def main() -> None:
     #                            IndexBuilder.low_carbon_diversity, 
     #                            IndexBuilder.carbon_budgets,
     #                            IndexBuilder.CDR_2050)
-    select_most_dissimilar_scenarios(Data.model_scenarios)
-    find_scenario_archetypes(Data.model_scenarios, 4)
+    # select_most_dissimilar_scenarios(Data.model_scenarios)
+    # find_scenario_archetypes(Data.model_scenarios, 4)
     # Utils.data_download(Data.paola_variables,'*', '*', Data.R10, Data.categories, file_name='CDR_data_R10' + str(Data.categories))
     # Utils.data_download(Data.mandatory_CDR_variables,'*', '*', Data.R10, Data.categories, file_name='CDR_Robustness' + str(Data.categories))
     # regions = ['World']
@@ -97,7 +97,7 @@ def main() -> None:
     #                                     call_sub=None, 
     #                                     save_data=False)
 
-    # get_regional_scores()
+    get_regional_scores()
 
 
 

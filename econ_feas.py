@@ -62,7 +62,7 @@ def main() -> None:
         to_append = energy_supply_investment_score(Data.regional_dimensions_pyamdf, 0.023, 2100, Data.model_scenarios, Utils.categories, regional=region)
         output_df = pd.concat([output_df, to_append], ignore_index=True, axis=0)
     output_df.to_csv('outputs/energy_supply_investment_score_regional' + str(Utils.categories) + '.csv')
-    energy_supply_investment_score(Data.regional_dimensions_pyamdf, 0.023, 2100, Data.model_scenarios, Data.categories, regional=None)
+    # energy_supply_investment_score(Data.regional_dimensions_pyamdf, 0.023, 2100, Data.model_scenarios, Data.categories, regional=None)
 
 
 

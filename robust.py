@@ -38,32 +38,31 @@ def main() -> None:
     #                                 False, 
     #                                 unity_year=2050, 
     #                                 regional=None)
-    flexibility_score(Data.regional_dimensions_pyamdf, Data.model_scenarios, 
-                      2050, Data.energy_variables, Robust.flexibility_data, Data.categories, regional=None)
-    # calculate_total_CDR(Data.model_scenarios, Robust.cdr_df, Data.regional_dimensions_pyamdf, 2051, regional=None)
-    shannon_index_low_carbon_mix(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2050, Data.categories)
-    # empty_df = pd.DataFrame()
-    # for region in Data.R10:
-    #     to_append = calculate_total_CDR(Data.model_scenarios, Robust.cdr_df, Data.regional_dimensions_pyamdf, 2050, regional=region)
-    #     empty_df = pd.concat([empty_df, to_append], ignore_index=True, axis=0)
-
-    # empty_df.to_csv('outputs/total_CDR_regional' + str(Data.categories) + '.csv')
+    # flexibility_score(Data.regional_dimensions_pyamdf, Data.model_scenarios, 
+    #                   2050, Data.energy_variables, Robust.flexibility_data, Data.categories, regional=None)
+    # # calculate_total_CDR(Data.model_scenarios, Robust.cdr_df, Data.regional_dimensions_pyamdf, 2051, regional=None)
+    # shannon_index_low_carbon_mix(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2050, Data.categories)
+    empty_df = pd.DataFrame()
+    for region in Data.R10:
+        to_append = calculate_total_CDR(Data.model_scenarios, Robust.cdr_df, Data.regional_dimensions_pyamdf, 2050, regional=region)
+        empty_df = pd.concat([empty_df, to_append], ignore_index=True, axis=0)
+    empty_df.to_csv('outputs/total_CDR_regional' + str(Data.categories) + '.csv')
     # # shannon_index_low_carbon_mix(Data.dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories)
     # # get_regional_level_remaining_budgets(Robust.territorial_emissions_by_country, 
     # #                                      Robust.land_use_emissions_by_country,
     # #                                      Robust.historic_population, 
     # #                                      Data.region_country_df, 2023)
     # run_regional_carbon_budgets()
-    empty_df = pd.DataFrame()
-    shannon_df = pd.DataFrame()
-    for region in Data.R10:
-        to_append = flexibility_score(Data.regional_dimensions_pyamdf, Data.model_scenarios, 
-                      2050, Data.energy_variables, Robust.flexibility_data, Data.categories, regional=region)
-        to_append_shannon = shannon_index_low_carbon_mix(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2050, Data.categories, regional=region)
-        empty_df = pd.concat([empty_df, to_append], ignore_index=True, axis=0)
-        shannon_df = pd.concat([shannon_df, to_append_shannon], ignore_index=True, axis=0)
-    empty_df.to_csv('outputs/flexibility_scores_regional' + str(Data.categories) + '.csv', index=False)
-    shannon_df.to_csv('outputs/low_carbon_shannon_diversity_index_regional' + str(Data.categories) + '.csv', index=False)
+    # empty_df = pd.DataFrame()
+    # shannon_df = pd.DataFrame()
+    # for region in Data.R10:
+    #     to_append = flexibility_score(Data.regional_dimensions_pyamdf, Data.model_scenarios, 
+    #                   2050, Data.energy_variables, Robust.flexibility_data, Data.categories, regional=region)
+    #     to_append_shannon = shannon_index_low_carbon_mix(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2050, Data.categories, regional=region)
+    #     empty_df = pd.concat([empty_df, to_append], ignore_index=True, axis=0)
+    #     shannon_df = pd.concat([shannon_df, to_append_shannon], ignore_index=True, axis=0)
+    # empty_df.to_csv('outputs/flexibility_scores_regional' + str(Data.categories) + '.csv', index=False)
+    # shannon_df.to_csv('outputs/low_carbon_shannon_diversity_index_regional' + str(Data.categories) + '.csv', index=False)
     # run_regional_carbon_budgets()
 
 

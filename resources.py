@@ -14,13 +14,13 @@ class NaturalResources:
     material_intensities_temporal = pd.read_csv('inputs/material_intensities_temporal.csv')
     timeseries_material_intensities = pd.read_csv('outputs/timeseries_material_intensities.csv')
     tech_shares = pd.read_csv('inputs/technology_shares.csv')
+    reserve_growth = pd.read_csv('inputs/reserve_growth.csv')
     historical_production = pd.read_csv('inputs/mine_production_hist.csv') 
     minerals = ['Nd', 'Dy', 'Ni', 'Mn', 'Ag', 'Cd', 'Te', 'Se', 'In']
     material_recycling_scenario = 're_neu' # 're_opt' or 're_con'
-    growth_rate_ceiling = 2 # times the maximum growth rate of the historical data
-    maximum_circularity_rate = 0.9
-    product_life = 15 # years
-    reserve_growth_rate = 0.01 # 1% growth rate in reserves per year CHECK THIS zero error
+    maximum_circularity_rate = 0.85
+    product_life = 10 # years
+    # reserve_growth_rate = 0.01 # 1% growth rate in reserves per year CHECK THIS zero error
     solar_base_capacity_added = 171 # GW (2022 values from IRENA)
     wind_base_capacity_added = 75 # GW (2022 values from IRENA) https://www.irena.org/News/pressreleases/2023/Mar/Record-9-point-6-Percentage-Growth-in-Renewables-Achieved-Despite-Energy-Crisis
 
@@ -32,10 +32,11 @@ class NaturalResources:
 
 def main() -> None:
 
-    # calculate_global_availability(NaturalResources.material_recycling, 
-    #                               NaturalResources.material_reserves, 
-    #                               NaturalResources.historical_production,
-    #                               Data.categories)
+    calculate_global_availability(NaturalResources.material_recycling, 
+                                  NaturalResources.material_reserves, 
+                                  NaturalResources.historical_production,
+                                  Data.categories,
+                                  NaturalResources.reserve_growth)
     
     """
     NOTE: when running the timeseries material intensities, need to add wind 
@@ -49,7 +50,7 @@ def main() -> None:
                                  2050,
                                  Data.categories,
                                  NaturalResources.timeseries_material_intensities,
-                                 fixed_material_intensities=True)
+                                 fixed_material_intensities=False)
     # calculate_base_shares_minerals()
     # create_timeseries_material_intensities(NaturalResources.material_intensities_temporal, 
     #                                        NaturalResources.tech_shares, 
@@ -58,7 +59,7 @@ def main() -> None:
 
 
 # function with adjustable parameters that calculates the total global availability of each material
-def calculate_global_availability(recycling, reserves, production, categories):
+def calculate_global_availability(recycling, reserves, production, categories, reserve_growth):
 
     # firstly take the mine production in the first year and the recycling rate in the first year available. 
     # Then calculate the total availability of each material in each year by calculating the total production and recycling in that year.
@@ -69,6 +70,7 @@ def calculate_global_availability(recycling, reserves, production, categories):
     recycling = recycling.set_index('scenario')
     production = production.set_index('mineral')
     reserves = reserves.set_index('mineral')
+    reserve_growth = reserve_growth.set_index('mineral')
     historical_availability = pd.DataFrame()
     future_availability_df = pd.DataFrame()
     all_availability = pd.DataFrame()
@@ -80,6 +82,7 @@ def calculate_global_availability(recycling, reserves, production, categories):
         recycling_current_rate = relevant_data.loc['re_cur']
         future_recycling_rate = relevant_data.loc[NaturalResources.material_recycling_scenario]
         mineral_production = production.loc[mineral]
+        mineral_reserve_growth = reserve_growth.loc[mineral]['reserve_growth']
 
         # establish the first year in the production data (column names are years)
         first_year = production.columns[0]
@@ -115,23 +118,11 @@ def calculate_global_availability(recycling, reserves, production, categories):
         # add the dictionary to the dataframe
         historical_availability[mineral] = total_availability
 
-        # find the maximum growth rate and the average growth rate of the historical data
-        max_growth_rate = 0
-        growth_rates = []
-        for year in range(0, len(mineral_production)):
-            if year == 0:
-                pass     
-            else:
-                current_production = mineral_production[year]
-                previous_production = mineral_production[year-1]
-                growth_rate = (current_production - previous_production) / previous_production
-                if growth_rate > max_growth_rate:
-                    max_growth_rate = growth_rate   
-                if growth_rate > 0:
-                    growth_rates.append(growth_rate)
-        
-        average_growth_rate = sum(growth_rates) / len(growth_rates)
-        # print(mineral, max_growth_rate, average_growth_rate)
+        # calculate the compound average growth rate for the mineral
+        compound_average_growth_rate = (mineral_production[-1] / mineral_production[0]) ** (1 / len(mineral_production)) - 1
+        if compound_average_growth_rate < 0:
+            compound_average_growth_rate = 0
+        average_growth_rate = compound_average_growth_rate
 
         # calculate the annual improvement in the recycling rate based on the 2050 recycling rate and the current recycling rate
         first_future_year = 2023
@@ -147,13 +138,14 @@ def calculate_global_availability(recycling, reserves, production, categories):
         # this loop is for the future mineral availability
         for future_year in range(2024, 2101):
             
-            # update the reserve total
-            # new_reserves_found = reserves_total * NaturalResouces.reserve_growth_rate
-            # print(new_reserves_found)
-            # reserves_remaining += new_reserves_found
+            # update the reserve total based on per mineral growth rate (based on historical data)
+            new_reserves_found = reserves_remaining * mineral_reserve_growth
+            reserves_remaining += new_reserves_found
 
             # calculate the future recycling rate
             future_recycling_rate = rate_current + (annual_improvement * (future_year - first_future_year))
+
+            # check if the recycling rate is above the maximum circularity rate
             if future_recycling_rate > NaturalResources.maximum_circularity_rate:
                 future_recycling_rate = NaturalResources.maximum_circularity_rate
             
@@ -201,7 +193,6 @@ def calculate_global_availability(recycling, reserves, production, categories):
             if future_availability[future_year] < 0:
                 future_availability[future_year] = 0
 
-       
         # save to the dataframe
         future_availability_df[mineral] = future_availability
         
@@ -309,7 +300,6 @@ def scenario_assessment_minerals(pyam_df, minerals, scenario_model_list, base_th
             wind_capacity_previous = scenario_model_df.filter(variable='Capacity|Electricity|Wind', year=year-10).data['value'].values
             solar_capacity_added = solar_capacity_current - solar_capacity_previous
             wind_capacity_added = wind_capacity_current - wind_capacity_previous
-            print(solar_capacity_added, wind_capacity_added)
             solar_capacity_added = solar_capacity_added[0]
             wind_capacity_added = wind_capacity_added[0]
             

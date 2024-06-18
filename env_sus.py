@@ -80,7 +80,7 @@ def main() -> None:
     
     empty_df.to_csv('outputs/environmental_metrics_regional' + str(Data.categories) + '.csv')
     
-    forest_cover_change(Data.regional_dimensions_pyamdf, 2100, Data.model_scenarios, EnvSus.beccs_threshold, Data.categories, regional=None)
+    # forest_cover_change(Data.regional_dimensions_pyamdf, 2100, Data.model_scenarios, EnvSus.beccs_threshold, Data.categories, regional=None)
 
 
 def forest_cover_change(pyam_df, end_year, scenario_model_list, beccs_threshold, categories, regional=None):
