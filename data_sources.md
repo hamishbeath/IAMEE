@@ -15,7 +15,7 @@ Recycling rates taken from 10.1088/1748-9326/aca4ea (supplementary file), and ht
 Trajectory for onshore and offshore wind, various sources inc. (https://about.bnef.com/blog/the-next-phase-of-wind-power-growth-in-five-charts/)
 Indium reserves: https://link.springer.com/article/10.1007/s11053-023-10296-z
 Nd and Dy reserves: https://www.sciencedirect.com/science/article/pii/S2352484722024118#b21 and https://mmta.co.uk/metals/nd/
-
+solar added: https://www.iea.org/reports/renewables-2023/electricity, wind added GWEC reports
 
 Resilience
 Between country resilience data from https://link.springer.com/article/10.1007/s10584-021-03133-w#Sec2 via the author. Relevant data originally from KC and Lutz, and Dellink et al.

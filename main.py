@@ -30,7 +30,6 @@ class IndexBuilder:
     except FileNotFoundError:
         print('Index data not available yet')
 
-
     try:
         regional_investment_metrics = pd.read_csv('outputs/energy_supply_investment_score_regional' + str(Data.categories) + '.csv')
         regional_environment_metrics = pd.read_csv('outputs/environmental_metrics_regional' + str(Data.categories) + '.csv')
@@ -87,17 +86,17 @@ def main() -> None:
     # select_most_dissimilar_scenarios(Data.model_scenarios)
     # find_scenario_archetypes(Data.model_scenarios, 4)
     # Utils.data_download(Data.paola_variables,'*', '*', Data.R10, Data.categories, file_name='CDR_data_R10' + str(Data.categories))
-    # Utils.data_download(Data.mandatory_CDR_variables,'*', '*', Data.R10, Data.categories, file_name='CDR_Robustness' + str(Data.categories))
+    Utils.data_download(Data.mandatory_variables,'*', '*', Data.R10, Data.categories, file_name='pyamdf_dimensions_data_R10' + str(Data.categories))
     # regions = ['World']
     # Utils().manadory_variables_scenarios(Data.categories, 
     #                                     Data.econ_regions, 
-    #                                     Data.paola_variables, 
+    #                                     Data.mandatory_variables, 
     #                                     subset=False, 
-    #                                     special_file_name='CDR_scenarios_R10_all' + str(Data.categories), 
+    #                                     special_file_name=None, 
     #                                     call_sub=None, 
-    #                                     save_data=False)
+    #                                     save_data=True)
 
-    get_regional_scores()
+    # get_regional_scores()
 
 
 
@@ -360,10 +359,10 @@ def get_regional_scores():
 
         region_data = data[data['region'] == region]
         region_data['economic_dimension_score'] = (region_data['economic_score'] ) #/ region_data['economic_score'].max() 
-        region_data['environmental_dimension_score'] = (region_data['environmental_score'] ) / region_data['environmental_score'].max()
-        region_data['resource_dimension_score'] = (region_data['resource_score'] ) / region_data['resource_score'].max()
-        region_data['resilience_dimension_score'] = (region_data['resilience_score'] ) / region_data['resilience_score'].max()
-        region_data['robustness_dimension_score'] = (region_data['robustness_score'] ) / region_data['robustness_score'].max()
+        region_data['environmental_dimension_score'] = (region_data['environmental_score'] - region_data['environmental_score'].min()) / (region_data['environmental_score'].max() - region_data['environmental_score'].min())
+        region_data['resource_dimension_score'] = (region_data['resource_score'] - region_data['resource_score'].min()) / (region_data['resource_score'].max() - region_data['resource_score'].min())
+        region_data['resilience_dimension_score'] = (region_data['resilience_score'] - region_data['resilience_score'].min()) / (region_data['resilience_score'].max() - region_data['resilience_score'].min())
+        region_data['robustness_dimension_score'] = (region_data['robustness_score'] - region_data['robustness_score'].min()) / (region_data['robustness_score'].max() - region_data['robustness_score'].min())
 
         dimension_scores = pd.concat([dimension_scores, region_data], axis=0)
 
@@ -389,11 +388,10 @@ def select_most_dissimilar_scenarios(model_scenarios_list):
 
     # normalise the scores
     data['economic_score'] = (data['economic_score'] ) #/ data['economic_score'].max() 
-    data['environmental_score'] = (data['environmental_score'] ) / data['environmental_score'].max()
-    data['resource_score'] = (data['resource_score'] ) / data['resource_score'].max()
-    data['resilience_score'] = (data['resilience_score'] ) / data['resilience_score'].max()
-    data['robustness_score'] = (data['robustness_score'] ) / data['robustness_score'].max()
-    
+    data['environmental_score'] = (data['environmental_score'] - data['environmental_score'].min()) / (data['environmental_score'].max() - data['environmental_score'].min())
+    data['resource_score'] = (data['resource_score'] - data['resource_score'].min()) / (data['resource_score'].max() - data['resource_score'].min())
+    data['resilience_score'] = (data['resilience_score'] - data['resilience_score'].min()) / (data['resilience_score'].max() - data['resilience_score'].min())
+    data['robustness_score'] = (data['robustness_score'] - data['robustness_score'].min()) / (data['robustness_score'].max() - data['robustness_score'].min())
     # make the model and scenario the index
     data.set_index(['model', 'scenario'], inplace=True)
     data.to_csv('outputs/normalised_scores' + str(Data.categories) + '.csv', index=True)

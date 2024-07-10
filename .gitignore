@@ -12,6 +12,7 @@
 !robust.py
 !main.py
 !run.py
+!fairness.py
 
 !data_sources.md
 !model_classification.csv

@@ -29,21 +29,29 @@ def main() -> None:
     #                     Data.categories, regional=None)
 
     # Run regional indicators
-    final_energy = pd.DataFrame()
-    shannon = pd.DataFrame()
-    gini = pd.DataFrame()
-    for region in Data.R10:
-        # to_append = shannon_index_energy_mix(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories, regional=region)
-        to_append_energy = final_energy_demand(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories, regional=region)
-        to_append_shannon = shannon_index_energy_mix(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories, regional=region)
-        to_append_gini = gini_between_countries(Data.dimensions_pyamdf, Data.model_scenarios, 2100, Data.meta_df, Resilience.gini_between_countries, Data.categories, regional=region)
-        final_energy = pd.concat([final_energy, to_append_energy], ignore_index=True, axis=0)
-        shannon = pd.concat([shannon, to_append_shannon], ignore_index=True, axis=0)
-        gini = pd.concat([gini, to_append_gini], ignore_index=True, axis=0)
-    shannon.to_csv('outputs/shannon_diversity_index_regional' + str(Data.categories) + '.csv')
-    final_energy.to_csv('outputs/final_energy_demand_regional' + str(Data.categories) + '.csv')
-    gini.to_csv('outputs/gini_coefficient_regional' + str(Data.categories) + '.csv')
-
+    # final_energy = pd.DataFrame()
+    # shannon = pd.DataFrame()
+    # gini = pd.DataFrame()
+    # for region in Data.R10:
+    #     # to_append = shannon_index_energy_mix(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories, regional=region)
+    #     to_append_energy = final_energy_demand(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories, regional=region)
+    #     to_append_shannon = shannon_index_energy_mix(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories, regional=region)
+    #     to_append_gini = gini_between_countries(Data.dimensions_pyamdf, Data.model_scenarios, 2100, Data.meta_df, Resilience.gini_between_countries, Data.categories, regional=region)
+    #     final_energy = pd.concat([final_energy, to_append_energy], ignore_index=True, axis=0)
+    #     shannon = pd.concat([shannon, to_append_shannon], ignore_index=True, axis=0)
+    #     gini = pd.concat([gini, to_append_gini], ignore_index=True, axis=0)
+    # shannon.to_csv('outputs/shannon_diversity_index_regional' + str(Data.categories) + '.csv')
+    # final_energy.to_csv('outputs/final_energy_demand_regional' + str(Data.categories) + '.csv')
+    # gini.to_csv('outputs/gini_coefficient_regional' + str(Data.categories) + '.csv')
+    # 
+    electricity_price(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories, regional=None)
+    # prices = pd.DataFrame()
+    # for region in Data.R10:
+    #     if region == 'World':
+    #         continue
+    #     to_append = electricity_price(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories, regional=region)
+    #     prices = pd.concat([prices, to_append], ignore_index=True, axis=0)   
+    # prices.to_csv('outputs/electricity_prices_regional' + str(Data.categories) + '.csv')
 
     # get_within_region_gini(Resilience.ssp_gini_data, Data.region_country_df, 
     #                        Data.R10_codes, 2025)
@@ -57,7 +65,7 @@ def shannon_index_energy_mix(pyam_df, scenario_model_list, end_year, categories,
         region = regional
     else:
         region = 'World'
-    
+
     # filter for the variables needed
     df = pyam_df.filter(variable=Resilience.energy_variables,
                         region=region,
@@ -251,6 +259,69 @@ def gini_between_countries(pyam_df, scenario_model_list, end_year, meta_df, gini
         ssp_gini_coefficients = pd.DataFrame({'ssp': list(ssp_ginis.keys()), 
                                             'gini_coefficient': list(ssp_ginis.values())})
 
+
+# Function that gets the electricity price for the different scenarios
+def electricity_price(pyam_df, scenario_model_list, end_year, categories, regional=None):
+    
+    if regional is not None:
+        region = regional
+    else:
+        region = 'World'
+
+    # filter for the variables needed
+    df = pyam_df.filter(variable=['Price|Secondary Energy|Electricity', 'GDP|MER'],
+                        year=range(2020, end_year+1),
+                        scenario=scenario_model_list['scenario'], 
+                        model=scenario_model_list['model'])
+
+    # for the regional analysis, just use the regional price values from the model
+    if regional is not None:
+
+        df.filter(variable='Price|Secondary Energy|Electricity', region=region)
+        electricity_prices = []
+        # loop through models and scenarios
+        for scenario, model in zip(scenario_model_list['scenario'], scenario_model_list['model']):
+            
+            # Filter out the data for the required scenario
+            scenario_df = df.filter(scenario=scenario)
+            scenario_model_df = scenario_df.filter(model=model)
+            
+            # make pandas series with the values and years as index
+            variable_df = scenario_model_df.data
+            variable_mean = pd.Series(variable_df['value'].values, index=variable_df['year']).mean()
+            electricity_prices.append(variable_mean)
+
+        # create a new dataframe with the electricity prices
+        electricity_prices_df = pd.DataFrame({'model': scenario_model_list['model'], 'scenario': scenario_model_list['scenario'], 'electricity_price': electricity_prices})
+        electricity_prices_df['region'] = region
+        return electricity_prices_df
+    
+    # for the electricity prices for the world, take the regional prices, and use the GDP to weight the prices
+    else:
+        electricity_prices = []
+        for scenario, model in zip(scenario_model_list['scenario'], scenario_model_list['model']):
+            # Filter out the data for the required scenario
+            scenario_df = df.filter(scenario=scenario)
+            scenario_model_df = scenario_df.filter(model=model)
+            
+            decadal_prices = []
+            for year in range(2020, 2101, 10):
+                variable_df = scenario_model_df.filter(year=year)
+                total_price = 0
+                total_gdp = 0
+                # Sum of  all the price * GDP for each region over the gdp for the region
+                for region in Data.R10:
+                    region_df = variable_df.filter(region=region)
+                    price = region_df.filter(variable='Price|Secondary Energy|Electricity').data['value'].values[0]
+                    gdp = region_df.filter(variable='GDP|MER').data['value'].values[0]
+                    total_price += price * gdp
+                    total_gdp += gdp
+                decadal_prices.append(total_price / total_gdp)
+            
+            electricity_prices.append(np.array(decadal_prices).mean())
+        
+        electricity_prices_df = pd.DataFrame({'model': scenario_model_list['model'], 'scenario': scenario_model_list['scenario'], 'electricity_price': electricity_prices})
+        electricity_prices_df.to_csv('outputs/electricity_prices' + str(categories) + '.csv', index=False)
 
 
 # calculate regional within region Gini by SSP

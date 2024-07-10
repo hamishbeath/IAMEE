@@ -522,7 +522,6 @@ def get_regional_level_remaining_budgets(emissions_by_country,
     R10_budget_shares = pd.DataFrame(R10_budget_shares, index=[0])
     R10_budget_shares.to_csv('inputs/R10_carbon_budget_shares.csv', index=False)
 
-
     emissions_df['ISO3'] = emissions_out    
     regional_breakdown = regional_breakdown.join(emissions_df.set_index('ISO3'), how='left')
 

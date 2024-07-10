@@ -35,7 +35,7 @@ class Data:
                         'EN_NPi2020_200f', 'EN_NPi2020_400f', 'SusDev_SDP-PkBudg1000', 'SusDev_SSP1-PkBudg900', 
                         'DeepElec_SSP2_def_Budg900', 'DISCRATE_cb400_cdrno_dr5p', 'EN_NPi2020_450f', 'EN_NPi2020_500f']
 
-    R10 = ['Countries of Latin America and the Caribbean','Countries of South Asia; primarily India',
+    R10 = ['World','Countries of Latin America and the Caribbean','Countries of South Asia; primarily India',
         'Countries of Sub-Saharan Africa', 'Countries of centrally-planned Asia; primarily China',
         'Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc.',
         'Eastern and Western Europe (i.e., the EU28)',
@@ -54,7 +54,7 @@ class Data:
                            'Capacity|Electricity|Solar|PV', 'Final Energy',
                            'Primary Energy|Coal', 'Primary Energy|Oil', 'Primary Energy|Gas', 'Primary Energy|Nuclear',
                            'Primary Energy|Biomass', 'Primary Energy|Non-Biomass Renewables','Carbon Sequestration|CCS|Biomass',
-                            'GDP|MER', 'Land Cover|Forest','Land Cover', 'Carbon Sequestration|Land Use']
+                            'GDP|MER', 'Land Cover|Forest','Land Cover', 'Carbon Sequestration|Land Use', 'Price|Secondary Energy|Electricity']
 
     mandatory_econ_variables = ['GDP|MER', 'Investment|Energy Supply',
                                 'AR6 climate diagnostics|Surface Temperature (GSAT)|MAGICCv7.5.3|50.0th Percentile',
