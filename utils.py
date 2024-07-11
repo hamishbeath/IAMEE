@@ -46,6 +46,17 @@ class Data:
     R10_codes = ['R10LATIN_AM', 'R10INDIA+', 'R10AFRICA', 'R10CHINA+', 'R10MIDDLE_EAST',
                  'R10EUROPE', 'R10REST_ASIA', 'R10PAC_OECD', 'R10REF_ECON','R10NORTH_AM'] #r10_iamc
 
+    R10_development = {'R10LATIN_AM':'South',
+                        'R10INDIA+':'South',
+                        'R10AFRICA':'South',
+                        'R10CHINA+':'South',
+                        'R10MIDDLE_EAST':'South',
+                        'R10EUROPE':'North',
+                        'R10REST_ASIA':'South',
+                        'R10PAC_OECD':'North',
+                        'R10REF_ECON':'North',
+                        'R10NORTH_AM':'North'}
+
     region_country_df = pd.read_csv('iso3c_regions.csv')
     #https://github.com/setupelz/regioniso3c/blob/main/iso3c_region_mapping_20240319.csv    
 

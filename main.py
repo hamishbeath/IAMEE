@@ -20,6 +20,7 @@ class IndexBuilder:
         final_energy_demand = pd.read_csv('outputs/final_energy_demand' + str(Data.categories) + '.csv')    
         energy_diversity = pd.read_csv('outputs/shannon_diversity_index' + str(Data.categories) + '.csv')   
         gini_coefficient = pd.read_csv('outputs/gini_coefficient' + str(Data.categories) + '.csv')
+        electricity_price = pd.read_csv('outputs/electricity_prices' + str(Data.categories) + '.csv')
 
         # import robustness metrics
         energy_system_flexibility = pd.read_csv('outputs/flexibility_scores' + str(Data.categories) + '.csv')
@@ -27,8 +28,13 @@ class IndexBuilder:
         low_carbon_diversity = pd.read_csv('outputs/low_carbon_shannon_diversity_index' + str(Data.categories) + '.csv')
         CDR_2050 = pd.read_csv('outputs/total_CDR' + str(Data.categories) + '.csv')
     
+        # import fairness metrics
+        between_region_gini = pd.read_csv('outputs/between_region_gini' + str(Data.categories) + '.csv')
+        carbon_budget_fairness = pd.read_csv('outputs/R10_carbon_budget_shares' + str(Data.categories) + '.csv')
+
+
     except FileNotFoundError:
-        print('Index data not available yet')
+        print('Index data are not available yet')
 
     try:
         regional_investment_metrics = pd.read_csv('outputs/energy_supply_investment_score_regional' + str(Data.categories) + '.csv')
@@ -39,6 +45,7 @@ class IndexBuilder:
         regional_final_energy_demand = pd.read_csv('outputs/final_energy_demand_regional' + str(Data.categories) + '.csv')
         regional_energy_diversity = pd.read_csv('outputs/shannon_diversity_index_regional' + str(Data.categories) + '.csv')
         regional_gini_coefficient = pd.read_csv('outputs/gini_coefficient_regional' + str(Data.categories) + '.csv')
+        regional_electricity_price = pd.read_csv('outputs/electricity_prices_regional' + str(Data.categories) + '.csv')
         
         # import robustness metrics
         regional_energy_system_flexibility = pd.read_csv('outputs/flexibility_scores_regional' + str(Data.categories) + '.csv')
@@ -57,6 +64,7 @@ class Selection:
         resource_scores = pd.read_csv('outputs/resource_scores' + str(Data.categories) + '.csv')
         resilience_scores = pd.read_csv('outputs/resilience_scores' + str(Data.categories) + '.csv')
         robustness_scores = pd.read_csv('outputs/robustness_scores' + str(Data.categories) + '.csv')
+        fairness_scores = pd.read_csv('outputs/fairness_scores' + str(Data.categories) + '.csv')
         number_of_illustrative_scenarios = 4
     
     except:
@@ -195,9 +203,10 @@ def resource_score(minerals, resource_metrics, regional=None):
 def resilience_score(final_energy_demand, energy_diversity, gini_coefficient, regional=None):
     """
     composite of 
-    - final energy demand (lower better) weighting 1/3
-    - energy diversity (higher better) weighting 1/3
-    - gini coefficient (lower better) weighting 1/3
+    - final energy demand (lower better) weighting 1/4
+    - energy diversity (higher better) weighting 1/4
+    - gini coefficient (lower better) weighting 1/4
+    - electricity price (lower better) weighting 1/4
     """
     outout_df = pd.DataFrame()
     outout_df['model'] = final_energy_demand['model']
@@ -221,7 +230,13 @@ def resilience_score(final_energy_demand, energy_diversity, gini_coefficient, re
     gini_coefficient_normalised = (gini_coefficient - gini_coefficient.min()) / (gini_coefficient.max() - gini_coefficient.min())
     outout_df['gini_coefficient'] = gini_coefficient_normalised
 
-    outout_df['resilience_score'] = outout_df['final_energy_demand'] + outout_df['energy_diversity'] + outout_df['gini_coefficient']
+    # normalise the electricity price
+    electricity_price = IndexBuilder.regional_electricity_price['electricity_price']
+    electricity_price_normalised = (electricity_price - electricity_price.min()) / (electricity_price.max() - electricity_price.min())
+    outout_df['electricity_price'] = electricity_price_normalised
+
+    # create the composite resilience score
+    outout_df['resilience_score'] = outout_df['final_energy_demand'] + outout_df['energy_diversity'] + outout_df['gini_coefficient'] + outout_df['electricity_price']
     if regional != None:
         outout_df['Region'] = regional
         return outout_df
@@ -276,6 +291,28 @@ def calculate_robustness_score(flexibility_scores, shannon_index, carbon_budgets
     else:
         # create the composite robustness score
         output_df.to_csv('outputs/robustness_scores' + str(Data.categories) + '.csv', index=False)
+
+
+# calculate the fairness score (higher score = more fairness challenges)
+def calculate_fairness_score(between_region_gini, carbon_budget_fairness):
+
+    output_df = pd.DataFrame()
+    output_df['model'] = between_region_gini['model']
+    output_df['scenario'] = between_region_gini['scenario']
+
+    # normalise the between region gini coefficient
+    between_region_gini = between_region_gini['between_region_gini']
+    between_region_gini_normalised = (between_region_gini - between_region_gini.min()) / (between_region_gini.max() - between_region_gini.min())
+    output_df['between_region_gini'] = between_region_gini_normalised
+
+    # normalise the carbon budget fairness
+    carbon_budget_fairness = carbon_budget_fairness['carbon_budget_fairness']
+    carbon_budget_fairness_normalised = (carbon_budget_fairness - carbon_budget_fairness.min()) / (carbon_budget_fairness.max() - carbon_budget_fairness.min())
+    output_df['carbon_budget_fairness'] = carbon_budget_fairness_normalised
+
+    # create the composite fairness score
+    output_df['fairness_score'] = output_df['between_region_gini'] + output_df['carbon_budget_fairness']
+    output_df.to_csv('outputs/fairness_scores' + str(Data.categories) + '.csv', index=False)
 
 
 def get_regional_scores():
@@ -384,7 +421,8 @@ def select_most_dissimilar_scenarios(model_scenarios_list):
                         'environmental_score': Selection.environment_scores['environmental_score'],
                         'resource_score': Selection.resource_scores['resource_score'],
                         'resilience_score': Selection.resilience_scores['resilience_score'],
-                        'robustness_score': Selection.robustness_scores['robustness_score']}, index=None)
+                        'robustness_score': Selection.robustness_scores['robustness_score'],
+                        'fairness_score': Selection.fairness_scores['fairness_score']}, index=None)
 
     # normalise the scores
     data['economic_score'] = (data['economic_score'] ) #/ data['economic_score'].max() 
@@ -392,6 +430,7 @@ def select_most_dissimilar_scenarios(model_scenarios_list):
     data['resource_score'] = (data['resource_score'] - data['resource_score'].min()) / (data['resource_score'].max() - data['resource_score'].min())
     data['resilience_score'] = (data['resilience_score'] - data['resilience_score'].min()) / (data['resilience_score'].max() - data['resilience_score'].min())
     data['robustness_score'] = (data['robustness_score'] - data['robustness_score'].min()) / (data['robustness_score'].max() - data['robustness_score'].min())
+    data['fairness_score'] = (data['fairness_score'] - data['fairness_score'].min()) / (data['fairness_score'].max() - data['fairness_score'].min())
     # make the model and scenario the index
     data.set_index(['model', 'scenario'], inplace=True)
     data.to_csv('outputs/normalised_scores' + str(Data.categories) + '.csv', index=True)
@@ -406,7 +445,6 @@ def select_most_dissimilar_scenarios(model_scenarios_list):
     max_score = -np.inf
     best_combination = None
 
-
     # Loop through all combinations of four pathways
     for combo in combinations_of_four:
         
@@ -419,8 +457,6 @@ def select_most_dissimilar_scenarios(model_scenarios_list):
             max_score = score
             best_combination = combo
         
-
-
     # # Sample implementation for selecting 4 most dissimilar pathways (greedy approach)
     # n_select = Selection.number_of_illustrative_scenarios
     # selected_indices = [np.argmax(np.sum(dist_matrix, axis=1))]  # Start with the most dissimilar
@@ -492,7 +528,6 @@ def find_scenario_archetypes(model_scenarios_list, cluster_number=int):
     # Save the selected scenarios to a CSV file
     selected_scenarios_df.to_csv('outputs/selected_scenarios' + str(Data.categories) + '.csv', index=False)
     
-
     # # calculate scenario archetype scores as the centroids of each cluster
     cluster_centroids = pd.DataFrame(kmeans.cluster_centers_, columns=data.columns[:-1])
     # add in the cluster number

@@ -81,8 +81,8 @@ def main() -> None:
 
 class Plotting:
 
-    dimensions = ['economic', 'environment', 'resilience', 'resource', 'robust']
-    dimension_names = ['Economic', 'Environment', 'Resource', 'Resilience', 'Robust']
+    dimensions = ['economic', 'environment', 'resilience', 'resource', 'robust', 'fairness']
+    dimension_names = ['Economic', 'Environment', 'Resource', 'Resilience', 'Robust', 'Fairness']
     dimension_colours = {'economic': 'red', 'environment': 'green', 'resilience': 'blue', 'resource': 'orange', 'robust': 'purple'}
     dimension_titles = {'economic': 'Economic Feasibility', 'environment': 'Non-climate Environmental Sustainability', 'resilience': 'Societal Resilience', 'resource': 'Resource Availability', 'robust': 'Scenario Robustness'}
     dimention_cmaps = {'economic': 'Reds', 'environment': 'Greens', 'resilience': 'Blues', 'resource': 'Oranges', 'robust': 'Purples'}
@@ -842,7 +842,7 @@ class Plotting:
 
         # plt.rcParams['font.size'] = 7
         # Number of variables we're plotting.
-        categories = list(archetypes)[0:5]
+        categories = list(archetypes)[0:6]
         archetype_names = ['Warning lights', 'Resource risk', 'Sustainability struggle', 'Clear path']
         # archetype_colours = ['#648FFF', '#DC267F', '#FE6100', '#FFB000']
         archetype_colours = ['#FFB000', '#648FFF', '#DC267F', '#FE6100']
@@ -922,7 +922,7 @@ class Plotting:
         print(model_families, len(model_families))
 
         # Number of variables we're plotting.
-        categories = list(scenario_scores)[2:7]
+        categories = list(scenario_scores)[2:8]
 
         # make a fig with 6 subplots, 2 rows
         fig, axs = plt.subplots(2, 2, figsize=(10, 10), subplot_kw=dict(polar=True))
@@ -1022,7 +1022,7 @@ class Plotting:
         print(model_families, len(model_families))
 
         # Number of variables we're plotting.
-        categories = list(scenario_scores)[2:7]
+        categories = list(scenario_scores)[2:8]
 
         # make a fig with 6 subplots, 2 rows
         fig, ax = plt.subplots(1, 1, figsize=(10, 10), subplot_kw=dict(polar=True))
@@ -1117,7 +1117,7 @@ class Plotting:
         ssps = scenario_scores['ssp'].unique().tolist()
 
         # Number of variables we're plotting.
-        categories = list(scenario_scores)[2:7]
+        categories = list(scenario_scores)[2:8]
 
         # make a fig with 2 subplots, 1 row
         fig, axs = plt.subplots(2, 1, figsize=(10, 10), subplot_kw=dict(polar=True))
@@ -1202,7 +1202,7 @@ class Plotting:
         # ssps = scenario_scores['ssp'].unique().tolist()
 
         # Number of variables we're plotting.
-        categories = list(scenario_scores)[2:7]
+        categories = list(scenario_scores)[2:8]
 
         # make a fig with 2 subplots, 1 row
         fig, ax = plt.subplots(1, 1, figsize=(10, 10), subplot_kw=dict(polar=True))
@@ -1271,7 +1271,7 @@ class Plotting:
 
         # plt.rcParams['font.size'] = 7
         # Number of variables we're plotting.
-        categories = list(scenario_scores)[2:7]
+        categories = list(scenario_scores)[2:8]
 
         # make a fig with 3 subplots, 1 row
         fig, ax = plt.subplots(1, 1, figsize=(10, 10), subplot_kw=dict(polar=True))
@@ -1340,7 +1340,7 @@ class Plotting:
         """
 
         # Number of variables we're plotting.
-        categories = list(scenario_scores)[2:7]
+        categories = list(scenario_scores)[2:8]
 
         # make a fig with 1 subplot
         fig, ax = plt.subplots(1, 1, figsize=(10, 10), subplot_kw=dict(polar=True))
@@ -2033,7 +2033,7 @@ class Plotting:
                 all_models_duplicated.append(scenario)
         
 
-        categories = list(scenario_scores)[2:7]
+        categories = list(scenario_scores)[2:8]
         # set up the figure
         fig, axs = plt.subplots(1, 3, figsize=(10, 10), subplot_kw=dict(polar=True))
 
