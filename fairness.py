@@ -23,16 +23,16 @@ def main() -> None:
 
     between_region_gini(Data.regional_dimensions_pyamdf, 
                         Data.model_scenarios, 2100, Data.categories)
-    carbon_budget_fairness(Data.model_scenarios, 
-                           Fairness.regional_carbon_budget_shares, 
-                           Fairness.regional_budget_results)
+    # carbon_budget_fairness(Data.model_scenarios, 
+    #                        Fairness.regional_carbon_budget_shares, 
+    #                        Fairness.regional_budget_results)
 
 
 # Function that calculates the Gini coefficient between R10 regions
 def between_region_gini(pyam_df, scenario_model_list, end_year, categories):
 
     # filter for the variables needed
-    df = pyam_df.filter(variable=['GDP|MER'],
+    df = pyam_df.filter(variable=['GDP|MER', 'Population'],
                         year=range(2020, end_year+1),
                         scenario=scenario_model_list['scenario'], 
                         model=scenario_model_list['model'])
@@ -49,10 +49,14 @@ def between_region_gini(pyam_df, scenario_model_list, end_year, categories):
                 continue
         
             # filter for the regions
-            region_df = pd.Series(scenario_model_df.filter(region=region).data['value'].values,
+            region_df_gdp = pd.Series(scenario_model_df.filter(region=region, variable='GDP|MER').data['value'].values,
                                   index=scenario_model_df.filter(region=region).data['year'])
-            cumulative_gdp = pyam.timeseries.cumulative(region_df, 2020, end_year)
-            region_gdps = np.append(region_gdps, cumulative_gdp)
+            region_df_pop = pd.Series(scenario_model_df.filter(region=region, variable='Population').data['value'].values,
+                                    index=scenario_model_df.filter(region=region).data['year'])
+            cumulative_gdp = pyam.timeseries.cumulative(region_df_gdp, 2020, end_year)
+            cumulative_pop = pyam.timeseries.cumulative(region_df_pop, 2020, end_year)
+            gdp_capita = cumulative_gdp / cumulative_pop
+            region_gdps = np.append(region_gdps, gdp_capita)
 
         # Calculate the Gini coefficient for the region using gini package
         ginis.append(gini(region_gdps))

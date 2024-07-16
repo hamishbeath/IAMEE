@@ -19,11 +19,10 @@ class NaturalResources:
     minerals = ['Nd', 'Dy', 'Ni', 'Mn', 'Ag', 'Cd', 'Te', 'Se', 'In']
     material_recycling_scenario = 're_opt' # 're_opt' or 're_con'
     maximum_circularity_rate = 0.9
-    product_life = 12 # years
+    product_life = 15 # years
     # reserve_growth_rate = 0.01 # 1% growth rate in reserves per year CHECK THIS zero error
     solar_base_capacity_added = 171 # GW (2022 values from IRENA)
     wind_base_capacity_added = 75 # GW (2022 values from IRENA) https://www.irena.org/News/pressreleases/2023/Mar/Record-9-point-6-Percentage-Growth-in-Renewables-Achieved-Despite-Energy-Crisis
-
     material_thresholds = pd.read_csv('inputs/mineral_renewables_amounts.csv')
     wind_variables = ['Capacity|Electricity|Wind|Onshore', 
                      'Capacity|Electricity|Wind|Offshore']

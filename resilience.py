@@ -5,6 +5,7 @@ import pandas as pd
 from utils import Data
 import country_converter as coco
 from pygini import gini
+import math
 
 class Resilience:
 
@@ -15,6 +16,7 @@ class Resilience:
     gini_between_countries = pd.read_csv('inputs/gini_btw_6.csv')
     ssp_gini_data = pd.read_csv('inputs/ssp_population_gdp_projections.csv')
     regional_gini = pd.read_csv('outputs/within_region_gini.csv')
+    baseline_prices = pyam.IamDataFrame(data='inputs/baseline_data_R10' + str(Data.categories) + '.csv')
 
 def main() -> None:
 
@@ -44,12 +46,21 @@ def main() -> None:
     # final_energy.to_csv('outputs/final_energy_demand_regional' + str(Data.categories) + '.csv')
     # gini.to_csv('outputs/gini_coefficient_regional' + str(Data.categories) + '.csv')
     # 
-    electricity_price(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories, regional=None)
+    electricity_price(Data.regional_dimensions_pyamdf, 
+                      Data.model_scenarios, 2100, Data.categories,
+                      Data.scenario_baselines, Resilience.baseline_prices, 
+                      Data.region_country_df, regional=None)
     # prices = pd.DataFrame()
     # for region in Data.R10:
     #     if region == 'World':
     #         continue
-    #     to_append = electricity_price(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories, regional=region)
+    #     to_append = electricity_price(Data.regional_dimensions_pyamdf, 
+    #                                   Data.model_scenarios, 2100, 
+    #                                   Data.categories, 
+    #                                   Data.scenario_baselines,
+    #                                   Resilience.baseline_prices,
+    #                                   Data.region_country_df,
+    #                                   regional=region)
     #     prices = pd.concat([prices, to_append], ignore_index=True, axis=0)   
     # prices.to_csv('outputs/electricity_prices_regional' + str(Data.categories) + '.csv')
 
@@ -260,9 +271,16 @@ def gini_between_countries(pyam_df, scenario_model_list, end_year, meta_df, gini
                                             'gini_coefficient': list(ssp_ginis.values())})
 
 
-# Function that gets the electricity price for the different scenarios
-def electricity_price(pyam_df, scenario_model_list, end_year, categories, regional=None):
-    
+
+
+# Function that gets the electricity price for the different scenarios 
+def electricity_price(pyam_df, scenario_model_list, end_year, categories, baseline_scenarios,
+                      baseline_data, regions_mapping, regional=None):
+    """
+    This will only work for the subset being run for C1 and C2 AR6. Should be excluded 
+    for subsets unless additional data found as need baseline scenarios for each scenario
+    in subset and additional data from R5 if no R10 data available.
+    """  
     if regional is not None:
         region = regional
     else:
@@ -277,10 +295,37 @@ def electricity_price(pyam_df, scenario_model_list, end_year, categories, region
     # for the regional analysis, just use the regional price values from the model
     if regional is not None:
 
-        df.filter(variable='Price|Secondary Energy|Electricity', region=region)
+        df = df.filter(variable='Price|Secondary Energy|Electricity', region=region)
         electricity_prices = []
         # loop through models and scenarios
         for scenario, model in zip(scenario_model_list['scenario'], scenario_model_list['model']):
+
+
+            
+            scenario_baseline = baseline_scenarios[(baseline_scenarios['scenario'] == scenario) & (baseline_scenarios['model'] == model)]['baseline'].values[0]
+            
+            # Extract baseline data for the scenario
+            scenario_baseline_data = baseline_data.filter(scenario=scenario_baseline, 
+                                                          model=model,
+                                                          variable='Price|Secondary Energy|Electricity')
+
+            # Now try and get the region values
+
+            scenario_baseline_region_data = scenario_baseline_data.filter(region=region)
+            baseline_mean_price = pd.Series(scenario_baseline_region_data.data['value'].values, index=scenario_baseline_region_data.data['year']).mean()
+
+            if math.isnan(baseline_mean_price):
+                print('No regional baseline data found, using R5 proxy')
+                # get region location in R10 list
+                region_position = Data.R10.index(region)
+                if Data.R10[0] == 'World':
+                    region_position -= 1
+                region_code = Data.R10_codes[region_position]
+                # get the R5 region
+                r5_region = regions_mapping[regions_mapping['r10_iamc'] == region_code]['r5_iamc'].values[0]
+                # get the baseline data for the R5 region
+                scenario_baseline_region_data = scenario_baseline_data.filter(region=r5_region)
+                baseline_mean_price = pd.Series(scenario_baseline_region_data.data['value'].values, index=scenario_baseline_region_data.data['year']).mean()
             
             # Filter out the data for the required scenario
             scenario_df = df.filter(scenario=scenario)
@@ -289,6 +334,9 @@ def electricity_price(pyam_df, scenario_model_list, end_year, categories, region
             # make pandas series with the values and years as index
             variable_df = scenario_model_df.data
             variable_mean = pd.Series(variable_df['value'].values, index=variable_df['year']).mean()
+
+            # gap between the baseline and the scenario
+            variable_mean = variable_mean - baseline_mean_price
             electricity_prices.append(variable_mean)
 
         # create a new dataframe with the electricity prices
@@ -298,28 +346,60 @@ def electricity_price(pyam_df, scenario_model_list, end_year, categories, region
     
     # for the electricity prices for the world, take the regional prices, and use the GDP to weight the prices
     else:
+        
         electricity_prices = []
         for scenario, model in zip(scenario_model_list['scenario'], scenario_model_list['model']):
+            
+            # Extract the baseline scenario
+            scenario_baseline = baseline_scenarios[(baseline_scenarios['scenario'] == scenario) & (baseline_scenarios['model'] == model)]['baseline'].values[0]
+
+            # Extract baseline data for the scenario
+            scenario_baseline_data = baseline_data.filter(scenario=scenario_baseline, 
+                                                          model=model)
+
             # Filter out the data for the required scenario
             scenario_df = df.filter(scenario=scenario)
             scenario_model_df = scenario_df.filter(model=model)
             
-            decadal_prices = []
+            decadal_price_gap = []
             for year in range(2020, 2101, 10):
                 variable_df = scenario_model_df.filter(year=year)
                 total_price = 0
                 total_gdp = 0
+                total_baseline_price = 0
+                total_baseline_gdp = 0
+                
                 # Sum of  all the price * GDP for each region over the gdp for the region
                 for region in Data.R10:
                     region_df = variable_df.filter(region=region)
+                    try:
+                        baseline_price = scenario_baseline_data.filter(variable='Price|Secondary Energy|Electricity', region=region).data['value'].values[0]
+                        baseline_gdp = region_df.filter(variable='GDP|MER').data['value'].values[0]
+                    except IndexError:
+                        # get region location in R10 list
+                        region_position = Data.R10.index(region)
+                        if Data.R10[0] == 'World':
+                            region_position -= 1
+                        region_code = Data.R10_codes[region_position]
+                        # get the R5 region
+                        r5_region = regions_mapping[regions_mapping['r10_iamc'] == region_code]['r5_iamc'].values[0]
+                        # get the baseline data for the R5 region
+                        baseline_price = scenario_baseline_data.filter(variable='Price|Secondary Energy|Electricity',region=r5_region).data['value'].values[0]
+                        baseline_gdp = region_df.filter(variable='GDP|MER').data['value'].values[0]
+
+                    total_baseline_price += baseline_price * baseline_gdp
+                    total_baseline_gdp += baseline_gdp
                     price = region_df.filter(variable='Price|Secondary Energy|Electricity').data['value'].values[0]
                     gdp = region_df.filter(variable='GDP|MER').data['value'].values[0]
                     total_price += price * gdp
                     total_gdp += gdp
-                decadal_prices.append(total_price / total_gdp)
+                scenario_price = total_price / total_gdp
+                baseline_price = total_baseline_price / total_baseline_gdp
+                
+                decadal_price_gap.append(scenario_price - baseline_price)
             
-            electricity_prices.append(np.array(decadal_prices).mean())
-        
+            electricity_prices.append(np.array(decadal_price_gap).mean())
+
         electricity_prices_df = pd.DataFrame({'model': scenario_model_list['model'], 'scenario': scenario_model_list['scenario'], 'electricity_price': electricity_prices})
         electricity_prices_df.to_csv('outputs/electricity_prices' + str(categories) + '.csv', index=False)
 

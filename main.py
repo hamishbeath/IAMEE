@@ -30,7 +30,7 @@ class IndexBuilder:
     
         # import fairness metrics
         between_region_gini = pd.read_csv('outputs/between_region_gini' + str(Data.categories) + '.csv')
-        carbon_budget_fairness = pd.read_csv('outputs/R10_carbon_budget_shares' + str(Data.categories) + '.csv')
+        carbon_budget_fairness = pd.read_csv('outputs/carbon_budget_fairness' + str(Data.categories) + '.csv')
 
 
     except FileNotFoundError:
@@ -87,23 +87,33 @@ def main() -> None:
     # resilience_score(IndexBuilder.final_energy_demand,
     #                 IndexBuilder.energy_diversity,
     #                 IndexBuilder.gini_coefficient)
-    # calculate_robustness_score(IndexBuilder.energy_system_flexibility, 
-    #                            IndexBuilder.low_carbon_diversity, 
-    #                            IndexBuilder.carbon_budgets,
-    #                            IndexBuilder.CDR_2050)
+    # fairness_score(IndexBuilder.between_region_gini, IndexBuilder.carbon_budget_fairness)
+    
+    # # robustness_score(IndexBuilder.energy_system_flexibility, 
+    # #                            IndexBuilder.low_carbon_diversity, 
+    # #                            IndexBuilder.carbon_budgets,
+    # #                            IndexBuilder.CDR_2050)
     # select_most_dissimilar_scenarios(Data.model_scenarios)
     # find_scenario_archetypes(Data.model_scenarios, 4)
     # Utils.data_download(Data.paola_variables,'*', '*', Data.R10, Data.categories, file_name='CDR_data_R10' + str(Data.categories))
-    Utils.data_download(Data.mandatory_variables,'*', '*', Data.R10, Data.categories, file_name='pyamdf_dimensions_data_R10' + str(Data.categories))
+    # 
+    # Utils.data_download(Data.mandatory_variables,'*', '*', Data.R10, Data.categories, file_name='pyamdf_dimensions_data_R10' + str(Data.categories))
+    # models = Data.scenario_baselines['model'].to_list()
+    # scenarios = Data.scenario_baselines['baseline'].to_list()
+    # variables = ['Price|Secondary Energy|Electricity', 'GDP|MER']
+    # image_scenarios = ['SSP1-Baseline', 'SSP2-Baseline']
+    # R5_list = list(Data.R5.keys())
+    # Utils.data_download(variables,models,scenarios, Data.R10, Data.categories, file_name='baseline_data_R10' + str(Data.categories))
+    # Utils.data_download(variables, 'IMAGE 3.2', image_scenarios, R5_list, Data.categories, file_name='image_baseline_data_R5' + str(Data.categories))
     # regions = ['World']
-    # Utils().manadory_variables_scenarios(Data.categories, 
-    #                                     Data.econ_regions, 
-    #                                     Data.mandatory_variables, 
-    #                                     subset=False, 
-    #                                     special_file_name=None, 
-    #                                     call_sub=None, 
-    #                                     save_data=True)
 
+    Utils().manadory_variables_scenarios('C1', 
+                                        'World', 
+                                        Data.mandatory_test_variables, 
+                                        subset=False, 
+                                        special_file_name='Test_econ', 
+                                        call_sub=None, 
+                                        save_data=False)
     # get_regional_scores()
 
 
@@ -247,7 +257,7 @@ def resilience_score(final_energy_demand, energy_diversity, gini_coefficient, re
 
 
 # calculate the robustness score (higher score = more robustness challenges)
-def calculate_robustness_score(flexibility_scores, shannon_index, carbon_budgets, CDR_2050, regional=None):
+def robustness_score(flexibility_scores, shannon_index, carbon_budgets, CDR_2050, regional=None):
     """
     composite of:
     - energy system flexibility (lower better) weighting 1/4
@@ -294,7 +304,7 @@ def calculate_robustness_score(flexibility_scores, shannon_index, carbon_budgets
 
 
 # calculate the fairness score (higher score = more fairness challenges)
-def calculate_fairness_score(between_region_gini, carbon_budget_fairness):
+def fairness_score(between_region_gini, carbon_budget_fairness):
 
     output_df = pd.DataFrame()
     output_df['model'] = between_region_gini['model']

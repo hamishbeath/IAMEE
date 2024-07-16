@@ -57,12 +57,19 @@ class Data:
                         'R10REF_ECON':'North',
                         'R10NORTH_AM':'North'}
 
+    R5 = {'Asian countries except Japan': 'R5ASIA', 
+          'Countries from the Reforming Economies of the Former Soviet Union': 'R5REF',
+          'Countries of the Middle East and Africa': 'R5MAF',
+          'Latin American countries': 'R5LAM',
+          'OECD90 and EU (and EU candidate) countries': 'R5OECD90+EU'}
+    
+
     region_country_df = pd.read_csv('iso3c_regions.csv')
     #https://github.com/setupelz/regioniso3c/blob/main/iso3c_region_mapping_20240319.csv    
-
+    
 
     mandatory_variables = ['Emissions|CO2', 'Investment|Energy Supply','Capacity|Electricity|Wind',
-                           'Capacity|Electricity|Solar|PV', 'Final Energy',
+                           'Capacity|Electricity|Solar|PV', 'Final Energy', 'Population',
                            'Primary Energy|Coal', 'Primary Energy|Oil', 'Primary Energy|Gas', 'Primary Energy|Nuclear',
                            'Primary Energy|Biomass', 'Primary Energy|Non-Biomass Renewables','Carbon Sequestration|CCS|Biomass',
                             'GDP|MER', 'Land Cover|Forest','Land Cover', 'Carbon Sequestration|Land Use', 'Price|Secondary Energy|Electricity']
@@ -70,6 +77,8 @@ class Data:
     mandatory_econ_variables = ['GDP|MER', 'Investment|Energy Supply',
                                 'AR6 climate diagnostics|Surface Temperature (GSAT)|MAGICCv7.5.3|50.0th Percentile',
                                 'AR6 climate diagnostics|Surface Temperature (GSAT)|MAGICCv7.5.3|95.0th Percentile']
+    
+    mandatory_test_variables = ['Investment|Energy Supply', 'Investment|Energy Efficiency', 'Policy Cost|GDP Loss']
 
     mandatory_CDR_variables = ['Carbon Sequestration|Direct Air Capture', 'Carbon Sequestration|Land Use','Carbon Sequestration|CCS|Biomass']
     paola_variables = ['Carbon Sequestration|Direct Air Capture', 'Carbon Sequestration|Land Use','Carbon Sequestration|CCS|Biomass', 'Carbon Sequestration|Enhanced Weathering']
@@ -113,19 +122,19 @@ class Data:
         land_use_seq_data = pyam.IamDataFrame(data='land_sequestration_imputed.csv')
     except:
         print('No land use imputed data found')
+    try:
+        scenario_baselines = pd.read_csv('baselines' + str(categories) + '.csv')
+    except FileNotFoundError:
+        print('No baselines file found for the category of', categories)
 
 class Utils:
 
-    
     test_variables = ['Water Consumption', 'Land Cover|Pasture', 'Land Cover|Forest',
                             'Land Cover', 'Land Cover|Cropland',
                             'Land Cover|Cropland|Energy Crops']
     
     categories = ['C1', 'C2']
     # categories = ['C1', 'C2', 'C3', 'C4', 'C5','C6', 'C7', 'C8']
-    
-
-    
     # connSR15 = pyam.iiasa.Connection(name='iamc15', 
     #                             creds=None, 
     #                             auth_url='https://api.manager.ece.iiasa.ac.at')
