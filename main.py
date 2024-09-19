@@ -3,6 +3,7 @@ import pyam
 import pandas as pd
 from utils import Data
 from utils import Utils
+from econ_feas import EconData
 from itertools import combinations, product
 from resources import NaturalResources
 from scipy.spatial.distance import pdist, squareform
@@ -98,40 +99,62 @@ def main() -> None:
     # Utils.data_download(Data.paola_variables,'*', '*', Data.R10, Data.categories, file_name='CDR_data_R10' + str(Data.categories))
     # 
     # Utils.data_download(Data.mandatory_variables,'*', '*', Data.R10, Data.categories, file_name='pyamdf_dimensions_data_R10' + str(Data.categories))
-    # models = Data.scenario_baselines['model'].to_list()
-    # scenarios = Data.scenario_baselines['baseline'].to_list()
+    models = EconData.regional_scenarios_models['model'].to_list()
+    scenarios = EconData.regional_scenarios_models['scenario'].to_list()
     # variables = ['Price|Secondary Energy|Electricity', 'GDP|MER']
     # image_scenarios = ['SSP1-Baseline', 'SSP2-Baseline']
     # R5_list = list(Data.R5.keys())
-    # Utils.data_download(variables,models,scenarios, Data.R10, Data.categories, file_name='baseline_data_R10' + str(Data.categories))
+    Utils.data_download(Data.mandatory_econ_variables_regional
+                        ,models,scenarios, Data.R10, Data.categories_all, 
+                        file_name='econ/pyamdf_econ_analysis_R10')
+    
     # Utils.data_download(variables, 'IMAGE 3.2', image_scenarios, R5_list, Data.categories, file_name='image_baseline_data_R5' + str(Data.categories))
+    
+
     # regions = ['World']
+    # df = Utils.data_download_sub(Data.mandatory_variables, '*', '*', 
+    #                 Data.categories, regions, 2100)
+    
+    # df = df.filter(Category=Data.categories)
+    # Utils().manadory_variables_scenarios(Data.categories_all, 
+    #                                     Data.econ_regions,
+    #                                     Data.mandatory_econ_variables_regional, 
+    #                                     subset=False, 
+    #                                     special_file_name='econ/scenarios_models_R10', 
+    #                                     call_sub=None, 
+    #                                     save_data=False,
+    #                                     local=False)
+    
+    # Utils().create_variable_scenario_count(df, 
+    #                                        Data.mandatory_variables,
+    #                                        regions)
 
-    Utils().manadory_variables_scenarios('C1', 
-                                        'World', 
-                                        Data.mandatory_test_variables, 
-                                        subset=False, 
-                                        special_file_name='Test_econ', 
-                                        call_sub=None, 
-                                        save_data=False)
-    # get_regional_scores()
-
-
+    # get_regional_scores(cross_region_norm=None)
 
 
 # calculate the economic score (higher score = more economic challenges)
-def economic_score(investment_scores, regional=None):
+def economic_score(investment_scores, regional=None, cross_region_norm=None):
     
 
     output_df = pd.DataFrame()
     output_df['model'] = investment_scores['model']
     output_df['scenario'] = investment_scores['scenario']
-    
-    # normalise the investment data
     energy_investment = investment_scores['mean_value']
     energy_investment_2050 = investment_scores['mean_value_2050']
-    energy_investment_normalised = (energy_investment - energy_investment.min()) / (energy_investment.max() - energy_investment.min())
-    energy_investment_2050_normalised = (energy_investment_2050 - energy_investment_2050.min()) / (energy_investment_2050.max() - energy_investment_2050.min())
+    
+    if cross_region_norm == None:
+        # normalise the investment data
+        energy_investment_normalised = (energy_investment - energy_investment.min()) / (energy_investment.max() - energy_investment.min())
+        energy_investment_2050_normalised = (energy_investment_2050 - energy_investment_2050.min()) / (energy_investment_2050.max() - energy_investment_2050.min())
+
+    else:
+        # normalise the investment data but from the min and max of all regions
+        # get the regional investment data
+        all_regional_energy_investment = IndexBuilder.regional_investment_metrics['mean_value']
+        all_regional_energy_investment_2050 = IndexBuilder.regional_investment_metrics['mean_value_2050']
+        energy_investment_normalised = (energy_investment - all_regional_energy_investment.min()) / (all_regional_energy_investment.max() - all_regional_energy_investment.min())
+        energy_investment_2050_normalised = (energy_investment_2050 - all_regional_energy_investment_2050.min()) / (all_regional_energy_investment_2050.max() - all_regional_energy_investment_2050.min())
+
 
     output_df['investment_score'] = energy_investment_normalised
     output_df['investment_score_2050'] = energy_investment_2050_normalised
@@ -144,17 +167,26 @@ def economic_score(investment_scores, regional=None):
 
 
 # calculate the environmental score (higher score = more environmental challenges)
-def environment_score(environment_metrics, regional=None):
+def environment_score(environment_metrics, regional=None, cross_region_norm=None):
 
     output_df = pd.DataFrame()
     output_df['model'] = environment_metrics['model']
     output_df['scenario'] = environment_metrics['scenario']
-
-    # normalise the environmental data
+    
     forest_change_2050 = -1 * environment_metrics['forest_change_2050']
     forest_change = -1 * environment_metrics['forest_change_2100']
-    forest_change_normalised = (forest_change - forest_change.min()) / (forest_change.max() - forest_change.min())
-    forest_change_2050_normalised = (forest_change_2050 - forest_change_2050.min()) / (forest_change_2050.max() - forest_change_2050.min())
+
+    if cross_region_norm == None:
+    # normalise the environmental data
+        forest_change_normalised = (forest_change - forest_change.min()) / (forest_change.max() - forest_change.min())
+        forest_change_2050_normalised = (forest_change_2050 - forest_change_2050.min()) / (forest_change_2050.max() - forest_change_2050.min())
+
+    else:
+    # normalise the investment data but from the min and max of all regions
+        all_regional_forest_change = -1 * IndexBuilder.regional_environment_metrics['forest_change_2100']
+        all_regional_forest_change_2050 = -1 * IndexBuilder.regional_environment_metrics['forest_change_2050']
+        forest_change_normalised = (forest_change - all_regional_forest_change.min()) / (all_regional_forest_change.max() - all_regional_forest_change.min())
+        forest_change_2050_normalised = (forest_change_2050 - all_regional_forest_change_2050.min()) / (all_regional_forest_change_2050.max() - all_regional_forest_change_2050.min())
 
     # add up the composite environmental score
     beccs_threshold_breached = environment_metrics['beccs_threshold_breached']
@@ -210,7 +242,7 @@ def resource_score(minerals, resource_metrics, regional=None):
 
 
 # calculate the resilience score (higher score = more resilience challenges)
-def resilience_score(final_energy_demand, energy_diversity, gini_coefficient, regional=None):
+def resilience_score(final_energy_demand, energy_diversity, gini_coefficient, electricity_price, regional=None, cross_region_norm=None):
     """
     composite of 
     - final energy demand (lower better) weighting 1/4
@@ -227,23 +259,49 @@ def resilience_score(final_energy_demand, energy_diversity, gini_coefficient, re
         final_energy_demand = final_energy_demand['energy_per_gdp']
     else:
         final_energy_demand = final_energy_demand['final_energy_demand']
-    final_energy_demand_normalised = (final_energy_demand - final_energy_demand.min()) / (final_energy_demand.max() - final_energy_demand.min())
-    outout_df['final_energy_demand'] = final_energy_demand_normalised
-
-    # normalise the energy diversity
+    
     energy_diversity = -1 * energy_diversity['shannon_index']
-    energy_diversity_normalised = (energy_diversity - energy_diversity.min()) / (energy_diversity.max() - energy_diversity.min())
-    outout_df['energy_diversity'] = energy_diversity_normalised
-
-    # normalise the gini coefficient
     gini_coefficient = gini_coefficient['ssp_gini_coefficient']
-    gini_coefficient_normalised = (gini_coefficient - gini_coefficient.min()) / (gini_coefficient.max() - gini_coefficient.min())
-    outout_df['gini_coefficient'] = gini_coefficient_normalised
+    electricity_price = electricity_price['electricity_price']
 
-    # normalise the electricity price
-    electricity_price = IndexBuilder.regional_electricity_price['electricity_price']
-    electricity_price_normalised = (electricity_price - electricity_price.min()) / (electricity_price.max() - electricity_price.min())
-    outout_df['electricity_price'] = electricity_price_normalised
+    if cross_region_norm == None:
+        # normalise the final energy demand
+        final_energy_demand_normalised = (final_energy_demand - final_energy_demand.min()) / (final_energy_demand.max() - final_energy_demand.min())
+        outout_df['final_energy_demand'] = final_energy_demand_normalised
+        
+        # normalise the energy diversity
+        energy_diversity_normalised = (energy_diversity - energy_diversity.min()) / (energy_diversity.max() - energy_diversity.min())
+        outout_df['energy_diversity'] = energy_diversity_normalised
+
+        # normalise the gini coefficient
+        gini_coefficient_normalised = (gini_coefficient - gini_coefficient.min()) / (gini_coefficient.max() - gini_coefficient.min())
+        outout_df['gini_coefficient'] = gini_coefficient_normalised
+
+        # normalise the electricity price
+        electricity_price_normalised = (electricity_price - electricity_price.min()) / (electricity_price.max() - electricity_price.min())
+        outout_df['electricity_price'] = electricity_price_normalised
+
+    else:
+        # normalise the final energy demand across all regions
+        all_regional_final_energy_demand = IndexBuilder.regional_final_energy_demand['energy_per_gdp']
+        final_energy_demand_normalised = (final_energy_demand - all_regional_final_energy_demand.min()) / (all_regional_final_energy_demand.max() - all_regional_final_energy_demand.min())
+        outout_df['final_energy_demand'] = final_energy_demand_normalised
+        
+        # normalise the energy diversity across all regions
+        all_regional_energy_diversity = -1 *IndexBuilder.regional_energy_diversity['shannon_index']
+        energy_diversity_normalised = (energy_diversity - all_regional_energy_diversity.min()) / (all_regional_energy_diversity.max() - all_regional_energy_diversity.min())
+        outout_df['energy_diversity'] = energy_diversity_normalised
+
+        # normalise the gini coefficient across all regions
+        all_regional_gini_coefficient = IndexBuilder.regional_gini_coefficient['ssp_gini_coefficient']
+        gini_coefficient_normalised = (gini_coefficient - all_regional_gini_coefficient.min()) / (all_regional_gini_coefficient.max() - all_regional_gini_coefficient.min())
+        outout_df['gini_coefficient'] = gini_coefficient_normalised
+
+        # normalise the electricity price across all regions
+        all_regional_electricity_price = IndexBuilder.regional_electricity_price['electricity_price']
+        electricity_price_normalised = (electricity_price - all_regional_electricity_price.min()) / (all_regional_electricity_price.max() - all_regional_electricity_price.min())
+        outout_df['electricity_price'] = electricity_price_normalised
+
 
     # create the composite resilience score
     outout_df['resilience_score'] = outout_df['final_energy_demand'] + outout_df['energy_diversity'] + outout_df['gini_coefficient'] + outout_df['electricity_price']
@@ -257,7 +315,7 @@ def resilience_score(final_energy_demand, energy_diversity, gini_coefficient, re
 
 
 # calculate the robustness score (higher score = more robustness challenges)
-def robustness_score(flexibility_scores, shannon_index, carbon_budgets, CDR_2050, regional=None):
+def robustness_score(flexibility_scores, shannon_index, carbon_budgets, CDR_2050, regional=None, cross_region_norm=None):
     """
     composite of:
     - energy system flexibility (lower better) weighting 1/4
@@ -270,38 +328,74 @@ def robustness_score(flexibility_scores, shannon_index, carbon_budgets, CDR_2050
     output_df['model'] = flexibility_scores['model']
     output_df['scenario'] = flexibility_scores['scenario']
     
-    # normalise the flexibility scores
-    flexibility_scores = flexibility_scores['flexibility_score']
-    flexibility_scores_normalised = (flexibility_scores - flexibility_scores.min()) / (flexibility_scores.max() - flexibility_scores.min())
-    output_df['flexibility_scores'] = flexibility_scores_normalised
-
-    # normalise the energy diversity
-    shannon_index = -1 * shannon_index['shannon_index']
-    shannon_index_normalised = (shannon_index - shannon_index.min()) / (shannon_index.max() - shannon_index.min())
-    output_df['shannon_index'] = shannon_index_normalised
-
-    # normalise the carbon budget shares
-    carbon_budgets = carbon_budgets['carbon_budget_share']
-    carbon_budgets_normalised = (carbon_budgets - carbon_budgets.min()) / (carbon_budgets.max() - carbon_budgets.min())
-    output_df['carbon_budgets'] = carbon_budgets_normalised
-
-    # normalise the CDR 2050
     if regional != None:
-        CDR_2050 = CDR_2050['total_CDR_land'] # here the CDR is being split by land area
+        
+        if cross_region_norm == None:
+            CDR_2050 = CDR_2050['total_CDR_gdp']
+        
+        else:
+            CDR_2050 = CDR_2050['total_CDR_gdp']
     else:
         CDR_2050 = CDR_2050['total_CDR']
-    CDR_2050_normalised = (CDR_2050 - CDR_2050.min()) / (CDR_2050.max() - CDR_2050.min())
-    output_df['CDR_2050'] = CDR_2050_normalised
+
+    flexibility_scores = flexibility_scores['flexibility_score']
+    shannon_index = -1 * shannon_index['shannon_index']
+    carbon_budgets = carbon_budgets['carbon_budget_share']
+
+    # check if CDR 2050 contains nan values
+    if CDR_2050.isnull().values.any():
+        CDR_2050 = CDR_2050.fillna(
+            CDR_2050.mean())
+
+    if cross_region_norm == None:
+    
+        # normalise the CDR 2050
+        CDR_2050_normalised = (CDR_2050 - CDR_2050.min()) / (CDR_2050.max() - CDR_2050.min())
+        output_df['CDR_2050'] = CDR_2050_normalised
+
+        # normalise the flexibility scores
+        flexibility_scores_normalised = (flexibility_scores - flexibility_scores.min()) / (flexibility_scores.max() - flexibility_scores.min())
+        output_df['flexibility_scores'] = flexibility_scores_normalised
+
+        # normalise the energy diversity
+        shannon_index_normalised = (shannon_index - shannon_index.min()) / (shannon_index.max() - shannon_index.min())
+        output_df['shannon_index'] = shannon_index_normalised
+
+        # normalise the carbon budget shares
+        carbon_budgets_normalised = (carbon_budgets - carbon_budgets.min()) / (carbon_budgets.max() - carbon_budgets.min())
+        output_df['carbon_budgets'] = carbon_budgets_normalised
+
+    else:
+        # normalise the CDR 2050
+        all_regional_CDR_2050 = IndexBuilder.regional_CDR_2050['total_CDR_gdp']
+        CDR_2050_normalised = (CDR_2050 - all_regional_CDR_2050.min()) / (all_regional_CDR_2050.max() - all_regional_CDR_2050.min())
+        # print cdr_2050 in full to see if there are any nan values
+        print(CDR_2050_normalised)
+        output_df['CDR_2050'] = CDR_2050_normalised
+        print(output_df['CDR_2050'])
+        # normalise the flexibility scores
+        all_regional_flexibility_scores = IndexBuilder.regional_energy_system_flexibility['flexibility_score']
+        flexibility_scores_normalised = (flexibility_scores - all_regional_flexibility_scores.min()) / (all_regional_flexibility_scores.max() - all_regional_flexibility_scores.min())
+        output_df['flexibility_scores'] = flexibility_scores_normalised
+
+        # normalise the energy diversity
+        all_regional_shannon_index = -1 * IndexBuilder.regional_low_carbon_diversity['shannon_index']
+        shannon_index_normalised = (shannon_index - all_regional_shannon_index.min()) / (all_regional_shannon_index.max() - all_regional_shannon_index.min())
+        output_df['shannon_index'] = shannon_index_normalised
+
+        # normalise the carbon budget shares
+        all_regional_carbon_budgets = IndexBuilder.regional_carbon_budgets['carbon_budget_share']
+        carbon_budgets_normalised = (carbon_budgets - all_regional_carbon_budgets.min()) / (all_regional_carbon_budgets.max() - all_regional_carbon_budgets.min())
+        output_df['carbon_budgets'] = carbon_budgets_normalised
 
     output_df['robustness_score'] = output_df['flexibility_scores'] + output_df['shannon_index'] + output_df['carbon_budgets'] + output_df['CDR_2050']
+    print(output_df['robustness_score'])
     if regional != None:
         output_df['Region'] = regional
         return output_df
-    
     else:
         # create the composite robustness score
         output_df.to_csv('outputs/robustness_scores' + str(Data.categories) + '.csv', index=False)
-
 
 # calculate the fairness score (higher score = more fairness challenges)
 def fairness_score(between_region_gini, carbon_budget_fairness):
@@ -325,7 +419,7 @@ def fairness_score(between_region_gini, carbon_budget_fairness):
     output_df.to_csv('outputs/fairness_scores' + str(Data.categories) + '.csv', index=False)
 
 
-def get_regional_scores():
+def get_regional_scores(cross_region_norm=None):
 
     # get the economic output
     econ_output = pd.DataFrame()
@@ -334,18 +428,18 @@ def get_regional_scores():
     resilience_output = pd.DataFrame()
     robust_output = pd.DataFrame()
 
+    if Data.R10[0] == 'World':
+        Data.R10.pop(0)
+
     for region in Data.R10:
         
-        # 
         region_investment_scores = IndexBuilder.regional_investment_metrics[IndexBuilder.regional_investment_metrics['region'] == region]
-        region_econ_scores = economic_score(region_investment_scores, region)
+        region_econ_scores = economic_score(region_investment_scores, region, cross_region_norm)
         econ_output = pd.concat([econ_output, region_econ_scores], axis=0)
         
         # environment
         region_env_scores = IndexBuilder.regional_environment_metrics[IndexBuilder.regional_environment_metrics['region'] == region]
-        
-        region_env_scores = environment_score(region_env_scores, region)
-        print(region_env_scores)
+        region_env_scores = environment_score(region_env_scores, region, cross_region_norm)
         env_output = pd.concat([env_output, region_env_scores], axis=0)
         
         # resources
@@ -358,31 +452,36 @@ def get_regional_scores():
         region_final_energy_demand = IndexBuilder.regional_final_energy_demand[IndexBuilder.regional_final_energy_demand['region'] == region]
         region_energy_diversity = IndexBuilder.regional_energy_diversity[IndexBuilder.regional_energy_diversity['region'] == region]
         region_gini_coefficient = IndexBuilder.regional_gini_coefficient[IndexBuilder.regional_gini_coefficient['region'] == region]
-        region_resilience = resilience_score(region_final_energy_demand, region_energy_diversity, region_gini_coefficient, region)
+        region_electricity_price = IndexBuilder.regional_electricity_price[IndexBuilder.regional_electricity_price['region'] == region]
+        region_resilience = resilience_score(region_final_energy_demand, region_energy_diversity, region_gini_coefficient, region_electricity_price, region, cross_region_norm)
         resilience_output = pd.concat([resilience_output, region_resilience], axis=0)
         
         # robust
         region_energy_system_flexibility = IndexBuilder.regional_energy_system_flexibility[IndexBuilder.regional_energy_system_flexibility['region'] == region]
         region_low_carbon_diversity = IndexBuilder.regional_low_carbon_diversity[IndexBuilder.regional_low_carbon_diversity['region'] == region]
-        # print(region_low_carbon_diversity)
-        
         region_carbon_budgets = IndexBuilder.regional_carbon_budgets[IndexBuilder.regional_carbon_budgets['region'] == region]
         region_CDR_2050 = IndexBuilder.regional_CDR_2050[IndexBuilder.regional_CDR_2050['region'] == region]
-        # print(region_carbon_budgets)
-        # print(region_CDR_2050)
-        
-        region_robustness = calculate_robustness_score(region_energy_system_flexibility,
+        region_robustness = robustness_score(region_energy_system_flexibility,
                                       region_low_carbon_diversity,
                                       region_carbon_budgets,
-                                      region_CDR_2050, region)
+                                      region_CDR_2050, region, cross_region_norm)
         robust_output = pd.concat([robust_output, region_robustness], axis=0)        
 
+    print(robust_output)
 
-    econ_output.to_csv('outputs/economic_scores_regional' + str(Data.categories) + '.csv', index=False)
-    env_output.to_csv('outputs/environmental_scores_regional' + str(Data.categories) + '.csv', index=False)
-    resource_output.to_csv('outputs/resource_scores_regional' + str(Data.categories) + '.csv', index=False)
-    resilience_output.to_csv('outputs/resilience_scores_regional' + str(Data.categories) + '.csv', index=False)
-    robust_output.to_csv('outputs/robustness_scores_regional' + str(Data.categories) + '.csv', index=False)
+    if cross_region_norm != None:
+        econ_output.to_csv('outputs/economic_scores_regional_cross_region_norm' + str(Data.categories) + '.csv', index=False)
+        env_output.to_csv('outputs/environmental_scores_regional_cross_region_norm' + str(Data.categories) + '.csv', index=False)
+        resource_output.to_csv('outputs/resource_scores_regional_cross_region_norm' + str(Data.categories) + '.csv', index=False)
+        resilience_output.to_csv('outputs/resilience_scores_regional_cross_region_norm' + str(Data.categories) + '.csv', index=False)
+        robust_output.to_csv('outputs/robustness_scores_regional_cross_region_norm' + str(Data.categories) + '.csv', index=False)
+
+    else:
+        econ_output.to_csv('outputs/economic_scores_regional' + str(Data.categories) + '.csv', index=False)
+        env_output.to_csv('outputs/environmental_scores_regional' + str(Data.categories) + '.csv', index=False)
+        resource_output.to_csv('outputs/resource_scores_regional' + str(Data.categories) + '.csv', index=False)
+        resilience_output.to_csv('outputs/resilience_scores_regional' + str(Data.categories) + '.csv', index=False)
+        robust_output.to_csv('outputs/robustness_scores_regional' + str(Data.categories) + '.csv', index=False)
 
     econ_output = econ_output.reset_index()
     env_output = env_output.reset_index()
@@ -402,18 +501,35 @@ def get_regional_scores():
     
     # calculate the normalised dimension scores
     dimension_scores = pd.DataFrame()
-    for region in Data.R10:
+    
+    
+    if cross_region_norm == None:
+        for region in Data.R10:
 
-        region_data = data[data['region'] == region]
-        region_data['economic_dimension_score'] = (region_data['economic_score'] ) #/ region_data['economic_score'].max() 
-        region_data['environmental_dimension_score'] = (region_data['environmental_score'] - region_data['environmental_score'].min()) / (region_data['environmental_score'].max() - region_data['environmental_score'].min())
-        region_data['resource_dimension_score'] = (region_data['resource_score'] - region_data['resource_score'].min()) / (region_data['resource_score'].max() - region_data['resource_score'].min())
-        region_data['resilience_dimension_score'] = (region_data['resilience_score'] - region_data['resilience_score'].min()) / (region_data['resilience_score'].max() - region_data['resilience_score'].min())
-        region_data['robustness_dimension_score'] = (region_data['robustness_score'] - region_data['robustness_score'].min()) / (region_data['robustness_score'].max() - region_data['robustness_score'].min())
+            region_data = data[data['region'] == region]
+            region_data['economic_dimension_score'] = (region_data['economic_score'] ) #/ region_data['economic_score'].max() 
+            region_data['environmental_dimension_score'] = (region_data['environmental_score'] - region_data['environmental_score'].min()) / (region_data['environmental_score'].max() - region_data['environmental_score'].min())
+            region_data['resource_dimension_score'] = (region_data['resource_score'] - region_data['resource_score'].min()) / (region_data['resource_score'].max() - region_data['resource_score'].min())
+            region_data['resilience_dimension_score'] = (region_data['resilience_score'] - region_data['resilience_score'].min()) / (region_data['resilience_score'].max() - region_data['resilience_score'].min())
+            region_data['robustness_dimension_score'] = (region_data['robustness_score'] - region_data['robustness_score'].min()) / (region_data['robustness_score'].max() - region_data['robustness_score'].min())
 
-        dimension_scores = pd.concat([dimension_scores, region_data], axis=0)
+            dimension_scores = pd.concat([dimension_scores, region_data], axis=0)
+        
+        dimension_scores.to_csv('outputs/regional_normalised_dimension_scores' + str(Data.categories) + '.csv', index=False)
 
-    dimension_scores.to_csv('outputs/regional_normalised_dimension_scores' + str(Data.categories) + '.csv', index=False)
+    else:
+        for region in Data.R10:
+
+            region_data = data[data['region'] == region]
+            region_data['economic_dimension_score'] = (region_data['economic_score'] - data['economic_score'].min()) / (data['economic_score'].max() - data['economic_score'].min())
+            region_data['environmental_dimension_score'] = (region_data['environmental_score'] - data['environmental_score'].min()) / (data['environmental_score'].max() - data['environmental_score'].min())
+            region_data['resource_dimension_score'] = (region_data['resource_score'] - data['resource_score'].min()) / (data['resource_score'].max() - data['resource_score'].min())
+            region_data['resilience_dimension_score'] = (region_data['resilience_score'] - data['resilience_score'].min()) / (data['resilience_score'].max() - data['resilience_score'].min())
+            region_data['robustness_dimension_score'] = (region_data['robustness_score'] - data['robustness_score'].min()) / (data['robustness_score'].max() - data['robustness_score'].min())
+
+            dimension_scores = pd.concat([dimension_scores, region_data], axis=0)
+
+        dimension_scores.to_csv('outputs/regional_normalised_dimension_scores_cross_regional_normalisation' + str(Data.categories) + '.csv', index=False)
 
 
 # select most dissimilar scenarios

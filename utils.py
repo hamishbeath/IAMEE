@@ -35,7 +35,7 @@ class Data:
                         'EN_NPi2020_200f', 'EN_NPi2020_400f', 'SusDev_SDP-PkBudg1000', 'SusDev_SSP1-PkBudg900', 
                         'DeepElec_SSP2_def_Budg900', 'DISCRATE_cb400_cdrno_dr5p', 'EN_NPi2020_450f', 'EN_NPi2020_500f']
 
-    R10 = ['World','Countries of Latin America and the Caribbean','Countries of South Asia; primarily India',
+    R10 = ['Countries of Latin America and the Caribbean','Countries of South Asia; primarily India',
         'Countries of Sub-Saharan Africa', 'Countries of centrally-planned Asia; primarily China',
         'Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc.',
         'Eastern and Western Europe (i.e., the EU28)',
@@ -76,10 +76,15 @@ class Data:
 
     mandatory_econ_variables = ['GDP|MER', 'Investment|Energy Supply',
                                 'AR6 climate diagnostics|Surface Temperature (GSAT)|MAGICCv7.5.3|50.0th Percentile',
-                                'AR6 climate diagnostics|Surface Temperature (GSAT)|MAGICCv7.5.3|95.0th Percentile']
+                                'AR6 climate diagnostics|Surface Temperature (GSAT)|MAGICCv7.5.3|95.0th Percentile',
+                                'Policy Cost|GDP Loss']
     
-    mandatory_test_variables = ['Investment|Energy Supply', 'Investment|Energy Efficiency', 'Policy Cost|GDP Loss']
+    mandatory_econ_variables_regional = ['GDP|MER', 'Investment|Energy Supply',
+                            'Policy Cost|GDP Loss']
 
+
+    # mandatory_test_variables = ['Investment|Energy Supply', 'Policy Cost|GDP Loss']
+    # mandatory_CDR_variables = ['Carbon Sequestration|Enhanced Weathering']
     mandatory_CDR_variables = ['Carbon Sequestration|Direct Air Capture', 'Carbon Sequestration|Land Use','Carbon Sequestration|CCS|Biomass']
     paola_variables = ['Carbon Sequestration|Direct Air Capture', 'Carbon Sequestration|Land Use','Carbon Sequestration|CCS|Biomass', 'Carbon Sequestration|Enhanced Weathering']
     # paola_variables = ['Carbon Sequestration|Land Use','Carbon Sequestration|CCS|Biomass']
@@ -91,11 +96,18 @@ class Data:
 
     c1a_scenarios_selected = ['PEP_1p5C_red_eff', 'SSP1_SPA1_19I_RE_LB', 'EN_NPi2020_300f', 'EN_NPi2020_400f']
     c1a_models_selected = ['REMIND-MAgPIE 1.7-3.0', 'IMAGE 3.2', 'AIM/CGE 2.2', 'WITCH 5.0']
+    # ar6_world = pyam.IamDataFrame(data='database/AR6_Scenarios_Database_World_v1.1.csv', meta='database/meta_data.csv')
+    # ar6_world = pyam.read_datapackage('database/', data='AR6_Scenarios_Database_World_v1.1.csv', meta='meta_data.csv')
 
+    
+    # ar6_R10 = pyam.IamDataFrame(data='database/AR6_Scenarios_Database_Regions_v1.1.csv', meta='database/meta_data.csv')
+    # ar6_meta = pd.DataFrame('database/metadata.csv')
+    
     dollar_2022_2010 = 0.25 # reduction in value of 2022 dollars to 2010 dollars
     # categories = ''
+    cdr_categories = ['C1', 'C2', 'C3']
     categories = ['C1', 'C2']
-    # categories = ['C1', 'C2', 'C3', 'C4', 'C5','C6', 'C7', 'C8']
+    categories_all = ['C1', 'C2', 'C3', 'C4', 'C5','C6', 'C7', 'C8']
     model_scenarios = pd.read_csv('Countries of Sub-Saharan Africa_mandatory_variables_scenarios' + str(categories) + '.csv')
     dimensions_pyamdf = cat_df = pyam.IamDataFrame(data='cat_df' + str(categories) + '.csv')
     meta_df = pd.read_csv('cat_meta' + str(categories) + '.csv') 
@@ -302,7 +314,7 @@ class Utils:
     # function that takes as an input a list of mandatory variables and regional coverage and 
     # provides a list of scenarios that report on all of the mandatory variables for the given region
     def manadory_variables_scenarios(self, categories, regions, variables, subset=False, special_file_name=None
-                                     ,call_sub=None, save_data=False):
+                                     ,call_sub=None, save_data=False, local=False):
 
         """
         Function that takes as an input a list of mandatory variables and regional coverage and 
@@ -318,13 +330,26 @@ class Utils:
         - list of scenarios that report on all of the mandatory variables for the given region
 
         """
-        connAr6 = pyam.iiasa.Connection(name='ar6-public', 
-                            creds=None, 
-                            auth_url='https://api.manager.ece.iiasa.ac.at')    
+        if local == False:
+        
+            connAr6 = pyam.iiasa.Connection(name='ar6-public', 
+                                creds=None, 
+                                auth_url='https://api.manager.ece.iiasa.ac.at')    
 
-        print('Querying data')
-        df = connAr6.query(model='*', scenario='*',
-                variable=variables, region=regions)
+            print('Querying data')
+            df = connAr6.query(model='*', scenario='*',
+                    variable=variables, region=regions)
+
+        else:
+            if regions == 'World':
+                df = Data.ar6_world
+            else:
+                # check region in R10 list
+                if regions in Data.R10:
+                    df = Data.ar6_R10.filter(region=regions)
+                else:
+                    raise ValueError('Region not in R10 list')
+                    
         print(df)
         # ensure filtering by temperature category (subset or not)
         if subset == True:
@@ -341,9 +366,9 @@ class Utils:
         # except:
         # cat_df = df.filter(Category=categories)
                 if special_file_name != None:
-                    cat_df.to_csv('cat_df' + str(categories) + special_file_name + '.csv')
+                    cat_df.to_csv(special_file_name + 'cat_df' + str(categories) + '.csv')
                     cat_meta = cat_df.as_pandas(meta_cols=True)
-                    cat_meta.to_csv('cat_meta' + str(categories) + special_file_name + '.csv')
+                    cat_meta.to_csv(special_file_name + 'cat_meta' + str(categories) +  '.csv')
                 else:    
                     cat_df.to_csv('cat_df' + str(categories) + '.csv')
                     cat_meta = cat_df.as_pandas(meta_cols=True)
@@ -378,6 +403,43 @@ class Utils:
             elif call_sub != None:
                 return output_df
 
+
+    def create_variable_scenario_count(self, df, variables, regions):
+
+
+        # make outout dataframe
+        output_df = pd.DataFrame()
+
+        df = df.filter(year=2040)
+
+        # add the variables to the output dataframe
+        output_df['variable'] = variables
+
+        # loop through each region
+        for region in regions:
+
+            region_df = df.filter(region=region)
+
+            scenario_count_list = []
+
+            # loop through each variable
+            for variable in variables:
+                
+                # filter by variable
+                variable_df = region_df.filter(variable=variable)
+
+                # make list of available scenarios
+                variable_scenarios = variable_df['scenario'].tolist()
+
+                # count the number of scenarios for each variable
+                scenario_count = len(variable_scenarios)
+                scenario_count_list.append(scenario_count)
+
+            output_df[region] = scenario_count_list
+
+        print(output_df)
+
+        output_df.to_csv('variable_scenario_count.csv')
     # function that takes the pyam dataframe and loops through each mandatory variable to assess the 
     # whether or not removing the variable substantially increases the number of scenarios or models
     def filter_data_sheet_variable_prevelance(self, category, region, variables):
@@ -468,11 +530,14 @@ class Utils:
                     creds=None, 
                     auth_url='https://api.manager.ece.iiasa.ac.at')    
 
-        df = connAr6.query(model='*', scenario='*', categories=Data.categories,
+        df = connAr6.query(model='*', scenario='*', category=categories,
             variable=variables, region=region, year=range(2020, end_year+1)
             )
 
         return df
+
+
+
 
 
     # def filter_data_sheet_variable_prevelance(self, db, categories, region, threshold):

@@ -69,9 +69,9 @@ def main() -> None:
     # Plotting.land_use_stacked_shares(Plotting, Data.c1a_scenarios_selected, Data.c1a_models_selected, Plotting.c1a_data)
     # Plotting.CDR_stacked_shares(Plotting, Selection.selected_scenarios)
     # Plotting.radar_plot_model_fingerprint_single_panel(Plotting, Data.model_scenarios, Plotting.model_families, Plotting.model_colours, Plotting.clustered_scores)
-    # Plotting.regional_differences_across_scenarios(Plotting, Plotting.normalised_scores, Plotting.regional_normalised_scores, Data.model_scenarios, Plotting.selected_scenarios)
-    Plotting.specific_dimension_regional_analysis(Plotting, Plotting.normalised_scores, Plotting.regional_normalised_scores, 
-                                                  Data.R10[3], Data.R10[6], Plotting.model_families)
+    Plotting.regional_differences_across_scenarios(Plotting, Plotting.normalised_scores, Plotting.regional_normalised_scores, Data.model_scenarios, Plotting.selected_scenarios, cross_regional_norm=None)
+    # Plotting.specific_dimension_regional_analysis(Plotting, Plotting.normalised_scores, Plotting.regional_normalised_scores, 
+    #                                               Data.R10[3], Data.R10[6], Plotting.model_families)
     # Plotting.radar_plot_ssp_pairs(Plotting, Data.model_scenarios, IndexBuilder.gini_coefficient, Plotting.clustered_scores)
     # Plotting.radar_plot(Plotting, Data.model_scenarios, Plotting.clustered_scores)
     # Plotting.convex_hull(Plotting, Plotting.clustered_scores, 10)
@@ -163,6 +163,7 @@ class Plotting:
     model_colours = {'IMAGE': '#E69F00', 'AIM':'#090059','GCAM':'#D57501', 'MESSAGE':'#56B4E9', 'REMIND':'#009E73', 'WITCH':'#CC79A7'}
 
     regional_normalised_scores = pd.read_csv('outputs/regional_normalised_dimension_scores' + str(Data.categories) + '.csv')
+    regional_normalised_scores_cross_regional = pd.read_csv('outputs/regional_normalised_dimension_scores_cross_regional_normalisation' + str(Data.categories) + '.csv')
     normalised_scores = pd.read_csv('outputs/normalised_scores' + str(Data.categories) + '.csv')
 
 
@@ -1748,7 +1749,7 @@ class Plotting:
         plt.show()
 
 
-    def regional_differences_across_scenarios(self, dimension_scores_global, dimension_scores_regional, scenarios_list, selected_scenarios):
+    def regional_differences_across_scenarios(self, dimension_scores_global, dimension_scores_regional, scenarios_list, selected_scenarios, cross_regional_norm=None):
 
         dimensions_list = ['economic','resilience','robustness']
         
@@ -1764,15 +1765,31 @@ class Plotting:
             region_df['scenario'] = dimension_scores_regional_selected['scenario']
             region_df['model'] = dimension_scores_regional_selected['model']
             region_df['region'] = dimension_scores_regional_selected['region']
-            region_df['economic_diff'] = dimension_scores_regional_selected['economic_dimension_score'] - dimension_scores_global['economic_score']
-            region_df['environmental_diff'] = dimension_scores_regional_selected['environmental_dimension_score'] - dimension_scores_global['environmental_score']
-            region_df['resource_diff'] = dimension_scores_regional_selected['resource_dimension_score'] - dimension_scores_global['resource_score']
-            region_df['resilience_diff'] = dimension_scores_regional_selected['resilience_dimension_score'] - dimension_scores_global['resilience_score']
-            region_df['robustness_diff'] = dimension_scores_regional_selected['robustness_dimension_score'] - dimension_scores_global['robustness_score']
+            # region_df['economic_diff'] = dimension_scores_regional_selected['economic_dimension_score'] - dimension_scores_global['economic_score']
+            # region_df['environmental_diff'] = dimension_scores_regional_selected['environmental_dimension_score'] - dimension_scores_global['environmental_score']
+            # region_df['resource_diff'] = dimension_scores_regional_selected['resource_dimension_score'] - dimension_scores_global['resource_score']
+            # region_df['resilience_diff'] = dimension_scores_regional_selected['resilience_dimension_score'] - dimension_scores_global['resilience_score']
+            # region_df['robustness_diff'] = dimension_scores_regional_selected['robustness_dimension_score'] - dimension_scores_global['robustness_score']
+            region_df['economic_diff'] = dimension_scores_regional_selected['economic_dimension_score'] 
+
+  
+            region_df['resilience_diff'] = dimension_scores_regional_selected['resilience_dimension_score'] 
+            region_df['robustness_diff'] = dimension_scores_regional_selected['robustness_dimension_score'] 
             print(region_df)
             output_df = pd.concat([output_df, region_df], axis=0)
+        print(output_df)
+        if cross_regional_norm == None:
+            # add global scores as 'World' region
+            global_df = pd.DataFrame()
+            global_df['scenario'] = dimension_scores_global['scenario']
+            global_df['model'] = dimension_scores_global['model']
+            global_df['region'] = 'World'
+            global_df['economic_diff'] = dimension_scores_global['economic_score']
+            global_df['resilience_diff'] = dimension_scores_global['resilience_score']
+            global_df['robustness_diff'] = dimension_scores_global['robustness_score']
+            output_df = pd.concat([output_df, global_df], axis=0)
 
-        output_df.to_csv('regional_differences.csv')
+        # output_df.to_csv('regional_differences.csv')
         # set up the figure so that it is a Overlapping densities (‘ridge plot’) from seaborn
         # with the regions on the y axis and the distribution of the differences on the x axis
         fig, axs = plt.subplots(1, 3, figsize=(15, 5), sharey=True)
@@ -1782,8 +1799,8 @@ class Plotting:
             sns.boxplot(x=dimension + '_diff', y='region', data=output_df, ax=axs[i], palette='terrain', linewidth=0.4, showfliers=False)
             axs[i].set_title(dimension)
             axs[i].set_ylabel('')
-            axs[i].set_xlabel('Difference in score')
-            axs[i].set_xlim(-0.85, 0.85)
+            axs[i].set_xlabel('Dimension score')
+            axs[i].set_xlim(-0.1, 1.1)
             icon_list = ['v', 'o', 's', 'p']
             
             # # Extract the y values of the middle of the violin plots
@@ -1818,7 +1835,7 @@ class Plotting:
                 scenario_diff_values = scenario_diff[dimension + '_diff'].values.flatten()
                 # Ensure that there's a y-coordinate for each value to plot
                 if len(scenario_diff_values) == len(y_coords_list):
-                    axs[i].scatter(scenario_diff_values, y_coords_list, marker=icon_list[j], s=50, color=marker_colours[j], alpha=0.9, edgecolor='grey', linewidth=0.3)
+                    axs[i].scatter(scenario_diff_values, y_coords_list, marker=icon_list[j], s=50, color=marker_colours[j], alpha=0.9, edgecolor='grey', linewidth=0.3, zorder=10)
                 else:
                     print("Mismatch in number of points to plot")
                 #         Plot each scenario value at the corresponding y-coordinate
@@ -1828,7 +1845,7 @@ class Plotting:
                 #             axs[i].scatter(val, y_mid, marker=icon_list[j], s=100, color='black')
 
         # set the y axis labels as data.R10_codes
-        axs[0].set_yticklabels(Data.R10_codes)
+        axs[0].set_yticklabels(Data.R10)
 
         # make a list of the markers
         markers = icon_list

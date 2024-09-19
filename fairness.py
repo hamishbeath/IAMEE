@@ -50,9 +50,9 @@ def between_region_gini(pyam_df, scenario_model_list, end_year, categories):
         
             # filter for the regions
             region_df_gdp = pd.Series(scenario_model_df.filter(region=region, variable='GDP|MER').data['value'].values,
-                                  index=scenario_model_df.filter(region=region).data['year'])
+                                  index=scenario_model_df.filter(region=region, variable='GDP|MER').data['year'])
             region_df_pop = pd.Series(scenario_model_df.filter(region=region, variable='Population').data['value'].values,
-                                    index=scenario_model_df.filter(region=region).data['year'])
+                                    index=scenario_model_df.filter(region=region, variable='Population').data['year'])
             cumulative_gdp = pyam.timeseries.cumulative(region_df_gdp, 2020, end_year)
             cumulative_pop = pyam.timeseries.cumulative(region_df_pop, 2020, end_year)
             gdp_capita = cumulative_gdp / cumulative_pop
