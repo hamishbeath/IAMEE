@@ -99,19 +99,30 @@ def main() -> None:
     # Utils.data_download(Data.paola_variables,'*', '*', Data.R10, Data.categories, file_name='CDR_data_R10' + str(Data.categories))
     # 
     # Utils.data_download(Data.mandatory_variables,'*', '*', Data.R10, Data.categories, file_name='pyamdf_dimensions_data_R10' + str(Data.categories))
-    models = EconData.regional_scenarios_models['model'].to_list()
-    scenarios = EconData.regional_scenarios_models['scenario'].to_list()
+    # models = EconData.regional_scenarios_models['model'].to_list()
+    # scenarios = EconData.regional_scenarios_models['scenario'].to_list()
     # variables = ['Price|Secondary Energy|Electricity', 'GDP|MER']
     # image_scenarios = ['SSP1-Baseline', 'SSP2-Baseline']
     # R5_list = list(Data.R5.keys())
-    Utils.data_download(Data.mandatory_econ_variables_regional
-                        ,models,scenarios, Data.R10, Data.categories_all, 
-                        file_name='econ/pyamdf_econ_analysis_R10')
     
-    # Utils.data_download(variables, 'IMAGE 3.2', image_scenarios, R5_list, Data.categories, file_name='image_baseline_data_R5' + str(Data.categories))
+    # models_scenarios_world = pd.read_csv('econ/scenarios_models_world.csv')
+    # models = models_scenarios_world['model'].to_list()
+    # scenarios = models_scenarios_world['scenario'].to_list()
+    # regions = ['World']
+    # df = Utils.data_download_sub(Data.mandatory_econ_variables
+    #                     ,models,scenarios, regions, Data.categories_all, 
+    #                     end_year=2100)
+    # df.to_csv('econ/econ_data_world.csv')
+    
+    variables = ['Secondary Energy|Electricity', 'Final Energy', 'Final Energy|Electricity', 'Emissions|CO2']
+    Utils.data_download(variables, '*', '*', ['World'], ['C1', 'C2'], 2100, file_name='plotting_data_ccmf_electrification')
     
 
-    # regions = ['World']
+    
+    # cdr_df = pyam.IamDataFrame("CDR_Robustness['C1', 'C2'].csv")
+    # models = Data.model_scenarios['model'].to_list()
+    # scenarios = Data.model_scenarios['scenario'].to_list()
+    
     # df = Utils.data_download_sub(Data.mandatory_variables, '*', '*', 
     #                 Data.categories, regions, 2100)
     
@@ -126,8 +137,8 @@ def main() -> None:
     #                                     local=False)
     
     # Utils().create_variable_scenario_count(df, 
-    #                                        Data.mandatory_variables,
-    #                                        regions)
+    #                                        Data.mandatory_CDR_variables,
+    #                                        regions, Data.categories)
 
     # get_regional_scores(cross_region_norm=None)
 

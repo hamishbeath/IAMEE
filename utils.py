@@ -75,6 +75,7 @@ class Data:
                             'GDP|MER', 'Land Cover|Forest','Land Cover', 'Carbon Sequestration|Land Use', 'Price|Secondary Energy|Electricity']
 
     mandatory_econ_variables = ['GDP|MER', 'Investment|Energy Supply',
+                                'AR6 climate diagnostics|Surface Temperature (GSAT)|MAGICCv7.5.3|5.0th Percentile',
                                 'AR6 climate diagnostics|Surface Temperature (GSAT)|MAGICCv7.5.3|50.0th Percentile',
                                 'AR6 climate diagnostics|Surface Temperature (GSAT)|MAGICCv7.5.3|95.0th Percentile',
                                 'Policy Cost|GDP Loss']
@@ -404,13 +405,13 @@ class Utils:
                 return output_df
 
 
-    def create_variable_scenario_count(self, df, variables, regions):
+    def create_variable_scenario_count(self, df, variables, regions, categories):
 
 
         # make outout dataframe
         output_df = pd.DataFrame()
 
-        df = df.filter(year=2040)
+        df = df.filter(year=2040, Category=categories)
 
         # add the variables to the output dataframe
         output_df['variable'] = variables
@@ -439,7 +440,7 @@ class Utils:
 
         print(output_df)
 
-        output_df.to_csv('variable_scenario_count.csv')
+        # output_df.to_csv('variable_scenario_count.csv')
     # function that takes the pyam dataframe and loops through each mandatory variable to assess the 
     # whether or not removing the variable substantially increases the number of scenarios or models
     def filter_data_sheet_variable_prevelance(self, category, region, variables):
@@ -511,16 +512,17 @@ class Utils:
 
 
     
-    def data_download(variables, models, scenarios, region, categories, file_name=str):
+    def data_download(variables, models, scenarios, region, categories,
+                      end_year, file_name=str):
    
         connAr6 = pyam.iiasa.Connection(name='ar6-public', 
                     creds=None, 
                     auth_url='https://api.manager.ece.iiasa.ac.at')    
 
         df = connAr6.query(model=models, scenario=scenarios,
-            variable=variables, region=region, category=categories
-            )
-
+            variable=variables, region=region, category=categories,
+            year=range(2020, end_year+1))
+        df = df.filter(Category=categories)
 
         df.to_csv(file_name + '.csv')
         
@@ -530,9 +532,12 @@ class Utils:
                     creds=None, 
                     auth_url='https://api.manager.ece.iiasa.ac.at')    
 
-        df = connAr6.query(model='*', scenario='*', category=categories,
+        df = connAr6.query(model=models, scenario=scenarios, category=categories,
             variable=variables, region=region, year=range(2020, end_year+1)
             )
+
+        df = df.filter(Category=categories)
+
 
         return df
 

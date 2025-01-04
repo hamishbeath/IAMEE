@@ -69,7 +69,7 @@ def main() -> None:
     # Plotting.land_use_stacked_shares(Plotting, Data.c1a_scenarios_selected, Data.c1a_models_selected, Plotting.c1a_data)
     # Plotting.CDR_stacked_shares(Plotting, Selection.selected_scenarios)
     # Plotting.radar_plot_model_fingerprint_single_panel(Plotting, Data.model_scenarios, Plotting.model_families, Plotting.model_colours, Plotting.clustered_scores)
-    Plotting.regional_differences_across_scenarios(Plotting, Plotting.normalised_scores, Plotting.regional_normalised_scores, Data.model_scenarios, Plotting.selected_scenarios, cross_regional_norm=None)
+    # Plotting.regional_differences_across_scenarios(Plotting, Plotting.normalised_scores, Plotting.regional_normalised_scores, Data.model_scenarios, Plotting.selected_scenarios, cross_regional_norm=None)
     # Plotting.specific_dimension_regional_analysis(Plotting, Plotting.normalised_scores, Plotting.regional_normalised_scores, 
     #                                               Data.R10[3], Data.R10[6], Plotting.model_families)
     # Plotting.radar_plot_ssp_pairs(Plotting, Data.model_scenarios, IndexBuilder.gini_coefficient, Plotting.clustered_scores)
@@ -78,6 +78,15 @@ def main() -> None:
     # Plotting.duplicate_scenarios_plot(Plotting, Plotting.clustered_scores)
     # Plotting.count_pairwise_low_scores(Plotting, Plotting.clustered_scores, low_score_threshold=0.2)
     # Plotting.radar_plot_temp_category(Plotting, Data.meta_df, Plotting.clustered_scores)
+    # Plotting.emissions_spaghetti_plot(Plotting, Data.model_scenarios, Data.regional_dimensions_pyamdf, 'World', 'Emissions|CO2',
+    #                                   Plotting.normalised_scores, weighted=False, selected_scenarios=None)
+    
+    
+    pyam_df = pyam.IamDataFrame(data='plotting_data_ccmf_electrification.csv')
+    Plotting.electrification_plots(pyam_df, 2020, 2051)
+
+
+
 
 
 class Plotting:
@@ -165,6 +174,10 @@ class Plotting:
     regional_normalised_scores = pd.read_csv('outputs/regional_normalised_dimension_scores' + str(Data.categories) + '.csv')
     regional_normalised_scores_cross_regional = pd.read_csv('outputs/regional_normalised_dimension_scores_cross_regional_normalisation' + str(Data.categories) + '.csv')
     normalised_scores = pd.read_csv('outputs/normalised_scores' + str(Data.categories) + '.csv')
+
+
+
+
 
 
     # Create a detailed polar bar plot that categorises 
@@ -2191,6 +2204,157 @@ class Plotting:
     # df = pd.read_csv('your_scenario_scores.csv')
     
     # print(pairwise_low_counts)
+
+
+    # Plot that plots timeseries variable for the scenarios, with various options
+    def emissions_spaghetti_plot(self, scenario_models, pyam_df, region, variable, 
+                                 scenario_scores, weighted=False, selected_scenarios=None): 
+        
+        """
+        Function for making spaghetti plots of the emissions trajectories for the scenarios
+        with options for different versions or the plot, including weighting (alpha) by
+        the feasibility score of the scenario
+
+        Inputs: 
+        - scenario_models: a list of the scenario models
+        - pyam_df: the pyam dataframe containing the emissions data
+        - region: the region to plot
+        - variable: the variable to plot
+        - scenario_scores: the dataframe containing the scenario scores
+        - weighted: whether to weight the plot by the feasibility score
+        - selected_scenarios: a dataframe containing the selected scenarios
+
+        Outputs:
+        - spaghetti plot of the emissions trajectories for the scenarios
+
+        """
+        # set the params
+        plt.rcParams['ytick.minor.visible'] = True
+        
+        # set up the figure
+        fig, ax = plt.subplots(figsize=(12, 8))
+
+        df = pyam_df.filter(region=region, variable=variable, year=range(2020, 2101))
+
+        scenario_scores['log_resource_score'] = np.log(1 + scenario_scores['resource_score'])
+        # scenario_scores['norm_log_resource_score'] = (scenario_scores['log_resource_score'] - scenario_scores['log_resource_score'].min()) / (scenario_scores['log_resource_score'].max() - scenario_scores['log_resource_score'].min())
+
+        print(scenario_scores)
+
+        # loop through each scenario
+        for scenario, model in zip(scenario_models['scenario'], scenario_models['model']):
+
+            # filter the data for the scenario
+            scenario_data = df.filter(scenario=scenario, model=model)
+
+            # interpolate the data
+            interpolated_data = scenario_data.interpolate(range(2020, 2101), method='slinear').data.copy()
+
+            # plot the data
+            if weighted:
+                # get the feasibility score
+                feasibility_score = scenario_scores.loc[scenario_scores['scenario'] == scenario, 'log_resource_score'].values[0]
+                ax.plot(interpolated_data['year'], interpolated_data['value'], alpha=0.05+feasibility_score, color='green')
+            else:
+                ax.plot(interpolated_data['year'], interpolated_data['value'], alpha=0.07, color='green')
+
+        if selected_scenarios is not None:
+            for i, scenario in selected_scenarios.iterrows():
+                scenario_data = df.filter(scenario=scenario['scenario'], model=scenario['model'])
+                interpolated_data = scenario_data.interpolate(range(2020, 2101)).data.copy()
+                ax.plot(interpolated_data['year'], interpolated_data['value'], alpha=1, linestyle='--', linewidth=2)
+
+        # set x min and max
+        ax.set_xlim(2020, 2100)
+        
+        # set the y axis label
+        ax.set_ylabel(variable)
+
+        # set the x axis label
+        ax.set_xlabel('Year')
+
+        plt.tight_layout()
+        plt.show()
+
+
+
+    # make a plot of a given variable / calculated variable for all the scenarios given showing median, 25th and 75th percentiles
+    def electrification_plots(pyam_df, start_year, end_year):
+
+        """
+        Function that produces timeseries plot of distribution of electrification rates for all scenarios in the pyam dataframe
+        
+        Inputs:
+        - pyam_df: the pyam dataframe containing the data
+        - start_year: the start year of the plot
+        - end_year: the end year of the plot
+
+        Outputs:
+        - timeseries plot of the distribution of electrification rates for all scenarios in the pyam dataframe
+
+        """
+
+        print(pyam_df)
+
+        # set the params
+        plt.rcParams['ytick.minor.visible'] = True
+        plt.rcParams['xtick.minor.visible'] = True
+
+        # set up the figure
+        fig, ax = plt.subplots(figsize=(12, 8))
+
+        # variable='Secondary Energy|Electricity'
+
+
+        # filter the data for the electrification rate
+        df = pyam_df.filter(year=range(start_year, end_year))
+
+
+        # interpolate the data
+        interpolated_data = df.interpolate(range(start_year, end_year)).data.copy()
+
+        # create new variable for the electricity share of final energy
+        df_pivot =  interpolated_data.pivot_table(
+            index=["model", "scenario", "region", "year"], 
+            columns="variable", 
+            values="value"
+        ).reset_index()
+
+        # calculate the electrification rate
+        df_pivot['Emissions intensity'] = df_pivot['Emissions|CO2'] / df_pivot['Final Energy']
+
+        interpolated_data = df_pivot.melt(
+            id_vars=["model", "scenario", "region", "year"],
+            value_vars=["Emissions intensity"],  # Add other variables if needed
+            var_name="variable",
+            value_name="value"
+)
+
+        medians = interpolated_data.groupby('year')['value'].median()
+        q25 = interpolated_data.groupby('year')['value'].quantile(0.25)
+        q75 = interpolated_data.groupby('year')['value'].quantile(0.75)
+        q5 = interpolated_data.groupby('year')['value'].quantile(0.05)
+        q95 = interpolated_data.groupby('year')['value'].quantile(0.95)
+
+        years = interpolated_data['year'].unique()
+
+        # plot the data with the median line, 25th and 75th percentiles as fill between
+        ax.plot(years, medians, color='orange', label='Median')
+        ax.fill_between(years, q25, q75, color='orange', alpha=0.2, label='25th-75th Percentile')
+        ax.fill_between(years, q5, q95, color='orange', alpha=0.1, label='5th-95th Percentile')
+
+        # set x min and max
+        ax.set_xlim(start_year, end_year-1)
+
+        # # set the y axis label
+        # ax.set_ylabel(variable)
+
+        # set the x axis label
+        ax.set_xlabel('Year')
+
+        plt.tight_layout()
+        plt.show()
+
 
 
 
