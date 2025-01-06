@@ -95,6 +95,20 @@ class Data:
                            'Primary Energy|Fossil|w/o CCS','Final Energy', 'Agricultural Demand', 'Emissions|CO2|AFOLU', 'Capacity|Electricity|Wind',
                            'Capacity|Electricity|Solar|PV','Energy Service|Transportation|Passenger', 'Energy Service|Transportation|Freight', 'Carbon Sequestration|Land Use' ]
 
+    
+    briefing_paper_variables = ['Carbon Sequestration|Direct Air Capture', 'Carbon Sequestration|Land Use',
+                                'Carbon Sequestration|CCS|Biomass', 'Land Cover|Pasture', 'Land Cover|Cropland', 
+                                'Land Cover|Cropland|Energy Crops', 'Land Cover|Forest', 'Land Cover', 'Primary Energy',
+                                'Primary Energy|Fossil|w/ CCS', 'Primary Energy|Fossil|w/o CCS', 'Primary Energy|Non-Biomass Renewables',
+                                'Primary Energy|Nuclear', 'Primary Energy|Biomass', 'Capacity|Electricity|Wind',
+                                'Capacity|Electricity|Solar|PV','Capacity|Electricity|Nuclear', 'Energy Service|Transportation|Passenger',
+                                  'Energy Service|Transportation|Freight', 'Final Energy|Transportation', 'Final Energy|Transportation|Liquids|Oil']
+    
+    briefing_paper_regions = ['World', 'Eastern and Western Europe (i.e., the EU28)']
+    
+    briefing_paper_data = pyam.IamDataFrame(data='briefing_paper_data.csv')
+
+
     c1a_scenarios_selected = ['PEP_1p5C_red_eff', 'SSP1_SPA1_19I_RE_LB', 'EN_NPi2020_300f', 'EN_NPi2020_400f']
     c1a_models_selected = ['REMIND-MAgPIE 1.7-3.0', 'IMAGE 3.2', 'AIM/CGE 2.2', 'WITCH 5.0']
     # ar6_world = pyam.IamDataFrame(data='database/AR6_Scenarios_Database_World_v1.1.csv', meta='database/meta_data.csv')
@@ -152,16 +166,9 @@ class Utils:
     #                             creds=None, 
     #                             auth_url='https://api.manager.ece.iiasa.ac.at')
     
-    selected_variables = pd.read_csv('variables_filtered.csv')['variables'].tolist()
+    # selected_variables = pd.read_csv('variables_filtered.csv')['variables'].tolist()
     
-    
-                           
-    # Function that provides simple statistics for a given set of inputs for Pyam
-    # Inputs:
-    # - database (AR6 or SR15)
-    # - temperature scenarios OR SSPs
-    # - region
-    # - variable(s)
+
 
 
     def simple_stats(self, db, region, variables, categories):

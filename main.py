@@ -74,6 +74,7 @@ class Selection:
     try:
         archetypes = pd.read_csv('outputs/scenario_archetypes' + str(Data.categories) + '.csv')
         selected_scenarios = pd.read_csv('outputs/selected_scenarios' + str(Data.categories) + '.csv', index_col=0)
+        centroid_scenarios = pd.read_csv('outputs/closest_to_centroids' + str(Data.categories) + '.csv', index_col=0)
     except:
         print('find_scenario_archetypes function has not been run yet')
 
@@ -114,17 +115,22 @@ def main() -> None:
     #                     end_year=2100)
     # df.to_csv('econ/econ_data_world.csv')
     
-    variables = ['Secondary Energy|Electricity', 'Final Energy', 'Final Energy|Electricity', 'Emissions|CO2']
-    Utils.data_download(variables, '*', '*', ['World'], ['C1', 'C2'], 2100, file_name='plotting_data_ccmf_electrification')
+    # variables = ['Secondary Energy|Electricity', 'Final Energy', 'Final Energy|Electricity', 'Emissions|CO2']
+    # Utils.data_download(variables, '*', '*', ['World'], ['C1', 'C2'], 2100, file_name='plotting_data_ccmf_electrification')
     
 
     
     # cdr_df = pyam.IamDataFrame("CDR_Robustness['C1', 'C2'].csv")
-    # models = Data.model_scenarios['model'].to_list()
-    # scenarios = Data.model_scenarios['scenario'].to_list()
-    
-    # df = Utils.data_download_sub(Data.mandatory_variables, '*', '*', 
-    #                 Data.categories, regions, 2100)
+
+    briefing_model_scenarios = pd.read_csv('outputs/closest_to_centroids' + str(Data.categories) + '.csv')
+    models = briefing_model_scenarios['model'].to_list()
+    scenarios = briefing_model_scenarios['scenario'].to_list()
+    variables = Data.briefing_paper_variables
+
+
+    Utils.data_download(Data.briefing_paper_variables, models, scenarios, 
+                    Data.briefing_paper_regions, Data.categories, 2100, 
+                    file_name='briefing_paper_data')
     
     # df = df.filter(Category=Data.categories)
     # Utils().manadory_variables_scenarios(Data.categories_all, 
@@ -671,6 +677,9 @@ def find_scenario_archetypes(model_scenarios_list, cluster_number=int):
     cluster_centroids['cluster'] = range(0, n_clusters)
     cluster_centroids.to_csv('outputs/scenario_archetypes' + str(Data.categories) + '.csv', index=False)
 
+    # return the four scenarios most similar to the cluster centroids
+    closest_to_centroids = return_centroid_illustrative_scenarios(cluster_centroids, data, cluster_number)
+    closest_to_centroids.to_csv('outputs/closest_to_centroids' + str(Data.categories) + '.csv', index=False)
 
     
 # Function to calculate total dissimilarity for a combination of scenarios
@@ -681,6 +690,41 @@ def calculate_total_dissimilarity(combination):
     # Calculating pairwise distances and then the total sum of those distances
     total_dissimilarity = sum(pdist(scenarios_features, 'euclidean'))
     return total_dissimilarity
+
+
+# Function that returns the four scenarios most similar to the cluster centroids
+def return_centroid_illustrative_scenarios(cluster_centroids, data, cluster_number=int):
+    
+    """
+    Sub function that returns the four scenarios most similar to the cluster centroids.
+    
+    Inputs:
+    - cluster_centroids: DataFrame with the cluster centroids.
+    - data: DataFrame with the scenarios and their clusters
+    - cluster_number: Number of clusters
+    
+    Returns:
+    - selected_pathways: DataFrame with the illustrative scenarios clostest to the cluster centroids
+    
+    """
+    selected_indices = []
+
+    for i in range(cluster_number):
+        
+        # Calculate the Euclidean distance between the cluster centroid and all pathways
+        centroid = cluster_centroids.iloc[i].values
+        distances = np.linalg.norm(data.values - centroid, axis=1)
+        
+        # Select the pathway closest to the centroid
+        closest_indices = np.argsort(distances)[:1]
+        selected_indices.extend(closest_indices)
+
+    # Extract the selected scenarios
+    selected_pathways = data.iloc[selected_indices]
+    print(selected_pathways)
+    return selected_pathways
+
+
 
 
 if __name__ == "__main__":

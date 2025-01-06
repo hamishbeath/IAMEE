@@ -61,13 +61,20 @@ def main() -> None:
     #                             Selection.robustness_scores, 
     #                             Plotting.bright_modern_colors)      
     
+    # clostest_cluster_centroid = pd.read_csv('outputs/closest_to_centroids' + str(Data.categories) + '.csv')
     # Plotting.radar_plot_scenario_archetypes(Plotting, Data.model_scenarios, Selection.archetypes, Plotting.bright_modern_colors,
-    #                                          Plotting.selected_scenarios)
-    # Plotting.line_plot_narrative_variables('Agricultural Demand', 2020, 2100, Plotting.c1a_data,ylim_min=None, ylim_max=None, base_normalisation=True, secondary_variable=None)
-    # Plotting.energy_system_stackplot(Plotting, Selection.selected_scenarios, Data.regional_dimensions_pyamdf, Plotting.energy_shares_variables)
-    # Plotting.transport_stackplot(Plotting, Data.c1a_scenarios_selected, Data.c1a_models_selected, Plotting.c1a_data)
-    # Plotting.land_use_stacked_shares(Plotting, Data.c1a_scenarios_selected, Data.c1a_models_selected, Plotting.c1a_data)
-    # Plotting.CDR_stacked_shares(Plotting, Selection.selected_scenarios)
+    #                                          clostest_cluster_centroid)
+    # Plotting.radar_plot_scenario_archetypes(Plotting, Data.model_scenarios, Selection.archetypes, Plotting.bright_modern_colors,
+    #                                         Plotting.selected_scenarios)
+    Plotting.line_plot_narrative_variables(Plotting, 'Energy Service|Transportation|Freight', Selection.centroid_scenarios, 
+                                                    Data.briefing_paper_data, base_normalisation=False, 
+                                                    secondary_variable=None, region=Data.briefing_paper_regions[0])
+    
+    # Plotting.energy_system_stackplot(Plotting, Selection.centroid_scenarios, Data.briefing_paper_data, 
+    #                                  Plotting.energy_shares_variables, region=Data.briefing_paper_regions[1])
+    # Plotting.transport_stackplot(Plotting, Selection.centroid_scenarios, Data.briefing_paper_data, region=Data.briefing_paper_regions[1])
+    # Plotting.land_use_stacked_shares(Plotting, Selection.centroid_scenarios, Data.briefing_paper_data, region=Data.briefing_paper_regions[1])
+    # Plotting.CDR_stacked_shares(Plotting, Selection.centroid_scenarios, Data.briefing_paper_data, region=Data.briefing_paper_regions[1])
     # Plotting.radar_plot_model_fingerprint_single_panel(Plotting, Data.model_scenarios, Plotting.model_families, Plotting.model_colours, Plotting.clustered_scores)
     # Plotting.regional_differences_across_scenarios(Plotting, Plotting.normalised_scores, Plotting.regional_normalised_scores, Data.model_scenarios, Plotting.selected_scenarios, cross_regional_norm=None)
     # Plotting.specific_dimension_regional_analysis(Plotting, Plotting.normalised_scores, Plotting.regional_normalised_scores, 
@@ -80,13 +87,8 @@ def main() -> None:
     # Plotting.radar_plot_temp_category(Plotting, Data.meta_df, Plotting.clustered_scores)
     # Plotting.emissions_spaghetti_plot(Plotting, Data.model_scenarios, Data.regional_dimensions_pyamdf, 'World', 'Emissions|CO2',
     #                                   Plotting.normalised_scores, weighted=False, selected_scenarios=None)
-    
-    
-    pyam_df = pyam.IamDataFrame(data='plotting_data_ccmf_electrification.csv')
-    Plotting.electrification_plots(pyam_df, 2020, 2051)
-
-
-
+    # pyam_df = pyam.IamDataFrame(data='plotting_data_ccmf_electrification.csv')
+    # Plotting.electrification_plots(pyam_df, 2020, 2051)
 
 
 class Plotting:
@@ -859,7 +861,8 @@ class Plotting:
         # plt.rcParams['font.size'] = 7
         # Number of variables we're plotting.
         categories = list(archetypes)[0:6]
-        archetype_names = ['Warning lights', 'Resource risk', 'Sustainability struggle', 'Clear path']
+        # archetype_names = ['Warning lights', 'Resource risk', 'Sustainability struggle', 'Clear path']
+        archetype_names = ['A','B', 'C', 'D']
         # archetype_colours = ['#648FFF', '#DC267F', '#FE6100', '#FFB000']
         archetype_colours = ['#FFB000', '#648FFF', '#DC267F', '#FE6100']
         # make a fig with 4 subplots, 2 rows
@@ -896,7 +899,7 @@ class Plotting:
 
             #set the y limit
             ax.set_ylim(0, 1)
-            title = archetype_names[archetype] + selected_scenarios[selected_scenarios['cluster'] == archetype]['scenario'].values[0]
+            title = archetype_names[archetype] + '_' + selected_scenarios[selected_scenarios['cluster'] == archetype]['scenario'].values[0]
             # Title for each subplot with the archetype name
             ax.set_title(title,size=14, y=1.1, fontweight='bold')
 
@@ -1391,12 +1394,23 @@ class Plotting:
         plt.show()
 
           
-    def line_plot_narrative_variables(variable, start_year, end_year, df,ylim_min=int, ylim_max=int, base_normalisation=False, secondary_variable=None):
+    def line_plot_narrative_variables(self, variable, selected_scenarios, df, 
+                                      base_normalisation=False, secondary_variable=None, region=None,):
 
+        illustrative_models = selected_scenarios['model'].tolist()
+        illustrative_scenarios = selected_scenarios['scenario'].tolist()
+        
+        if region == None:
+            region = 'World'
+
+        plt.rcParams['xtick.minor.visible'] = True
         plt.rcParams['ytick.minor.visible'] = True
         plt.rcParams['ytick.labelright'] = True
-        scenario_colours = ['#FBA006', '#19E5FF', '#FF03FB', '#00F982']
-        names = ['Warning lights', 'Resource risk', 'Sustainability struggle', 'Eco balance']
+        # scenario_colours = ['#FBA006', '#19E5FF', '#FF03FB', '#00F982']
+        scenario_colours = ['#FFB000', '#648FFF', '#DC267F', '#FE6100']
+        names = ['A', 'B', 'C', 'D']
+        # names = ['Warning lights', 'Resource risk', 'Sustainability struggle', 'Eco balance']
+        
         # set up the figure
         fig, ax = plt.subplots(figsize=(8, 6))
 
@@ -1408,14 +1422,15 @@ class Plotting:
         units = units[0]
 
         # filter for the years
-        df_variable = df_variable.filter(year=range(start_year, end_year+1))
+        df_variable = df_variable.filter(year=range(2020, 2100+1))
 
-        for i, scenario in enumerate(Data.c1a_scenarios_selected):
+        for i in range(0, len(illustrative_scenarios)):
             
+            scenario = illustrative_scenarios[i]
             label = names[i] + ' (' + scenario + ')' 
 
             # filter for the scenario
-            df_scenario = df_variable.filter(model=Data.c1a_models_selected[i], scenario=scenario)
+            df_scenario = df_variable.filter(model=illustrative_models[i], scenario=scenario, region=region)
             
             if base_normalisation == True:
                 # df_scenario['value'] = df_scenario['value'] / df_scenario['value'].iloc[0]
@@ -1425,27 +1440,27 @@ class Plotting:
         
             if secondary_variable != None:
                 df_secondary_variable = df.filter(variable=secondary_variable)
-                df_secondary_variable = df_secondary_variable.filter(model=Data.c1a_models_selected[i], scenario=scenario)
+                df_secondary_variable = df_secondary_variable.filter(model=illustrative_models[i], scenario=scenario)
                 if base_normalisation == True:
                     ax.plot(df_secondary_variable['year'], (df_secondary_variable['value']/df_secondary_variable['value'][0]), label=secondary_variable, color=scenario_colours[i], linestyle='dashed', linewidth=2)
                 else:
                     ax.plot(df_secondary_variable['year'], df_secondary_variable['value'], label=secondary_variable, color=scenario_colours[i], linestyle='dashed', linewidth=2)
 
         # set the title of the plot
-        ax.set_title(variable)
+        ax.set_title(variable + ' (' + region + ')')
         # set the x and y axis labels
         ax.set_xlabel('Year')
         
         if base_normalisation == True:
-            ax.set_ylabel('Change over time (normalised to 2020)')
+            ax.set_ylabel('Change over time (normalised to 2020 values)')
         else:
             ax.set_ylabel(units)
 
         # set x limits
-        ax.set_xlim(start_year, end_year)
+        ax.set_xlim(2020, 2100)
 
         # set y limits
-        ax.set_ylim(ylim_min, ylim_max)
+        # ax.set_ylim(ylim_min, ylim_max)
 
 
         # add a legend
@@ -1454,23 +1469,21 @@ class Plotting:
         plt.show()
         
     
-    def energy_system_stackplot(self, selected_scenarios,
-                                indicator_df, 
-                                energy_variables):
+    def energy_system_stackplot(self, selected_scenarios, data_df, 
+                                energy_variables, region=None):
+        
+        if region == None:
+            region = 'World'
         
         illustrative_models = selected_scenarios['model'].tolist()
         illustrative_scenarios = selected_scenarios['scenario'].tolist()
-        # loop through the index items and split them and append them to the lists
-        try:
-            narrative_df = Data.narrative_data
-        except AttributeError:
-            narrative_df = Utils.data_download_sub(Data.narrative_variables, illustrative_models,
-                                                   illustrative_scenarios, 'World', 2100)
-            narrative_df.to_csv('outputs/narrative_data' + str(Data.categories) + '.csv')
+        narrative_df = data_df.filter(variable=energy_variables, region=region, year=range(2020, 2101))
         
         plt.rcParams['ytick.minor.visible'] = True
-        names = ['Warning lights', 'Resource risk', 'Sustainability struggle', 'Eco balance']
+        # names = ['Warning lights', 'Resource risk', 'Sustainability struggle', 'Eco balance']
+        names = ['A', 'B', 'C', 'D']
         print(energy_variables)
+        
         """
         this function needs :
         - set up four sublots, one for each illustrative scenario
@@ -1490,25 +1503,24 @@ class Plotting:
             scenario = illustrative_scenarios[i]
             model = illustrative_models[i]
             # filter the indicator dataframe for the scenario and model
-            indicator_df_scenario = indicator_df.filter(scenario=scenario, model=model, year=range(2020, 2101), region='World')
-            
+            # indicator_df_scenario = indicator_df.filter(scenario=scenario, model=model, year=range(2020, 2101), region='World')
             # filter the narrative dataframe for the scenario and model
-            narrative_df_scenario = narrative_df.filter(scenario=scenario, model=model, year=range(2020, 2101), region='World')
-
+            narrative_df_scenario = narrative_df.filter(scenario=scenario, model=model)
+            colours = Plotting.energy_shares_colours.values()
+            
             # loop through each energy variable
             for variable in energy_variables:
                 print(variable)
-                colours = Plotting.energy_shares_colours.values()
+                df = narrative_df_scenario.filter(variable=variable)                
                 
-                if variable == 'Primary Energy|Fossil|w/ CCS' or variable == 'Primary Energy|Fossil|w/o CCS':
-                    df = narrative_df_scenario.filter(variable=variable)
-                    print(df)
-                else:
-                    df = indicator_df_scenario.filter(variable=variable)
-                    print(df)
+                # if variable == 'Primary Energy|Fossil|w/ CCS' or variable == 'Primary Energy|Fossil|w/o CCS':
+                #     df = narrative_df_scenario.filter(variable=variable)
+                #     print(df)
+                # else:
+                #     df = indicator_df_scenario.filter(variable=variable)
+                #     print(df)
                 # interpolate the data for the variable
                 interpolated_variable = df.interpolate(range(2020, 2101))
-
                 # add the interpolated data to the plotting dataframe
                 plotting_df[variable] = interpolated_variable['value']
 
@@ -1518,8 +1530,8 @@ class Plotting:
             # # add line plot over the top
             # for variable in energy_variables:
             #     axs.flatten()[i].plot(range(2020, 2101), plotting_df[variable], label=variable, color=Plotting.energy_shares_colours[variable], linewidth=2)
-            # title = names[i] + ' (' + scenario + ')'
-            title = scenario
+            title = names[i] + ' (' + scenario + ')'
+            # title = scenario
             # set the title of the plot
             axs.flatten()[i].set_title(title)
             # set the x and y axis labels
@@ -1530,7 +1542,7 @@ class Plotting:
             axs.flatten()[i].set_xlim(2020, 2100)
 
             # set y limits
-            axs.flatten()[i].set_ylim(0, 1100)
+            axs.flatten()[i].set_ylim(0, 100)
 
         colours = list(Plotting.energy_shares_colours.values())
 
@@ -1540,18 +1552,25 @@ class Plotting:
         # #create a legend
         fig.legend(handles=swatches, labels=labels, loc='lower center', ncol=2, frameon=False)
         
+        # add overall title
+        fig.suptitle('Primary Energy Mix ('+ region + ')', fontsize=16)
+
         # add a legend
         # fig.legend(frameon=False)
         plt.show()
 
 
-    def transport_stackplot(self, illustrative_scenarios, 
-                                illustrative_models,
-                                narrative_df
-                                ):
+    def transport_stackplot(self, selected_scenarios,
+                                narrative_df,
+                                region=None):
+        if region == None:
+            region = 'World'
         
+        illustrative_models = selected_scenarios['model'].tolist()
+        illustrative_scenarios = selected_scenarios['scenario'].tolist()
         plt.rcParams['ytick.minor.visible'] = True
-        names = ['Warning lights', 'Resource risk', 'Sustainability struggle', 'Eco balance']
+        # names = ['Warning lights', 'Resource risk', 'Sustainability struggle', 'Eco balance']
+        names = ['A', 'B', 'C', 'D']
         transport_variables = ['Final Energy|Transportation', 'Final Energy|Transportation|Liquids|Oil']
         colours = ['#3399FF', 'darkgrey']
         
@@ -1564,7 +1583,7 @@ class Plotting:
             # set the scenario and model
             scenario = illustrative_scenarios[i]
             model = illustrative_models[i]
-            narrative_df_scenario = narrative_df.filter(scenario=scenario, model=model, year=range(2020, 2101), region='World')
+            narrative_df_scenario = narrative_df.filter(scenario=scenario, model=model, year=range(2020, 2101), region=region)
 
             # loop through each energy variable
             for variable in transport_variables:
@@ -1604,7 +1623,7 @@ class Plotting:
             axs.flatten()[i].set_xlim(2020, 2100)
 
             # set y limits
-            axs.flatten()[i].set_ylim(0, 160)
+            axs.flatten()[i].set_ylim(0, 18)
 
         colours = list(Plotting.energy_shares_colours.values())
 
@@ -1614,19 +1633,25 @@ class Plotting:
         # #create a legend
         fig.legend(handles=swatches, labels=labels, loc='lower center', ncol=2, frameon=False)
         
+        # add overall title
+        fig.suptitle('Transport Final Energy ' + '(' + region + ')', fontsize=16)
         # add a legend
         # fig.legend(frameon=False)
         plt.show()
 
 
-    def land_use_stacked_shares(self, illustrative_scenarios,
-                                illustrative_models,
-                                narrative_df):
+    def land_use_stacked_shares(self, selected_scenarios,
+                                narrative_df, region=None):
+        if region == None:
+            region = 'World'
         
+        illustrative_models = selected_scenarios['model'].tolist()
+        illustrative_scenarios = selected_scenarios['scenario'].tolist()
         plt.rcParams['ytick.minor.visible'] = True
         land_use_variables = ['Land Cover|Pasture', 'Land Cover|Cropland', 'Land Cover|Forest', 'Land Cover']
         colours = ['#955251', '#33FF33', '#009933', 'darkgrey']
-        names = ['Warning lights', 'Resource risk', 'Sustainability struggle', 'Eco balance']
+        # names = ['Warning lights', 'Resource risk', 'Sustainability struggle', 'Eco balance']
+        names = ['A', 'B', 'C', 'D']
         
         # set up the figure
         fig, axs = plt.subplots(2, 2, figsize=(12, 12))
@@ -1639,7 +1664,7 @@ class Plotting:
             scenario = illustrative_scenarios[i]
             model = illustrative_models[i]
 
-            narrative_df_scenario = narrative_df.filter(scenario=scenario, model=model, year=range(2020, 2101), region='World')
+            narrative_df_scenario = narrative_df.filter(scenario=scenario, model=model, year=range(2020, 2101), region=region)
             land_cover_total = narrative_df_scenario.filter(variable='Land Cover')
             land_cover_total = land_cover_total.interpolate(range(2020, 2101)).data.copy()
 
@@ -1678,25 +1703,31 @@ class Plotting:
         swatches = [mpatches.Patch(color=colours[j], label=labels[j]) for j in range(len(labels))]
         # #create a legend
         fig.legend(handles=swatches, labels=labels, loc='lower center', ncol=2, frameon=False)
-
+        fig.suptitle('CDR Mix ('+ region + ')', fontsize=16)
+        
         plt.show()
         
             # loop through each energy variable
 
 
-    def CDR_stacked_shares(self, selected_scenarios):
+    def CDR_stacked_shares(self, selected_scenarios, narrative_df, region=None):
+
+        if region == None:
+            region = 'World'
+        
         
         illustrative_models = selected_scenarios['model'].tolist()
         illustrative_scenarios = selected_scenarios['scenario'].tolist()
-        try:
-            narrative_df = Data.narrative_data
-        except AttributeError:
-            narrative_df = Utils.data_download_sub(Data.narrative_variables, illustrative_models,
-                                                   illustrative_scenarios, 'World', 2100)
-            narrative_df.to_csv('outputs/narrative_data' + str(Data.categories) + '.csv')
+        # try:
+        #     narrative_df = Data.narrative_data
+        # except AttributeError:
+        #     narrative_df = Utils.data_download_sub(Data.narrative_variables, illustrative_models,
+        #                                            illustrative_scenarios, 'World', 2100)
+        #     narrative_df.to_csv('outputs/narrative_data' + str(Data.categories) + '.csv')
         
         plt.rcParams['ytick.minor.visible'] = True
-        names = ['Problem Pathway', 'Resource Risk', 'Sustainability Struggle', 'Eco-tech Endeavour']
+        # names = ['Problem Pathway', 'Resource Risk', 'Sustainability Struggle', 'Eco-tech Endeavour']
+        names = ['A', 'B', 'C', 'D']
         CDR_variables = ['Carbon Sequestration|CCS|Biomass','Carbon Sequestration|Land Use','Carbon Sequestration|Direct Air Capture']
         colours = ['#FF6600', '#FFCC00', '#FF0000']
 
@@ -1709,7 +1740,7 @@ class Plotting:
             # set the scenario and model
             scenario = illustrative_scenarios[i]
             model = illustrative_models[i]
-            narrative_df_scenario = narrative_df.filter(scenario=scenario, model=model, year=range(2020, 2101), region='World')
+            narrative_df_scenario = narrative_df.filter(scenario=scenario, model=model, year=range(2020, 2101), region=region)
             print(model)
             # loop through each CDR variable
 
@@ -1729,16 +1760,17 @@ class Plotting:
                         interpolated_variable = df.interpolate(range(2020, 2101)).data.copy()
                         Plotting.plotting_df[variable] = interpolated_variable['value']
                     except:
-                        narrative_df_scenario = Data.land_use_seq_data.filter(scenario=scenario, model=model, year=range(2020, 2101), region='World')
-                        df = narrative_df_scenario.filter(variable='Imputed|Carbon Sequestration|Land Use')
-                        interpolated_variable = df.interpolate(range(2020, 2101)).data.copy()
-                        Plotting.plotting_df[variable] = interpolated_variable['value']
+                        pass
+                        # narrative_df_scenario = Data.land_use_seq_data.filter(scenario=scenario, model=model, year=range(2020, 2101), region='World')
+                        # df = narrative_df_scenario.filter(variable='Imputed|Carbon Sequestration|Land Use')
+                        # interpolated_variable = df.interpolate(range(2020, 2101)).data.copy()
+                        # Plotting.plotting_df[variable] = interpolated_variable['value']
                 
             # make a stack plot for the scenario
             axs.flatten()[i].stackplot(range(2020, 2101), Plotting.plotting_df.T, labels=CDR_variables, colors=colours, alpha=0.4, edgecolor='darkgrey', linewidth=0.25)
 
             # title = names[i] + ' (' + scenario + ')'
-            title = scenario
+            title = names[i] + ' (' + scenario + ')'
             # set the title of the plot
             axs.flatten()[i].set_title(title)
 
@@ -1750,11 +1782,11 @@ class Plotting:
             axs.flatten()[i].set_xlim(2020, 2100)
 
             # set y limits
-            axs.flatten()[i].set_ylim(0, 21000)
+            axs.flatten()[i].set_ylim(0, 1000)
         
         # create legend
         labels = CDR_variables
-
+        fig.suptitle('CDR Mix ('+ region + ')', fontsize=16)
         swatches = [mpatches.Patch(color=colours[j], label=labels[j]) for j in range(len(labels))]
         # #create a legend
         fig.legend(handles=swatches, labels=labels, loc='lower center', ncol=2, frameon=False)
