@@ -3,24 +3,25 @@
 
 # Except
 !.gitignore
-!env_sus.py
-!utils.py
-!econ_feas.py
-!plotting.py
-!resources.py
-!resilience.py
-!robust.py
-!main.py
-!run.py
-!fairness.py
 
-!data_sources.md
-!model_classification.csv
-!variable_list_checked.csv
+!src
+!src/data/
+!src/utils/
+!src/data/inputs/
 
-!inputs
-!inputs/*
+!src/fairness.py
+!src/run.py
+!src/econ_feas.py
+!src/env_sus.py
+!src/plotting.py
+!src/resources.py
+!src/resilience.py
+!src/robust.py
+!src/main.py
+!src/run.py
+!src/constants.py
+!src/data_sources.md
 
-!outputs
-!outputs/*
-
+!src/data/inputs/*
+!src/data/outputs/*
+!src/utils/*

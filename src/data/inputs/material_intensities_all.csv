@@ -1,0 +1,7 @@
+﻿tech,Nd (g/kW),Dy (g/kW),Cd (g/Kw),Te (g/kW),Se (g/kW),In (g/kW)
+wind_offshore_con,125,9.3,0,0,0,0
+wind_offshore_opt,81,7.3,0,0,0,0
+wind_onshore_opt,59.3,5.3,0,0,0,0
+wind_onshore_con,91,6.9,0,0,0,0
+solar_con,0,0,116.7,99.7,39.3,55.5
+solar_opt,0,0,33,35.5,6.3,3
