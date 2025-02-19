@@ -206,7 +206,7 @@ def environment_score(environment_metrics, regional=None, cross_region_norm=None
         forest_change_2050_normalised = (forest_change_2050 - all_regional_forest_change_2050.min()) / (all_regional_forest_change_2050.max() - all_regional_forest_change_2050.min())
 
     # add up the composite environmental score
-    beccs_threshold_breached = environment_metrics['beccs_threshold_breached']
+    beccs_threshold_breached = environment_metrics['bioenergy_threshold_breached']
     output_df['environmental_score'] = forest_change_normalised + beccs_threshold_breached
     output_df['environmental_score_2050'] = forest_change_2050_normalised + beccs_threshold_breached
 
