@@ -1,29 +1,9 @@
 import numpy as np
 import pyam
-import seaborn as sns
-import matplotlib.pyplot as plt
 import pandas as pd
-import country_converter as coco
-from matplotlib import rcParams
 from utils import Data
 from utils import Utils
 from src.constants import *
-plt.rcParams['font.family'] = 'sans-serif'
-plt.rcParams['font.sans-serif'] = ['Helvetica']
-plt.rcParams['xtick.direction'] = 'in'
-# plt.rcParams['xtick.minor.visible'] = True
-plt.rcParams['ytick.direction'] = 'in'
-plt.rcParams['ytick.major.left'] = True
-plt.rcParams['ytick.major.right'] = True
-plt.rcParams['ytick.minor.visible'] = True
-#plt.rcParams['ytick.labelright'] = True
-#plt.rcParams['ytick.major.size'] = 0
-#plt.rcParams['ytick.major.pad'] = -56
-plt.rcParams['xtick.top'] = True
-plt.rcParams['ytick.right'] = True
-plt.rcParams['pdf.fonttype'] = 42
-plt.rcParams['ps.fonttype'] = 42
-import matplotlib.patches as mpatches
 
 
 class EconFeas:
@@ -97,9 +77,24 @@ class EconData:
 
 
 
-def main() -> None:
+def main(run_regional=None) -> None:
 
-
+    
+    if run_regional:
+        output_df = pd.DataFrame()
+        for region in Data.R10:
+            print(region)
+            to_append = energy_supply_investment_score(0.023, 2100, EconData.regional_scenarios_models, 
+                                                        EconData.global_econ_pyamdf, 
+                                                        EconData.global_econ_meta,
+                                                            apply_damages=damages, 
+                                                            region=region,
+                                                            region_codes=R10_CODES,
+                                                            df_regional=EconData.regional_econ_pyamdf,
+                                                            R10_temps_df=EconData.regional_damage_estimates, 
+                                                            included_categories=EconData.regional_categories)
+            output_df = pd.concat([output_df, to_append[0]], ignore_index=True, axis=0)
+            output_df.to_csv('outputs/energy_supply_investment_score_regional' + str(Utils.categories) + '.csv')
     # energy_supply_investment_score(Data.dimensions_pyamdf, 0.023, 2100, Data.model_scenarios, Data.categories)
     # energy_supply_investment_analysis(0.023, 2100, EconData.global_scenarios_models, 
     #                                   EconData.global_econ_pyamdf, 
@@ -112,78 +107,16 @@ def main() -> None:
     #                               EconData.regional_results_damages,
     #                                EconData.regional_categories, 
     #                                'mean_value', Data.R10m)
-    # output_df.to_csv('outputs/energy_supply_investment_score_regional' + str(Utils.categories) + '.csv')
+    # 
     # # energy_supply_investment_score(Data.regional_dimensions_pyamdf, 0.023, 2100, Data.model_scenarios, Data.categories, regional=None)
     # temporal_subplots(EconData.global_econ_results_no_damages, EconData.global_econ_results_damages, EconFeas.plotting_categories, 'mean_value')
     
     # calculate_R10_damages_temps(Data.R10_codes, 'default', 1.3, 4.6, Data.region_country_df)
-    # run_econ_analysis_regional()
-
-    # def north_south_regional_investment(scenario_model_list, 
-    #                                 df_results, df_results_damages,
-    #                                 gdp_data, gdp_data_damages,
-    #                                 regions, metric, start_year, end_year, 
-    #                                 ignore_positive_damages=False):
-    # north_south_regional_investment(EconData.regional_scenarios_models,
-    #                                 EconData.regional_results_no_damages,
-    #                                 EconData.regional_results_damages,
-    #                                 EconData.gdp_data,
-    #                                 EconData.gdp_data_damages,
-    #                                 Data.R10, 'mean_value', 2020, 2100, 
-    #                                 ignore_positive_damages=True)
-    # temporal_subplots_north_south(EconData.north_south_split, EconFeas.plotting_categories,
-    #                               2020, 2100)
-    # temporal_subplots_regional(EconData.regional_results_no_damages, EconData.regional_results_damages,
-    #                            EconFeas.plotting_categories, 'mean_value', EconData.plot_regions, 
-    #                            EconData.historical_values)
-    # temporal_subplots_select_scenarios(EconData.global_econ_results_no_damages,
-    #                                     EconData.global_econ_results_damages, 
-    #                                     EconData.imps_overshoot, EconData.imps_overshoot_colours)
-    # temporal_subplots_select_scenarios_north_south(EconData.north_south_split_5th, 
-    #                                    EconData.north_south_split_50th,
-    #                                     EconData.north_south_split_95th,
-    #                                 EconData.imps_fairness)
-    temporal_subplots(EconData.global_econ_results_no_damages,
-                      EconData.global_econ_results_damages,
-                      EconFeas.temp_groupings)  
-    # temporal_subplots_north_south(EconData.north_south_split_50th,
-    #                               EconFeas.temp_groupings, 2020, 2100)                 
-    # temporal_subplots_north_south_example_regions(EconData.north_south_split_50th,
-    #                                               EconData.regional_results_no_damages,
-    #                                               EconData.regional_results_damages,
-    #                                               EconFeas.temp_groupings,
-    #                                               2020, 2100, 
-    #                                               north_south='None',
-    #                                               example_regions=['R10INDIA+', 'R10MIDDLE_EAST'])
+    run_econ_analysis_regional()
 
 
 
-def run_econ_analysis_regional():
 
-    output_df = pd.DataFrame()
-    gdp_output = pd.DataFrame()
-    export_gdp = pd.DataFrame()
-    damages = 'damages'
-    for region in Data.R10:
-        print(region)
-        to_append = energy_supply_investment_analysis(0.023, 2100, EconData.regional_scenarios_models, 
-                                                    EconData.global_econ_pyamdf, 
-                                                    EconData.global_econ_meta,
-                                                        apply_damages=damages, 
-                                                        region=region,
-                                                        region_codes=R10_CODES,
-                                                        df_regional=EconData.regional_econ_pyamdf,
-                                                        R10_temps_df=EconData.regional_damage_estimates, 
-                                                        included_categories=EconData.regional_categories)
-        output_df = pd.concat([output_df, to_append[0]], ignore_index=True, axis=0)
-        export_gdp = pd.concat([export_gdp, to_append[1]], ignore_index=True,  axis=0)
-        
-    if damages != None:
-        output_df.to_csv('econ/energy_supply_investment_analysis_R10_' + damages + '.csv')
-        export_gdp.to_csv('econ/gdp_damages_R10_' + damages + '.csv') 
-    else:
-        output_df.to_csv('econ/energy_supply_investment_analysis_R10.csv')
-        export_gdp.to_csv('econ/gdp_R10.csv')
 
 
 # takes as an input a Pyam dataframe object with n number of scenarios in it. For each scenario it calculates both a binary 

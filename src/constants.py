@@ -29,6 +29,21 @@ C1AR10_SCENARIOS = ['EN_NPi2020_300f', 'SSP1-DACCS-1p9-3pctHR', 'SSP1-noDACCS-1p
 PRESENT_WARMING = 1.25
 
 
+# Framework Constants
+FRAMEWORK_VARIABLES = ['Emissions|CO2', 'Investment|Energy Supply','Capacity|Electricity|Wind',
+                        'Capacity|Electricity|Solar|PV', 'Final Energy', 'Final Energy|Electricity' 'Population',
+                        'Primary Energy|Coal', 'Primary Energy|Oil', 'Primary Energy|Gas', 'Primary Energy|Nuclear', 'Primary Energy|Fossil w/ CCS',
+                        'Primary Energy|Biomass', 'Primary Energy|Non-Biomass Renewables','Carbon Sequestration|CCS|Biomass',
+                        'GDP|MER', 'Land Cover|Forest|Natural Forest','Land Cover', 'Carbon Sequestration|Land Use', 
+                        'Price|Secondary Energy|Electricity', 'Food Demand|Crops', 'Food Demand|Livestock']
+
+CDR_VARIABLES = ['Carbon Sequestration|Direct Air Capture', 'Carbon Sequestration|Land Use','Carbon Sequestration|CCS|Biomass']
+
+ENERGY_VARIABLES = ['Primary Energy|Coal','Primary Energy|Oil',
+                    'Primary Energy|Gas', 'Primary Energy|Nuclear',
+                    'Primary Energy|Biomass', 'Primary Energy|Non-Biomass Renewables']
+
+
 # Regions
 R10 = ['Countries of Latin America and the Caribbean','Countries of South Asia; primarily India',
     'Countries of Sub-Saharan Africa', 'Countries of centrally-planned Asia; primarily China',
@@ -76,6 +91,11 @@ R5_DICT = {'Asian countries except Japan': 'R5ASIA',
         'OECD90 and EU (and EU candidate) countries': 'R5OECD90+EU'}
 
 R5_CODES = ['R5ASIA', 'R5REF', 'R5MAF', 'R5LAM', 'R5OECD90+EU'] #r5_iamc
+
+
+
+
+
 
 
 

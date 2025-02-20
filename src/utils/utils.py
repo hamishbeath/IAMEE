@@ -1,23 +1,11 @@
 import numpy as np
 import pyam
-import seaborn as sns
-import matplotlib.pyplot as plt
 import pandas as pd
 import country_converter as coco
 import pickle as pkl
-import plotly.express as px
-import plotly.graph_objects as go
-from sklearn.cluster import KMeans
 from src.constants import *
-# import logging
-
-# # Set up logging
-# logging.basicConfig(level=logging.DEBUG)
-
 cc = coco.CountryConverter()
-from matplotlib import rcParams
-rcParams['font.family'] = 'sans-serif'
-rcParams['font.sans-serif'] = ['Arial']
+
 
 
 """
@@ -29,66 +17,22 @@ regardless of the variables, database or dimensions being explored.
 class Data:
 
 
-
-
     region_country_df = pd.read_csv('iso3c_regions.csv')
     #https://github.com/setupelz/regioniso3c/blob/main/iso3c_region_mapping_20240319.csv    
-    
-
-    mandatory_variables = ['Emissions|CO2', 'Investment|Energy Supply','Capacity|Electricity|Wind',
-                           'Capacity|Electricity|Solar|PV', 'Final Energy', 'Population',
-                           'Primary Energy|Coal', 'Primary Energy|Oil', 'Primary Energy|Gas', 'Primary Energy|Nuclear',
-                           'Primary Energy|Biomass', 'Primary Energy|Non-Biomass Renewables','Carbon Sequestration|CCS|Biomass',
-                            'GDP|MER', 'Land Cover|Forest','Land Cover', 'Carbon Sequestration|Land Use', 'Price|Secondary Energy|Electricity']
-
-    mandatory_econ_variables = ['GDP|MER', 'Investment|Energy Supply',
-                                'AR6 climate diagnostics|Surface Temperature (GSAT)|MAGICCv7.5.3|5.0th Percentile',
-                                'AR6 climate diagnostics|Surface Temperature (GSAT)|MAGICCv7.5.3|50.0th Percentile',
-                                'AR6 climate diagnostics|Surface Temperature (GSAT)|MAGICCv7.5.3|95.0th Percentile',
-                                'Policy Cost|GDP Loss']
-    
-    mandatory_econ_variables_regional = ['GDP|MER', 'Investment|Energy Supply',
-                            'Policy Cost|GDP Loss']
 
 
-    # mandatory_test_variables = ['Investment|Energy Supply', 'Policy Cost|GDP Loss']
-    # mandatory_CDR_variables = ['Carbon Sequestration|Enhanced Weathering']
-    mandatory_CDR_variables = ['Carbon Sequestration|Direct Air Capture', 'Carbon Sequestration|Land Use','Carbon Sequestration|CCS|Biomass']
-    paola_variables = ['Carbon Sequestration|Direct Air Capture', 'Carbon Sequestration|Land Use','Carbon Sequestration|CCS|Biomass', 'Carbon Sequestration|Enhanced Weathering']
-    # paola_variables = ['Carbon Sequestration|Land Use','Carbon Sequestration|CCS|Biomass']
-    narrative_variables = ['Final Energy|Transportation', 'Final Energy|Transportation|Liquids', 'Final Energy|Transportation|Liquids|Oil', 
-                           'Primary Energy|Fossil', 'Land Cover|Pasture', 'Land Cover|Cropland', 'Land Cover|Forest', 'Land Cover',  'Carbon Sequestration|CCS|Biomass', 
-                           'Carbon Sequestration|CCS|Fossil', 'Primary Energy|Non-Biomass Renewables', 'Primary Energy|Fossil|w/ CCS', 'Carbon Sequestration|Direct Air Capture',
-                           'Primary Energy|Fossil|w/o CCS','Final Energy', 'Agricultural Demand', 'Emissions|CO2|AFOLU', 'Capacity|Electricity|Wind',
-                           'Capacity|Electricity|Solar|PV','Energy Service|Transportation|Passenger', 'Energy Service|Transportation|Freight', 'Carbon Sequestration|Land Use' ]
-
-    
-
-
-    
-
-    c1a_scenarios_selected = ['PEP_1p5C_red_eff', 'SSP1_SPA1_19I_RE_LB', 'EN_NPi2020_300f', 'EN_NPi2020_400f']
-    c1a_models_selected = ['REMIND-MAgPIE 1.7-3.0', 'IMAGE 3.2', 'AIM/CGE 2.2', 'WITCH 5.0']
     # ar6_world = pyam.IamDataFrame(data='database/AR6_Scenarios_Database_World_v1.1.csv', meta='database/meta_data.csv')
     # ar6_world = pyam.read_datapackage('database/', data='AR6_Scenarios_Database_World_v1.1.csv', meta='meta_data.csv')
-
     
     # ar6_R10 = pyam.IamDataFrame(data='database/AR6_Scenarios_Database_Regions_v1.1.csv', meta='database/meta_data.csv')
     # ar6_meta = pd.DataFrame('database/metadata.csv')
     
-
-    # categories = ''
-    cdr_categories = ['C1', 'C2', 'C3']
     categories = ['C1', 'C2']
 
     model_scenarios = pd.read_csv('Countries of Sub-Saharan Africa_mandatory_variables_scenarios' + str(categories) + '.csv')
     dimensions_pyamdf = cat_df = pyam.IamDataFrame(data='cat_df' + str(categories) + '.csv')
     meta_df = pd.read_csv('cat_meta' + str(categories) + '.csv') 
 
-    energy_variables = ['Primary Energy|Coal','Primary Energy|Oil',
-                        'Primary Energy|Gas', 'Primary Energy|Nuclear',
-                        'Primary Energy|Biomass', 'Primary Energy|Non-Biomass Renewables']
-    econ_regions = ['Countries of Sub-Saharan Africa']
     try:
         narrative_data = pyam.IamDataFrame(data='outputs/narrative_data' + str(categories) + '.csv')
     except FileNotFoundError:
@@ -103,17 +47,14 @@ class Data:
         scenario_archetypes = pd.read_csv('outputs/scenario_archetypes '+ str(categories) + '.csv')
     except:
         print('No scenario archetypes file found for the category of', categories)
-    try:
-        land_use_seq_data = pyam.IamDataFrame(data='land_sequestration_imputed.csv')
-    except:
-        print('No land use imputed data found')
+
     try:
         scenario_baselines = pd.read_csv('baselines' + str(categories) + '.csv')
     except FileNotFoundError:
         print('No baselines file found for the category of', categories)
 
-class Utils:
 
+class Utils:
 
 
     # function that takes as an input a list of mandatory variables and regional coverage and 
