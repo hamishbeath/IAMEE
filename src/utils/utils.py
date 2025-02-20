@@ -30,34 +30,6 @@ class Data:
 
 
 
-    R10 = ['Countries of Latin America and the Caribbean','Countries of South Asia; primarily India',
-        'Countries of Sub-Saharan Africa', 'Countries of centrally-planned Asia; primarily China',
-        'Countries of the Middle East; Iran, Iraq, Israel, Saudi Arabia, Qatar, etc.',
-        'Eastern and Western Europe (i.e., the EU28)',
-        'Other countries of Asia',
-        'Pacific OECD', 'Reforming Economies of Eastern Europe and the Former Soviet Union; primarily Russia',
-        'North America; primarily the United States of America and Canada']
-
-    R10_codes = ['R10LATIN_AM', 'R10INDIA+', 'R10AFRICA', 'R10CHINA+', 'R10MIDDLE_EAST',
-                 'R10EUROPE', 'R10REST_ASIA', 'R10PAC_OECD', 'R10REF_ECON','R10NORTH_AM'] #r10_iamc
-
-    R10_development = {'R10LATIN_AM':'South',
-                        'R10INDIA+':'South',
-                        'R10AFRICA':'South',
-                        'R10CHINA+':'South',
-                        'R10MIDDLE_EAST':'South',
-                        'R10EUROPE':'North',
-                        'R10REST_ASIA':'South',
-                        'R10PAC_OECD':'North',
-                        'R10REF_ECON':'North',
-                        'R10NORTH_AM':'North'}
-
-    R5 = {'Asian countries except Japan': 'R5ASIA', 
-          'Countries from the Reforming Economies of the Former Soviet Union': 'R5REF',
-          'Countries of the Middle East and Africa': 'R5MAF',
-          'Latin American countries': 'R5LAM',
-          'OECD90 and EU (and EU candidate) countries': 'R5OECD90+EU'}
-    
 
     region_country_df = pd.read_csv('iso3c_regions.csv')
     #https://github.com/setupelz/regioniso3c/blob/main/iso3c_region_mapping_20240319.csv    
@@ -91,18 +63,9 @@ class Data:
                            'Capacity|Electricity|Solar|PV','Energy Service|Transportation|Passenger', 'Energy Service|Transportation|Freight', 'Carbon Sequestration|Land Use' ]
 
     
-    briefing_paper_variables = ['Carbon Sequestration|Direct Air Capture', 'Carbon Sequestration|Land Use',
-                                'Carbon Sequestration|CCS|Biomass', 'Land Cover|Pasture', 'Land Cover|Cropland', 
-                                'Land Cover|Cropland|Energy Crops', 'Land Cover|Forest', 'Land Cover', 'Primary Energy',
-                                'Primary Energy|Fossil|w/ CCS', 'Primary Energy|Fossil|w/o CCS', 'Primary Energy|Non-Biomass Renewables',
-                                'Primary Energy|Nuclear', 'Primary Energy|Biomass', 'Capacity|Electricity|Wind',
-                                'Capacity|Electricity|Solar|PV','Capacity|Electricity|Nuclear', 'Energy Service|Transportation|Passenger',
-                                  'Energy Service|Transportation|Freight', 'Final Energy|Transportation', 'Final Energy|Transportation|Liquids|Oil']
-    
-    briefing_paper_regions = ['World', 'Eastern and Western Europe (i.e., the EU28)']
-    
-    briefing_paper_data = pyam.IamDataFrame(data='briefing_paper_data.csv')
 
+
+    
 
     c1a_scenarios_selected = ['PEP_1p5C_red_eff', 'SSP1_SPA1_19I_RE_LB', 'EN_NPi2020_300f', 'EN_NPi2020_400f']
     c1a_models_selected = ['REMIND-MAgPIE 1.7-3.0', 'IMAGE 3.2', 'AIM/CGE 2.2', 'WITCH 5.0']
@@ -113,11 +76,11 @@ class Data:
     # ar6_R10 = pyam.IamDataFrame(data='database/AR6_Scenarios_Database_Regions_v1.1.csv', meta='database/meta_data.csv')
     # ar6_meta = pd.DataFrame('database/metadata.csv')
     
-    dollar_2022_2010 = 0.25 # reduction in value of 2022 dollars to 2010 dollars
+
     # categories = ''
     cdr_categories = ['C1', 'C2', 'C3']
     categories = ['C1', 'C2']
-    categories_all = ['C1', 'C2', 'C3', 'C4', 'C5','C6', 'C7', 'C8']
+
     model_scenarios = pd.read_csv('Countries of Sub-Saharan Africa_mandatory_variables_scenarios' + str(categories) + '.csv')
     dimensions_pyamdf = cat_df = pyam.IamDataFrame(data='cat_df' + str(categories) + '.csv')
     meta_df = pd.read_csv('cat_meta' + str(categories) + '.csv') 
@@ -151,87 +114,6 @@ class Data:
 
 class Utils:
 
-
-
-
-    def create_variable_sheet(self, db, categories, regions, variables, variable_sheet):
-
-        """
-        Creates a datasheet with stats for each variable, against the regions and categories provided
-
-            Inputs:
-            - database (AR6 or SR15)
-            - temperature scenarios
-            - regions
-            - variables
-
-            Outputs:
-            - datasheet with stats for each region, variable and temperature category
-        
-        """
-            
-        if db == 'AR6':
-
-            df = Utils.connAr6.query(model='*', scenario='*',
-                variable=variables, region=regions, year=2100
-                )
-        if db == 'SR15':
-
-            df = Utils.connSR15.query(model='*', scenario='*',
-                variable=variables, region=regions, year=2100
-                    )
-        
-        # Make dataframe with a row for each variable
-        
-        datasheet = pd.DataFrame(variables)
-        datasheet.columns = ['variable']
-        
-        # loop through each temperature category
-        for category in categories:
-            df_category = df.filter(Category_subset=category)
-            
-
-            # Get the number of scenarios reporting emissions for CO2 in 2100 for World as a basis for %
-            emissions_scenarios = 0
-            df_category_emissions = df_category.filter(variable='Emissions|CO2')
-            model_list_emissions = df_category_emissions['model'].unique().tolist()
-            for model in model_list_emissions:
-                model_emissions_df = df_category_emissions.filter(model=model)
-                scenario_list_emissions = model_emissions_df['scenario'].unique().tolist()
-                scenario_count_emissions = len(scenario_list_emissions)
-                emissions_scenarios += scenario_count_emissions
-
-            # loop through each region
-            for region in regions:
-                
-                df_region = df_category.filter(region=region)
-
-                # count number of scenarios, allowing for multiple models per scenario
-                variables_count_list = []
-                variables_percentage_list = []
-                for variable in variables:
-                    current_scenario_count = 0
-                    
-                    df_variable = df_region.filter(variable=variable)
-                    model_list = df_variable['model'].unique().tolist()
-                    for model in model_list:
-                        model_df = df_variable.filter(model=model)
-                        scenario_list = model_df['scenario'].unique().tolist()
-                        scenario_count = len(scenario_list)
-                        current_scenario_count += scenario_count
-
-                    variables_count_list.append(current_scenario_count)
-                    variables_percentage_list.append(current_scenario_count/emissions_scenarios*100)
-                
-                # add to datasheet
-                datasheet[str(region),str(category), 'count'] = pd.Series(variables_count_list)
-                datasheet[str(region),str(category), 'percentage'] = pd.Series(variables_percentage_list)
-
-        datasheet['category_1'] = variable_sheet['category_1']
-        datasheet['category_2'] = variable_sheet['category_2']
-        
-        # Export datasheet to csv
-        datasheet.to_csv('stats_datasheet_CDR.csv')
 
 
     # function that takes as an input a list of mandatory variables and regional coverage and 
@@ -327,8 +209,10 @@ class Utils:
                 return output_df
 
 
-    def create_variable_scenario_count(self, df, variables, regions, categories):
 
+    # function that takes as an input a list of variables and regions coverage and
+    # provides a list of scenarios that report on each variable variables for the given region
+    def create_variable_scenario_count(self, df, variables, regions, categories):
 
         # make outout dataframe
         output_df = pd.DataFrame()
@@ -343,97 +227,16 @@ class Utils:
 
             region_df = df.filter(region=region)
 
-            scenario_count_list = []
-
-            # loop through each variable
-            for variable in variables:
-                
-                # filter by variable
-                variable_df = region_df.filter(variable=variable)
-
-                # make list of available scenarios
-                variable_scenarios = variable_df['scenario'].tolist()
-
-                # count the number of scenarios for each variable
-                scenario_count = len(variable_scenarios)
-                scenario_count_list.append(scenario_count)
+            # count the number of scenarios for each variable
+            scenario_count_list = region_df.data.groupby('variable')['scenario'].nunique().reindex(variables, fill_value=0).tolist()
 
             output_df[region] = scenario_count_list
 
         print(output_df)
-
-        # output_df.to_csv('variable_scenario_count.csv')
-    # function that takes the pyam dataframe and loops through each mandatory variable to assess the 
-    # whether or not removing the variable substantially increases the number of scenarios or models
-    def filter_data_sheet_variable_prevelance(self, category, region, variables):
-
-        cat_df = pyam.IamDataFrame(data='cat_df.csv')
-        cat_df = cat_df.filter(region=region)
-        # cat_df = cat_df.filter(Category_subset=category)
-        variable_list = []
-        model_number = []
-        scenario_number = []
-        
-        output_df = pd.DataFrame()
-        
-        # Iterate through variables to see the effect of excluding each one
-        for variable in variables:
-
-            # pop out the variable from the list
-            variables_copy = variables.copy()
-            variables_copy.remove(variable)
-            variable_df = cat_df.filter(variable=variables_copy)
-
-            model_list = []
-            scenario_list = []
-
-            for model in variable_df['model'].unique().tolist():
-                model_df = variable_df.filter(model=model)
-
-                # make list of available scenarios
-                model_scenarios = model_df['scenario'].unique().tolist()
-                for scenario in model_scenarios:
-                    
-                    scenario_df = model_df.filter(scenario=scenario)
-                    
-                    # now make a list of the scenario variables
-                    scenario_variables = scenario_df['variable'].unique().tolist()
-                    scenario_counter = 0
-                    for test_variable in variables_copy:
-                        if test_variable not in scenario_variables:
-                            break
-                    
-                        else:
-                            scenario_counter += 1
-                    
-                    if scenario_counter == len(variables_copy):
-                        scenario_list.append(scenario)
-                        model_list.append(model)
-        
-            print('The scenarios for when excluding', variable, 'in the region of', region, 'is: ')
-            # print(scenario_list)
-
-            if variable == 'Carbon Sequestration|CCS|Fossil':
-
-                print(scenario_list)
-                print(model_list)
-            # count the number of unique models in the list
-            unique_models = len(set(model_list))
-            # print(unique_models)
-            
-            model_number.append(unique_models)
-            scenario_number.append(len(scenario_list))
-            variable_list.append(variable)
-            # print(scenario_number)
-
-        output_df['variable'] = variable_list
-        output_df['model_number'] = model_number
-        output_df['scenario_number'] = scenario_number
-
-        output_df.to_csv('variable_prevalance.csv')
-
+        return output_df
 
     
+     
     def data_download(variables, models, scenarios, region, categories,
                       end_year, file_name=str):
    
@@ -447,7 +250,8 @@ class Utils:
         df = df.filter(Category=categories)
 
         df.to_csv(file_name + '.csv')
-        
+
+
     def data_download_sub(variables, models, scenarios, categories, region, end_year):
 
         connAr6 = pyam.iiasa.Connection(name='ar6-public', 
@@ -464,166 +268,38 @@ class Utils:
         return df
 
 
+    def map_countries_to_regions(country_groups, country_data):
 
+        """
+        Function to map countries to regions based on country groupings. 
+        The function takes as an input a dataframe of country groupings and a dataframe of country data.
+        The function returns a dataframe with the countries mapped to their respective regions.
 
+        Inputs: country_groups - dataframe of country groupings
+                country_data - dataframe of country data
 
-    # def filter_data_sheet_variable_prevelance(self, db, categories, region, threshold):
-
-    #     """"
-    #     Function that takes a datasheet from the create_variable_sheet function and filters it to only 
-    #     include variables that are reported by a certain percentage of scenarios for a given region and
-    #     temperature category.
-    #     Inputs: 
+        Outputs: output_df - dataframe with countries mapped to regions
         
+        """
+        output_dict = {}
+        # get the list groups of countries
+        country_groups_list = country_groups['group'].unique().tolist()
+        country_data_countries = country_data['country'].unique().tolist()
         
-    # Function that performs cluster analysis for a set of input variables, a set region and a set of predetermined scenarios. 
-    # The cluster analysis is performed using the k-means algorithm but implements time as feature. 
-    # The function returns a dataframe with the cluster labels for each scenario and the cluster centroids.
+        output_df = pd.DataFrame()
 
+        # Convert country names to ISO3 codes in both dataframes
+        country_groups['countries'] = country_groups['countries'].str.split(', | and ').apply(lambda x: coco.convert(names=x, to='ISO3'))
+        country_data['country'] = coco.convert(names=country_data['country'], to='ISO3')
 
+        # Explode the lists of countries into separate rows
+        country_groups = country_groups.explode('countries')
 
-    # Cluster analysis for a set of input variables, a set region and a set of predetermined scenarios. This function performs 
-    # cluster analysis using the k-means algorithm for a snapshot in time (2100) and for the entire time series.
-    def snapshot_cluster_analysis(self, region, scenarios, variables, category, n_clusters, snapshot_year):
+        # Merge the dataframes on the ISO3 country codes
+        output_df = country_data.merge(country_groups, left_on='country', right_on='countries', how='left')
+
+        # Drop the redundant 'countries' column
+        output_df = output_df.drop(columns=['countries'])
         
-        # # query data
-        # df = Utils.connAr6.query(model='*', scenario=scenarios,
-        #     variable=variables, region=region, year=snapshot_year
-        #     )
+        return output_df
 
-        # read in data
-
-
-        # # filter by temperature category
-        # df_category = df.filter(Category_subset=category)
-
-        # # save df as a csv
-        # df_category.to_csv('snapshot_data.csv')
-
-        df_category = pyam.IamDataFrame(data='snapshot_data.csv')
-        
-        k_means_data = pd.DataFrame()
-        for variable in variables:
-            df_variable = df_category.filter(variable=variable)
-            df_variable = df_variable.filter(year=snapshot_year)
-            df_variable = df_variable.as_pandas()
-            print(df_variable)
-            # set index to scenario and model
-            df_variable = df_variable.set_index(['model', 'scenario'])
-            k_means_data[variable] = df_variable['value']
-            
-        
-        print(k_means_data)
-
-
-        # # arrange data in a way that is suitable for clustering so that each scenario is a row and each variable is a column
-        # df_category = df_category.pivot_table(index=['model', 'scenario'], columns=variables, values='value').reset_index()
-        
-        kmeans = KMeans(n_clusters=n_clusters, random_state=0).fit(k_means_data[variables])
-
-        # Get cluster assignments
-        labels = kmeans.labels_
-
-        # Get cluster centroids
-        centroids = kmeans.cluster_centers_
-
-        # visualise
-        plt.scatter(k_means_data[variables[0]], k_means_data[variables[1]], c=labels, s=50, cmap='viridis')
-        plt.scatter(centroids[:, 0], centroids[:, 1], c='black', s=200, alpha=0.5)
-        plt.xlabel(variables[0])
-        plt.ylabel(variables[1])
-        plt.show()
-
-
-    # function that performs cluster analysis for a set of n variables, 
-    # but for each year in the time series including time as a feature
-    def time_series_cluster_analysis(self, region, scenarios, variables, category, n_clusters):
-        
-        # # query data
-        # df = Utils.connAr6.query(model='*', scenario=scenarios,
-        #     variable=variables, region=region
-        #     )
-
-        df_category = pyam.IamDataFrame(data='snapshot_data.csv')
-
-        # filter by temperature category
-        df_category = df_category.filter(year=range(2020, 2101))
-
-        k_means_data = pd.DataFrame()
-        for variable in variables:
-            df_variable = df_category.filter(variable=variable)
-            df_variable = df_variable.as_pandas()
-            print(df_variable)
-            # set index to scenario and model
-            df_variable = df_variable.set_index(['model', 'scenario', 'year'])
-            k_means_data[variable] = df_variable['value']
-        
-        
-        
-        
-        # # arrange data in a way that is suitable for clustering so that each scenario is a row and each variable is a column
-        # df_category = df_category.pivot_table(index=['model', 'scenario', 'year'], columns=variables, values='value').reset_index()
-        
-        print(k_means_data)
-            # Elbow Method
-        sse = []
-        list_k = list(range(1, 10))
-
-        for k in list_k:
-            km = KMeans(n_clusters=k)
-            km.fit(k_means_data[variables])
-            sse.append(km.inertia_)
-
-        # Plot sse against k
-        plt.figure(figsize=(6, 6))
-        plt.plot(list_k, sse, '-o')
-        plt.xlabel(r'Number of clusters *k*')
-        plt.ylabel('Sum of squared distance')
-        # plt.show()
-
-        kmeans = KMeans(n_clusters=n_clusters, random_state=0).fit(k_means_data[variables])
-
-        # # Get cluster assignments
-        labels = kmeans.labels_
-
-        # # Get cluster centroids
-        centroids = kmeans.cluster_centers_
-
-        # visualise
-        plt.scatter(k_means_data[variables[0]], k_means_data[variables[1]], c=labels, s=50, cmap='viridis')
-        plt.scatter(centroids[:, 0], centroids[:, 1], c='black', s=200, alpha=0.5)
-        plt.xlabel(variables[0])
-        plt.ylabel(variables[1])
-        # plt.show()
-
-        # # add cluster labels to dataframe
-        k_means_data['cluster'] = labels
-
-
-        print(k_means_data)
-        k_means_data_reset = k_means_data.reset_index()
-                # make a column combining scenario and model values for each row 
-        k_means_data_reset['scenario_model'] = k_means_data_reset['scenario'] + ' ' + k_means_data_reset['model']
-        # create a plotly figure where scenarios can be toggled on and off and the cluster is indicated by colour
-        fig = px.scatter(k_means_data_reset, x=variables[0], y=variables[1], color='cluster', hover_data=k_means_data_reset.columns)
-
-        for scenario in  k_means_data_reset['scenario_model'].unique():
-
-            # Filter the data for the scenario
-            df_scenario = k_means_data_reset[k_means_data_reset['scenario_model'] == scenario]
-
-            # Sort the data by year
-            df_scenario = df_scenario.sort_values('year')
-
-            # Add a line trace for the scenario with the same colour as the points being overlaid
-            fig.add_trace(go.Scatter(x=df_scenario[variables[0]], y=df_scenario[variables[1]], mode='lines', name=scenario))
-
-        
-
-        # Show the plot
-        fig.show()
-        
-        # # save dataframe as csv
-        # k_means_data.to_csv('cluster_data_timeseries.csv')
-
-        return df_category

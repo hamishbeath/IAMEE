@@ -6,7 +6,7 @@ This file contains all the constant values used throughout the project.
 
 # General Configurations
 APP_NAME = "IAMEE"
-VERSION = "1.0.0"
+VERSION = "0.0b"
 
 # # File Paths
 DATA_DIR = "data/"
@@ -77,6 +77,12 @@ R5_DICT = {'Asian countries except Japan': 'R5ASIA',
 
 R5_CODES = ['R5ASIA', 'R5REF', 'R5MAF', 'R5LAM', 'R5OECD90+EU'] #r5_iamc
 
+
+
+# Environmental Sustainability Constants
+
+BECCS_THRESHOLD = 2800 # in mtCO2 / year medium threshold, high conversion efficiency value from deprez et al 2024
+BIOENERGY_THRESHOLD = 100 # in EJ / year medium threshold, high conversion efficiency value from Creutzig et al 2015
 
 # Error Messages
 ERROR_FILE_NOT_FOUND = "The requested file could not be found."
