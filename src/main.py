@@ -83,6 +83,11 @@ class Selection:
 
 def main() -> None:
 
+    
+    
+
+    
+    
     # economic_score(IndexBuilder.investment_metrics)
     # environment_score(IndexBuilder.environment_metrics)
     # resource_score(NaturalResources.minerals, IndexBuilder.resource_metrics)

@@ -33,20 +33,13 @@ class Data:
     dimensions_pyamdf = cat_df = pyam.IamDataFrame(data='cat_df' + str(categories) + '.csv')
     meta_df = pd.read_csv('cat_meta' + str(categories) + '.csv') 
 
-    try:
-        narrative_data = pyam.IamDataFrame(data='outputs/narrative_data' + str(categories) + '.csv')
-    except FileNotFoundError:
-        print('No narrative data found')
 
     try:
         regional_dimensions_pyamdf = pyam.IamDataFrame(data='pyamdf_dimensions_data_R10' + str(categories) + '.csv')
     except FileNotFoundError:
         print('No regional dimensions data found')
     
-    try:
-        scenario_archetypes = pd.read_csv('outputs/scenario_archetypes '+ str(categories) + '.csv')
-    except:
-        print('No scenario archetypes file found for the category of', categories)
+
 
     try:
         scenario_baselines = pd.read_csv('baselines' + str(categories) + '.csv')
@@ -59,15 +52,16 @@ class Utils:
 
     # function that takes as an input a list of mandatory variables and regional coverage and 
     # provides a list of scenarios that report on all of the mandatory variables for the given region
-    def manadory_variables_scenarios(self, categories, regions, variables, subset=False, special_file_name=None
-                                     ,call_sub=None, save_data=False, local=False):
+    def manadory_variables_scenarios(self, categories, regional, variables, database,
+                                     subset=None, special_file_name=None
+                                     ,call_sub=None, save_data=False):
 
         """
         Function that takes as an input a list of mandatory variables and regional coverage and 
         provides a list of scenarios that report on all of the mandatory variables for the given region
 
         Inputs:
-        - database (AR6 or SR15)
+        - database (AR6 database)
         - temperature scenarios
         - regions
         - variables
@@ -76,49 +70,33 @@ class Utils:
         - list of scenarios that report on all of the mandatory variables for the given region
 
         """
-        if local == False:
-        
-            connAr6 = pyam.iiasa.Connection(name='ar6-public', 
-                                creds=None, 
-                                auth_url='https://api.manager.ece.iiasa.ac.at')    
 
-            print('Querying data')
-            df = connAr6.query(model='*', scenario='*',
-                    variable=variables, region=regions)
-
+        if regional == True:
+            regions = R10[2:3] 
         else:
-            if regions == 'World':
-                df = Data.ar6_world
-            else:
-                # check region in R10 list
-                if regions in Data.R10:
-                    df = Data.ar6_R10.filter(region=regions)
-                else:
-                    raise ValueError('Region not in R10 list')
-                    
-        print(df)
+            regions = ['World']
+
         # ensure filtering by temperature category (subset or not)
-        if subset == True:
-            cat_df = df.filter(Category_subset=categories)        
-        elif subset == False:
-            cat_df = df.filter(Category=categories)
-        else:
-            raise ValueError('Subset must be a boolean')
-        
+        # if subset == True:
+        #     cat_df = database.filter(Category_subset=categories)        
+        # elif subset == False:
+        cat_df = database.filter(Category=categories)
+        # else:
+        #     raise ValueError('Subset must be a boolean')
         # cat_df = df.filter(Category_subset=categories)
-        if call_sub == None:
+        # if call_sub == None:
             
-            if save_data == True:
-        # except:
-        # cat_df = df.filter(Category=categories)
-                if special_file_name != None:
-                    cat_df.to_csv(special_file_name + 'cat_df' + str(categories) + '.csv')
-                    cat_meta = cat_df.as_pandas(meta_cols=True)
-                    cat_meta.to_csv(special_file_name + 'cat_meta' + str(categories) +  '.csv')
-                else:    
-                    cat_df.to_csv('cat_df' + str(categories) + '.csv')
-                    cat_meta = cat_df.as_pandas(meta_cols=True)
-                    cat_meta.to_csv('cat_meta' + str(categories) + '.csv')
+        #     if save_data == True:
+        # # except:
+        # # cat_df = df.filter(Category=categories)
+        #         if special_file_name != None:
+        #             cat_df.to_csv(special_file_name + 'cat_df' + str(categories) + '.csv')
+        #             cat_meta = cat_df.as_pandas(meta_cols=True)
+        #             cat_meta.to_csv(special_file_name + 'cat_meta' + str(categories) +  '.csv')
+        #         else:    
+        #             cat_df.to_csv('cat_df' + str(categories) + '.csv')
+        #             cat_meta = cat_df.as_pandas(meta_cols=True)
+        #             cat_meta.to_csv('cat_meta' + str(categories) + '.csv')
 
         # cat_df = pyam.IamDataFrame(data='cat_df.csv')
 
@@ -141,13 +119,12 @@ class Utils:
             output_df['model'] = model_list
             output_df['scenario'] = scenario_list
 
-            if call_sub == None:
-                if special_file_name != None:
-                    output_df.to_csv(special_file_name + '.csv')
-                else:
-                    output_df.to_csv(region + '_mandatory_variables_scenarios' + str(categories) + '.csv')
-            elif call_sub != None:
-                return output_df
+            # if call_sub == None:
+            #     if special_file_name != None:
+            #         output_df.to_csv(special_file_name + '.csv')
+            #     else:
+            #         output_df.to_csv(region + '_mandatory_variables_scenarios' + str(categories) + '.csv')
+            return output_df
 
 
 
