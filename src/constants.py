@@ -9,10 +9,18 @@ APP_NAME = "IAMEE"
 VERSION = "0.0b"
 
 # # File Paths
-DATA_DIR = "data/"
-OUTPUT_DIR = "output/"
-INPUT_DIR = "input/"
+DATA_DIR = "src/data/"
+OUTPUT_DIR = DATA_DIR + "outputs/"
+INPUT_DIR = DATA_DIR + "inputs/"
+PROCESSED_DIR = DATA_DIR + "processed/"
+DATABASE_DIR = "src/database/"
 # LOG_FILE = "logs/app.log"
+
+
+# File Names
+DATABASE_FILE = DATABASE_DIR + "AR6_Scenarios_Database_World_v1.1.csv"
+REGIONAL_DATABASE_FILE = DATABASE_DIR + "AR6_Scenarios_Database_R10_regions_v1.1.csv"
+META_FILE = DATABASE_DIR + "meta_data.csv"
 
 # IAM Data constants
 CATEGORIES_ALL = ['C1', 'C2', 'C3', 'C4', 'C5','C6', 'C7', 'C8']
@@ -30,12 +38,31 @@ PRESENT_WARMING = 1.25
 
 
 # Framework Constants
-FRAMEWORK_VARIABLES = ['Emissions|CO2', 'Investment|Energy Supply','Capacity|Electricity|Wind',
-                        'Capacity|Electricity|Solar|PV', 'Final Energy', 'Final Energy|Electricity' 'Population',
-                        'Primary Energy|Coal', 'Primary Energy|Oil', 'Primary Energy|Gas', 'Primary Energy|Nuclear', 'Primary Energy|Fossil w/ CCS',
-                        'Primary Energy|Biomass', 'Primary Energy|Non-Biomass Renewables','Carbon Sequestration|CCS|Biomass',
-                        'GDP|MER', 'Land Cover|Forest|Natural Forest','Land Cover', 'Carbon Sequestration|Land Use', 
-                        'Price|Secondary Energy|Electricity', 'Food Demand|Crops', 'Food Demand|Livestock']
+FRAMEWORK_MANDATORY_VARIABLES = ['Emissions|CO2',
+                                 'Investment|Energy Supply',
+                                 'Capacity|Electricity|Wind', 
+                                 'Capacity|Electricity|Solar|PV', 
+                                 'Final Energy', 
+                                 'Final Energy|Electricity', 
+                                 'Population',
+                                 'Primary Energy|Coal',
+                                 'Primary Energy|Oil', 
+                                 'Primary Energy|Gas', 
+                                 'Primary Energy|Nuclear', 
+                                 'Primary Energy|Biomass',
+                                 'Primary Energy|Non-Biomass Renewables',
+                                 'Carbon Sequestration|CCS|Biomass',
+                                 'GDP|MER', 
+                                 'Land Cover', 
+                                 'Carbon Sequestration|Land Use',
+                                 'Price|Secondary Energy|Electricity',
+                                 'Food Demand|Crops', 
+                                 'Food Demand|Livestock', 
+                                 'Primary Energy|Fossil|w/ CCS', 
+                                 'Land Cover|Forest|Natural Forest']
+
+FRAMEWORK_VARIABLES = FRAMEWORK_MANDATORY_VARIABLES + ['Carbon Sequestration|Direct Air Capture']
+
 
 CDR_VARIABLES = ['Carbon Sequestration|Direct Air Capture', 'Carbon Sequestration|Land Use','Carbon Sequestration|CCS|Biomass']
 
@@ -96,13 +123,18 @@ R5_CODES = ['R5ASIA', 'R5REF', 'R5MAF', 'R5LAM', 'R5OECD90+EU'] #r5_iamc
 
 
 
-
-
-
 # Environmental Sustainability Constants
 
 BECCS_THRESHOLD = 2800 # in mtCO2 / year medium threshold, high conversion efficiency value from deprez et al 2024
 BIOENERGY_THRESHOLD = 100 # in EJ / year medium threshold, high conversion efficiency value from Creutzig et al 2015
+
+
+# Economic Feasibility Constants
+GLOBAL_BASE = 0.023
+REGIONAL_BASE_PATH = INPUT_DIR + 'energy_investment_regions.csv'
+
+
+
 
 # Error Messages
 ERROR_FILE_NOT_FOUND = "The requested file could not be found."

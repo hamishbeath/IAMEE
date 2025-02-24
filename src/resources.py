@@ -1,63 +1,81 @@
 import numpy as np
 import pyam
 import pandas as pd
-from utils import Utils
-from utils import Data
+import os
+from constants import *
+from utils.file_parser import *
+from utils import mandatory_variables_scenarios, data_download_sub
 
 class NaturalResources:
 
     # annual_retention_improvement = 0.01
-    material_intensities = pd.read_csv('inputs/material_intensities.csv')
+    material_intensities = pd.read_csv(os.path.join(INPUT_DIR, 'material_intensities.csv'))
     material_intensities = material_intensities.set_index('tech')
-    material_recycling = pd.read_csv('inputs/material_recycling.csv')
-    material_reserves = pd.read_csv('inputs/material_reserves.csv')
-    material_intensities_temporal = pd.read_csv('inputs/material_intensities_temporal.csv')
-    timeseries_material_intensities = pd.read_csv('outputs/timeseries_material_intensities.csv')
-    tech_shares = pd.read_csv('inputs/technology_shares.csv')
-    reserve_growth = pd.read_csv('inputs/reserve_growth.csv')
-    historical_production = pd.read_csv('inputs/mine_production_hist.csv') 
+    material_recycling = pd.read_csv(os.path.join(INPUT_DIR, 'material_recycling.csv'))
+    material_reserves = pd.read_csv(os.path.join(INPUT_DIR, 'material_reserves.csv'))
+    material_intensities_temporal = pd.read_csv(os.path.join(INPUT_DIR, 'material_intensities_temporal.csv'))
+    timeseries_material_intensities = pd.read_csv(os.path.join(OUTPUT_DIR, 'timeseries_material_intensities.csv'))
+    tech_shares = pd.read_csv(os.path.join(INPUT_DIR, 'technology_shares.csv'))
+    reserve_growth = pd.read_csv(os.path.join(INPUT_DIR, 'reserve_growth.csv'))
+    historical_production = pd.read_csv(os.path.join(INPUT_DIR, 'mine_production_hist.csv')) 
     minerals = ['Nd', 'Dy', 'Ni', 'Mn', 'Ag', 'Cd', 'Te', 'Se', 'In']
     material_recycling_scenario = 're_opt' # 're_opt' or 're_con'
     maximum_circularity_rate = 0.9
     product_life = 15 # years
-    # reserve_growth_rate = 0.01 # 1% growth rate in reserves per year CHECK THIS zero error
     solar_base_capacity_added = 171 # GW (2022 values from IRENA)
     wind_base_capacity_added = 75 # GW (2022 values from IRENA) https://www.irena.org/News/pressreleases/2023/Mar/Record-9-point-6-Percentage-Growth-in-Renewables-Achieved-Despite-Energy-Crisis
-    material_thresholds = pd.read_csv('inputs/mineral_renewables_amounts.csv')
+    material_thresholds = pd.read_csv(os.path.join(INPUT_DIR, 'mineral_renewables_amounts.csv'))
     wind_variables = ['Capacity|Electricity|Wind|Onshore', 
                      'Capacity|Electricity|Wind|Offshore']
 
 
-def main() -> None:
+def main(pyamdf=None, categories=None, scenarios=None, meta=None ) -> None:
+    
+    if categories is None:
+        categories = CATEGORIES_ALL[:2]
 
-    calculate_global_availability(NaturalResources.material_recycling, 
-                                  NaturalResources.material_reserves, 
-                                  NaturalResources.historical_production,
-                                  Data.categories,
-                                  NaturalResources.reserve_growth)
+    if meta is None:
+        meta = read_meta_data(META_FILE)
+    
+    if pyamdf is None:
+        pyamdf = read_pyam_add_metadata(PROCESSED_DIR + 'Framework_pyam' + str(categories) + '.csv', meta)
+
+    if scenarios is None:
+        scenarios = read_csv(PROCESSED_DIR + 'Framework_scenarios' + str(categories))
+    
+    
+    # check if the global availability of minerals has been calculated already
+    if not os.path.isfile(os.path.join(PROCESSED_DIR, 'mineral_availability.csv')):
+
+        calculate_global_availability(NaturalResources.material_recycling, 
+                                    NaturalResources.material_reserves, 
+                                    NaturalResources.historical_production,
+                                    NaturalResources.reserve_growth)
+    
+    # run the scenario assessment for minerals
+    scenario_assessment_minerals(pyamdf, 
+                                 NaturalResources.minerals, 
+                                 scenarios, 
+                                 NaturalResources.material_thresholds, 
+                                 2050,
+                                 categories,
+                                 NaturalResources.timeseries_material_intensities,
+                                 fixed_material_intensities=False)
+    
     
     """
     NOTE: when running the timeseries material intensities, need to add wind 
     defaults manually at the moment. To-do item, automate this step within the 
     function from the wind_default intensity values.
     """
-    scenario_assessment_minerals(Data.regional_dimensions_pyamdf, 
-                                 NaturalResources.minerals, 
-                                 Data.model_scenarios, 
-                                 NaturalResources.material_thresholds, 
-                                 2050,
-                                 Data.categories,
-                                 NaturalResources.timeseries_material_intensities,
-                                 fixed_material_intensities=False)
-    # calculate_base_shares_minerals()
     # create_timeseries_material_intensities(NaturalResources.material_intensities_temporal, 
     #                                        NaturalResources.tech_shares, 
     #                                        NaturalResources.minerals, 
     #                                        2050)
-
+    # calculate_base_shares_minerals()
 
 # function with adjustable parameters that calculates the total global availability of each material
-def calculate_global_availability(recycling, reserves, production, categories, reserve_growth):
+def calculate_global_availability(recycling, reserves, production, reserve_growth):
 
     # firstly take the mine production in the first year and the recycling rate in the first year available. 
     # Then calculate the total availability of each material in each year by calculating the total production and recycling in that year.
@@ -193,7 +211,7 @@ def calculate_global_availability(recycling, reserves, production, categories, r
         
     # concat the historical and future availability dataframes
     all_availability = pd.concat([historical_availability, future_availability_df], axis=0)
-    all_availability.to_csv('outputs/mineral_availability' + str(categories) + '.csv')
+    all_availability.to_csv(PROCESSED_DIR + 'mineral_availability.csv')
 
             
 
@@ -201,6 +219,7 @@ def calculate_global_availability(recycling, reserves, production, categories, r
 def scenario_assessment_minerals(pyam_df, minerals, scenario_model_list, base_thresholds, end_year, categories, 
                                  mineral_intensities_timeseries, fixed_material_intensities=False):
 
+    print('Assessing the mineral use for the scenarios')
     # filter for the variables needed
     df = pyam_df.filter(variable=['Capacity|Electricity|Wind','Capacity|Electricity|Solar|PV'],region='World',
                         year=range(2020, end_year+1),
@@ -209,22 +228,26 @@ def scenario_assessment_minerals(pyam_df, minerals, scenario_model_list, base_th
 
     # check whether shares of wind types files and scenario list exist 
     try: 
-        wind_shares_scenarios = pyam.IamDataFrame(data='outputs/wind_shares_scenarios' + str(categories) + '.csv') 
-        wind_shares_regional_list = pd.read_csv('outputs/wind_shares_regional_list' + str(categories) + '.csv')
+        wind_shares_scenarios = pyam.IamDataFrame(data=os.path.join(OUTPUT_DIR + 'wind_shares_scenarios' + str(categories) + '.csv')) 
+        wind_shares_list = pd.read_csv(OUTPUT_DIR + 'wind_shares_list' + str(categories) + '.csv')
     
     except FileNotFoundError:
-        wind_shares_scenarios = Utils.data_download_sub(NaturalResources.wind_variables,
-                                                        scenario_model_list['scenario'],
-                                                        scenario_model_list['model'],
+        
+        print('Wind shares files not found, downloading data')
+        scenarios = scenario_model_list['scenario'].tolist()
+        models = scenario_model_list['model'].tolist()
+
+        wind_shares_scenarios = data_download_sub(NaturalResources.wind_variables,
+                                                        models,
+                                                        scenarios,
+                                                        categories,
                                                         'World', end_year)
-        wind_shares_scenarios.to_csv('outputs/wind_shares_scenarios' + str(categories) + '.csv')
-        wind_shares_regional_list = Utils().manadory_variables_scenarios(categories, 
-                                                                       Data.econ_regions, 
-                                                                       NaturalResources.wind_variables, 
-                                                                       subset=False, 
-                                                                       special_file_name=None,
-                                                                       call_sub=True)
-        wind_shares_regional_list.to_csv('outputs/wind_shares_regional_list' + str(categories) + '.csv')
+        wind_shares_scenarios.to_csv(OUTPUT_DIR+ 'wind_shares_scenarios' + str(categories) + '.csv')
+        wind_shares_list = mandatory_variables_scenarios(categories, False, 
+                                                                  NaturalResources.wind_variables,
+                                                                  wind_shares_scenarios, 
+                                                                       subset=False)
+        wind_shares_list.to_csv(OUTPUT_DIR+ 'wind_shares_list' + str(categories) + '.csv')
 
     # extract the material intensities for the different technologies
     material_intensities = mineral_intensities_timeseries.set_index('category')
@@ -242,7 +265,7 @@ def scenario_assessment_minerals(pyam_df, minerals, scenario_model_list, base_th
     # material_intensities = NaturalResources.material_intensities
     # wind_material_intensity = material_intensities.loc['wind_neu']
     # solar_material_intensity = material_intensities.loc['solar_neu']
-    mineral_availability = pd.read_csv('outputs/mineral_availability' + str(categories) + '.csv', index_col=0)
+    mineral_availability = pd.read_csv(OUTPUT_DIR + 'mineral_availability' + str(categories) + '.csv', index_col=0)
 
     material_use_ratios = pd.DataFrame(columns=minerals)
     
@@ -253,9 +276,8 @@ def scenario_assessment_minerals(pyam_df, minerals, scenario_model_list, base_th
         scenario_df = df.filter(scenario=scenario)
         scenario_model_df = scenario_df.filter(model=model)
 
-        print(scenario, model)
         # filter for model 
-        wind_shares_model = wind_shares_regional_list[wind_shares_regional_list['model'] == model]
+        wind_shares_model = wind_shares_list[wind_shares_list['model'] == model]
         
         # check if the scenario is in the list that has regional shares of on and offshore wind
         if scenario in wind_shares_model['scenario'].values:
@@ -264,8 +286,7 @@ def scenario_assessment_minerals(pyam_df, minerals, scenario_model_list, base_th
                          wind_shares_scenarios,
                          wind_off_material_intensity, 
                          wind_on_material_intensity, end_year)
-            
-        
+
         else:
             wind_material_intensity = default_wind_material_intensity
             
@@ -323,8 +344,6 @@ def scenario_assessment_minerals(pyam_df, minerals, scenario_model_list, base_th
         for mineral in minerals:
             ratios[mineral] = max_usage[mineral] / base_thresholds[mineral].values[0]
 
-        print(ratios)
-
         # calculate the average ratio for each mineral
         # average_ratios = {key: value / counter for key, value in ratios.items()}
         # #add the average ratios to the dataframe
@@ -339,7 +358,7 @@ def scenario_assessment_minerals(pyam_df, minerals, scenario_model_list, base_th
     
 
     # save the dataframe to a csv
-    material_use_ratios.to_csv('outputs/material_use_ratios' + str(categories) + '.csv')
+    material_use_ratios.to_csv(OUTPUT_DIR + 'material_use_ratios' + str(categories) + '.csv')
 
 
 # function that calculates the base shares of minerals in renewables

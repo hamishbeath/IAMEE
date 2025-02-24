@@ -1,126 +1,47 @@
 import numpy as np
 import pyam
 import pandas as pd
-from utils import Data
-from utils import Utils
-from src.constants import *
+from constants import *
+from utils.file_parser import *
 
 
-class EconFeas:
+
+def main(run_regional=None, pyamdf=None, categories=None, scenarios=None, meta=None) -> None:
+
+    if run_regional is None:
+        run_regional = True
+
+    if categories is None:
+        categories = CATEGORIES_ALL[:2]
+
+    if meta is None:
+        meta = read_meta_data(META_FILE)
     
+    if pyamdf is None:
+        pyamdf = read_pyam_add_metadata(PROCESSED_DIR + 'Framework_pyam' + str(categories) + '.csv', meta)
 
-    variables=['GDP|PPP', 'Investment', 'Investment|Energy Supply']
-    run_mode = 'cat'
-    alpha = -0.037
-    beta = -0.0018
-    warming_variable = 'AR6 climate diagnostics|Surface Temperature (GSAT)|MAGICCv7.5.3|50.0th Percentile' 
-    warming_variable_5th = 'AR6 climate diagnostics|Surface Temperature (GSAT)|MAGICCv7.5.3|5.0th Percentile'
-    warming_variable_95th = 'AR6 climate diagnostics|Surface Temperature (GSAT)|MAGICCv7.5.3|95.0th Percentile'
-    warming_variable_50th = 'AR6 climate diagnostics|Surface Temperature (GSAT)|MAGICCv7.5.3|50.0th Percentile'
-    present_warming = 1.25
-    # AR6 climate diagnostics|Surface Temperature (GSAT)|MAGICCv7.5.3|95.0th Percentile
-    iea_country_groupings = pd.read_csv('econ/iea_country_groupings.csv')
-    by_country_gdp = pd.read_csv('econ/IMF_GDP_data_all_countries.csv')
+    if scenarios is None:
+        scenarios = read_csv(PROCESSED_DIR + 'Framework_scenarios' + str(categories))
 
-    temp_groupings = [('C1', 'C2'), ('C3', 'C4'), ('C5', 'C6'), ('C7', 'C8')]
-
-    cb_friendly_cat_colours = {'C1':'#332288', 
-                               'C2':'#117733', 
-                               'C3':'#44AA99', 
-                               'C4':'#88CCEE', 
-                               'C5':'#DDCC77', 
-                               'C6':'#CC6677', 
-                               'C7':'#AA4499', 
-                               'C8':'#882255'}
-
-    regional_colours = {'R10LATIN_AM':'#882255',
-                        'R10INDIA+':'#CC6677',
-                        'R10AFRICA':'#AA4499',
-                        'R10CHINA+':'#DDCC77',
-                        'R10MIDDLE_EAST':'#117733',
-                        'R10EUROPE':'#332288',
-                        'R10REST_ASIA':'#AA4499',
-                        'R10PAC_OECD':'#88CCEE',
-                        'R10REF_ECON':'#88CCEE',
-                        'R10NORTH_AM':'#88CCEE'}
-
-class EconData:
-
-    # Global Data
-    global_scenarios_models = pd.read_csv('econ/scenarios_models_world.csv')
-    # global_econ_pyamdf = pyam.IamDataFrame(data="econ/scenarios_models_worldcat_df['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8'].csv")
-    global_econ_pyamdf = pyam.IamDataFrame(data="econ/econ_data_world.csv")
-    global_econ_meta = pd.read_csv("econ/meta_data_c1_c8.csv")
-    global_econ_results_no_damages = pd.read_csv('econ/energy_supply_investment_analysis.csv')
-    global_econ_results_damages = pd.read_csv('econ/energy_supply_investment_analysis_damages' + EconFeas.warming_variable + '.csv')        
-    global_econ_results_damages_95 = pd.read_csv('econ/energy_supply_investment_analysis_damagesAR6 climate diagnostics|Surface Temperature (GSAT)|MAGICCv7.5.3|95.0th Percentile.csv')
-    global_econ_results_damages_5 = pd.read_csv('econ/energy_supply_investment_analysis_damagesAR6 climate diagnostics|Surface Temperature (GSAT)|MAGICCv7.5.3|5.0th Percentile.csv')
-
-
-    # Regional Data
-    regional_scenarios_models = pd.read_csv('econ/scenarios_models_R10.csv')
-    regional_econ_pyamdf = pyam.IamDataFrame(data='econ/pyamdf_econ_analysis_R10.csv')
-    regional_damage_estimates = pd.read_csv('econ/R10_damages_temps.csv')
-    regional_categories = CATEGORIES_ALL[:7]
-    regional_results_no_damages = pd.read_csv('econ/energy_supply_investment_analysis_R10.csv')
-    regional_results_damages = pd.read_csv('econ/energy_supply_investment_analysis_R10_damages.csv')
-    gdp_data = pd.read_csv('econ/gdp_R10.csv')  
-    gdp_data_damages = pd.read_csv('econ/gdp_damages_R10_damages.csv')
-    north_south_split = pd.read_csv('econ/north_south_regional_investment.csv')
-    historical_values = pd.read_csv('econ/energy_investment_regions.csv')
-    north_south_split_5th = pd.read_csv('econ/north_south_regional_investment' + EconFeas.warming_variable_5th + '.csv')
-    north_south_split_95th = pd.read_csv('econ/north_south_regional_investment' + EconFeas.warming_variable_95th + '.csv')
-    north_south_split_50th = pd.read_csv('econ/north_south_regional_investment' + EconFeas.warming_variable_50th + '.csv')
-
-    # plotting data
-    plot_regions = ['Countries of Latin America and the Caribbean', 'Countries of South Asia; primarily India', 'Eastern and Western Europe (i.e., the EU28)']
-
-
-
-def main(run_regional=None) -> None:
-
+    # import the regional data
+    regional_base = read_csv(REGIONAL_BASE_PATH)
     
     if run_regional:
         output_df = pd.DataFrame()
-        for region in Data.R10:
-            print(region)
-            to_append = energy_supply_investment_score(0.023, 2100, EconData.regional_scenarios_models, 
-                                                        EconData.global_econ_pyamdf, 
-                                                        EconData.global_econ_meta,
-                                                            apply_damages=damages, 
-                                                            region=region,
-                                                            region_codes=R10_CODES,
-                                                            df_regional=EconData.regional_econ_pyamdf,
-                                                            R10_temps_df=EconData.regional_damage_estimates, 
-                                                            included_categories=EconData.regional_categories)
-            output_df = pd.concat([output_df, to_append[0]], ignore_index=True, axis=0)
-            output_df.to_csv('outputs/energy_supply_investment_score_regional' + str(Utils.categories) + '.csv')
-    # energy_supply_investment_score(Data.dimensions_pyamdf, 0.023, 2100, Data.model_scenarios, Data.categories)
-    # energy_supply_investment_analysis(0.023, 2100, EconData.global_scenarios_models, 
-    #                                   EconData.global_econ_pyamdf, 
-    #                                   EconData.global_econ_meta,
-    #                                   apply_damages=True)
-    # map_countries_to_regions(EconFeas.iea_country_groupings, EconFeas.by_country_gdp)
-    # scenarios_list = pd.read_csv('econ_regional_Countries of Sub-Saharan Africa.csv')
-    # data = pyam.IamDataFrame(data="pyamdf_econ_data_R10['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8'].csv")
-    # box_plots_regional_categories(EconData.regional_results_no_damages,
-    #                               EconData.regional_results_damages,
-    #                                EconData.regional_categories, 
-    #                                'mean_value', Data.R10m)
-    # 
-    # # energy_supply_investment_score(Data.regional_dimensions_pyamdf, 0.023, 2100, Data.model_scenarios, Data.categories, regional=None)
-    # temporal_subplots(EconData.global_econ_results_no_damages, EconData.global_econ_results_damages, EconFeas.plotting_categories, 'mean_value')
+        for region in R10_CODES:
+            print('Calculating energy supply investment score for', region)
+            to_append = energy_supply_investment_score(pyamdf, 0.023, 2100, scenarios, 
+                                                        categories, regional=region, regional_thresholds=regional_base)
+            output_df = pd.concat([output_df, to_append], ignore_index=True, axis=0)
+            output_df.to_csv(OUTPUT_DIR + 'energy_supply_investment_score_regional' + str(categories) + '.csv')
     
-    # calculate_R10_damages_temps(Data.R10_codes, 'default', 1.3, 4.6, Data.region_country_df)
-    run_econ_analysis_regional()
-
-
-
+    energy_supply_investment_score(pyamdf, 0.023, 2100, scenarios, categories)
 
 
 
 # takes as an input a Pyam dataframe object with n number of scenarios in it. For each scenario it calculates both a binary 
-def energy_supply_investment_score(pyam_df, base_value, end_year, scenario_model_list, categories, regional=None):
+def energy_supply_investment_score(pyam_df, base_value, end_year, scenario_model_list, categories, 
+                                   regional=None, regional_thresholds=None):
 
     """
     This function takes an inputted Pyam dataframe and calculates to what extent the determined threshold for energy supply investment 
@@ -137,30 +58,31 @@ def energy_supply_investment_score(pyam_df, base_value, end_year, scenario_model
     Base value is calculated based on historical shares of energy supply investment as a share of GDP from 2015 to 2023. Data from IMF
     and IEA
     """
-    
+
     # Check if a regional filter is applied
     if regional is not None:
         region = regional
-        try:
-            regional_thresholds = pd.read_csv('econ/energy_investment_regions.csv')
-        except FileNotFoundError:
-            print('Regional investment file not found. Please ensure regional investment thresholds file is available.')
+
+        # get region position in the R10 list
+        region_index = R10_CODES.index(region)
+        region_full_text = R10[region_index]
 
         # Filter out the data for the required region
-        regional_threshold_data = regional_thresholds[regional_thresholds['region'] == region]
+        regional_threshold_data = regional_thresholds[regional_thresholds['region'] == region_full_text]
 
         # calculate the mean of the columns 2015 to 2023
         base_value = regional_threshold_data.iloc[:, 3:12].mean(axis=1)
-        print(base_value)
+
     else:
         region = 'World'
+
 
     # Filter out the data for the required variables
     df = pyam_df.filter(variable=['Investment|Energy Supply','GDP|MER'],
                         region=region, year=range(2020, end_year+1),
                         scenario=scenario_model_list['scenario'],
                         model=scenario_model_list['model'])
-    print(df)
+    
     # get list of years between 2020 and 2100 at decedal intervals
     year_list = list(range(2020, end_year+1, 10))
     
@@ -194,7 +116,6 @@ def energy_supply_investment_score(pyam_df, base_value, end_year, scenario_model
             model_year_list.append(year)
             proportion_of_base.append((year_share / base_value))
         
-
         # Calculate the mean value of the share of GDP that is invested in energy supply
         mean_value = np.mean(proportion_of_base)
 
@@ -216,9 +137,7 @@ def energy_supply_investment_score(pyam_df, base_value, end_year, scenario_model
         return output_df
 
     else:
-        output_df.to_csv('outputs/energy_supply_investment_score' + str(categories) + '.csv')
-
-
+        output_df.to_csv(OUTPUT_DIR + 'energy_supply_investment_score' + str(categories) + '.csv')
 
 
 

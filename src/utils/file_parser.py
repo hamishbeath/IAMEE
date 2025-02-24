@@ -7,11 +7,11 @@ Date: 25/09/2024
 import pandas as pd
 import pyam 
 
-# filepaths
-INPUT_FP = 'src/data/input/'
-PROCESSED_FP = 'src/data/processed/'
-OUTPUT_FP = 'src/data/output/'
-DATABASE_FP = 'src/data/database/'
+# # filepaths
+# INPUT_FP = 'data/input/'
+# PROCESSED_FP = 'data/processed/'
+# OUTPUT_FP = 'data/outputs/'
+# DATABASE_FP = 'data/database/'
 
 
 # # set up the meta data for the global database
@@ -39,7 +39,10 @@ def read_csv(file_name):
     Outputs:
     - dataframe
     """
-    df = pd.read_csv(file_name + '.csv')
+    if not file_name.endswith('.csv'):
+        file_name = file_name + '.csv'
+    
+    df = pd.read_csv(file_name)
     return df
 
 
@@ -55,6 +58,18 @@ def save_dataframe_csv(df, file_name):
     df.to_csv(file_name + '.csv', index=False)
 
 
+def save_pyam_dataframe_csv(df, file_name):
+
+    """
+    Function to save a pyam dataframe to a csv file
+
+    Inputs:
+    - df (dataframe): dataframe to save
+    - file_name (str): name of the file to save to
+    """
+    df.to_csv(file_name + '.csv', iamc_index=False)
+
+
 def read_pyam_df(file_name):
     """
     Function to read in a pyam dataframe from a csv file
@@ -65,8 +80,27 @@ def read_pyam_df(file_name):
     Outputs:
     - dataframe
     """
-    df = pyam.IamDataFrame(data=file_name + '.csv')
+    if not file_name.endswith('.csv'):
+        file_name = file_name + '.csv'
+
+    df = pyam.IamDataFrame(data=file_name)
     return df
+
+
+def read_meta_data(meta_filepath):
+        
+    # set up the meta data for the global database
+    if not meta_filepath.endswith('.csv'):
+        meta_filepath = meta_filepath + '.csv'
+    meta = pd.read_csv(meta_filepath)
+    
+    # rename columns to match pyam requirements
+    meta = meta.rename(columns={'Model': 'model', 'Scenario': 'scenario'})
+
+    # set index to model and scenario
+    meta = meta.set_index(['model', 'scenario'])  
+
+    return meta
 
 
 def read_pyam_add_metadata(file_name, meta_data) -> pyam.IamDataFrame:
@@ -75,11 +109,16 @@ def read_pyam_add_metadata(file_name, meta_data) -> pyam.IamDataFrame:
 
     Inputs:
     - file_name (str): name of the file to read in
-
+    - meta_data (dataframe): meta data to add
+    
+    
     Outputs:
-    - dataframe
+    - pyam dataframe
     """
-    df = pyam.IamDataFrame(data=file_name + '.csv', meta=meta_data)
+    if not file_name.endswith('.csv'):
+        file_name = file_name + '.csv'
+    
+    df = pyam.IamDataFrame(data=file_name, meta=meta_data)
     return df
 
 
@@ -102,8 +141,11 @@ def read_pyam_add_metacols(file_name, meta_data, meta_cols=list):
     # subset the meta data
     meta = meta_data[meta_cols]
     
+    if not file_name.endswith('.csv'):
+        file_name = file_name + '.csv'
+
     # combine meta data to the pyam df
-    df = pyam.IamDataFrame(data=file_name + '.csv', meta=meta)
+    df = pyam.IamDataFrame(data=file_name, meta=meta)
     return df
 
 # # read in the regional R10 database, add meta data and set index to model and scenario

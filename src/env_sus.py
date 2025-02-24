@@ -1,23 +1,37 @@
 import numpy as np
 import pyam
 import pandas as pd
-from utils import Utils
-from utils import Data
-from src.constants import *
+# from utils import Utils
+# from utils import Data
+from constants import *
+from utils.file_parser import *
 
+def main(run_regional=None, pyamdf=None, categories=None, scenarios=None, meta=None) -> None:
 
-def main(run_regional=None) -> None:
+    if run_regional is None:
+        run_regional = True
 
+    if categories is None:
+        categories = CATEGORIES_ALL[:2]
+
+    if meta is None:
+        meta = read_meta_data(META_FILE)
+    
+    if pyamdf is None:
+        pyamdf = read_pyam_add_metadata(PROCESSED_DIR + 'Framework_pyam' + str(categories) + '.csv', meta)
+
+    if scenarios is None:
+        scenarios = read_csv(PROCESSED_DIR + 'Framework_scenarios' + str(categories))
 
     if run_regional:
         regional_df = pd.DataFrame()
-        for region in R10:
-            to_append = forest_cover_change(Data.regional_dimensions_pyamdf, 2100, Data.model_scenarios, BIOENERGY_THRESHOLD, CATEGORIES_ALL[:2], regional=region)    
+        for region in R10_CODES:
+            to_append = forest_cover_change(pyamdf, 2100, scenarios, BIOENERGY_THRESHOLD, categories, regional=region)    
             regional_df = pd.concat([regional_df, to_append], ignore_index=True, axis=0)
 
-        regional_df.to_csv('outputs/environmental_metrics_regional' + str(Data.categories) + '.csv')
+        regional_df.to_csv(OUTPUT_DIR + 'environmental_metrics_regional' + str(categories) + '.csv')
     
-    forest_cover_change(Data.regional_dimensions_pyamdf, 2100, Data.model_scenarios, BIOENERGY_THRESHOLD, CATEGORIES_ALL[:2], regional=None)
+    forest_cover_change(pyamdf, 2100, scenarios, BIOENERGY_THRESHOLD, categories, regional=None)
 
 
 def forest_cover_change(pyam_df, end_year, scenario_model_list, beccs_threshold, categories, regional=None):
@@ -44,19 +58,20 @@ def forest_cover_change(pyam_df, end_year, scenario_model_list, beccs_threshold,
         region = regional
         
         # calculate the beccs threshold for the region
-        print('Calculating the bioenergy threshold for the region: ', region)
+
         threshold_df = pyam_df.filter(variable='Land Cover',region=[region,'World'],
                         year=2020,
                         scenario=scenario_model_list['scenario'], 
                         model=scenario_model_list['model'])
         world_land_cover = np.mean(threshold_df['value'][threshold_df['region'] == 'World'].values)
         region_land_cover = np.mean(threshold_df['value'][threshold_df['region'] == region].values)
-        share_of_beccs = int(region_land_cover) / int(world_land_cover)
+        # share_of_beccs = int(region_land_cover) / int(world_land_cover)
         beccs_threshold = (region_land_cover / world_land_cover) * beccs_threshold
         
     else:
         region = 'World'
     
+    print('Calculating the environmental metrics for the region', region)
     # filter for the variables needed
     df = pyam_df.filter(variable=['Land Cover|Forest|Natural Forest','Land Cover','Primary Energy|Biomass'],region=region,
                         year=range(2020, end_year+1),
@@ -68,71 +83,47 @@ def forest_cover_change(pyam_df, end_year, scenario_model_list, beccs_threshold,
     bioenergy_threshold_breached = []
     forest_change_2050 = []
     forest_change_2100 = []
-    
     for scenario, model in zip(scenario_model_list['scenario'], scenario_model_list['model']):
         
-        # Filter out the data for the required scenario and model
-        scenario_model_df = df.filter(scenario=scenario, model=model).as_pandas()
+        # Filter out the data for the required scenario
+        scenario_df = df.filter(scenario=scenario)
+        scenario__model_df = scenario_df.filter(model=model)
 
-        # Extract necessary values
-        land_cover = scenario_model_df[scenario_model_df['variable'] == 'Land Cover'].pivot(index='year', columns='region', values='value')
-        forest_cover = scenario_model_df[scenario_model_df['variable'] == 'Land Cover|Forest|Natural Forest'].pivot(index='year', columns='region', values='value')
-        bioenergy_seq = scenario_model_df[scenario_model_df['variable'] == 'Primary Energy|Biomass'].pivot(index='year', columns='region', values='value')
+        base_value = 0
+        forest_cover_values = []
+        bioenergy_seq_values = []
+        
+        # Iterate through the years
+        for year in year_list:    
 
-        # Calculate share of forest cover
-        share_of_forest = forest_cover / land_cover
+            # Filter out the data for the required year
+            year_df = scenario__model_df.filter(year=year)
+            year_df = year_df.as_pandas()
 
-        # Calculate forest cover change
-        base_value = share_of_forest.loc[2020]
-        forest_cover_values = share_of_forest.loc[year_list] - base_value
+            # extract necessary values 
+            land_cover = year_df['value'][year_df['variable'] == 'Land Cover'].values
+            forest_cover = year_df['value'][year_df['variable'] == 'Land Cover|Forest|Natural Forest'].values
+            bioenergy_seq = year_df['value'][year_df['variable'] == 'Primary Energy|Biomass'].values 
+            share_of_forest = forest_cover[0] / land_cover[0]
+
+            # if 2020 store as 'base' year for given scenario 
+            if year == 2020:
+                base_value = share_of_forest
+            # for all other 
+            else:
+                forest_cover_values.append(share_of_forest - base_value)
+
+            bioenergy_seq_values.append(bioenergy_seq[0])   
 
         # Check if the beccs threshold is breached
-        bioenergy_seq_values = bioenergy_seq.loc[year_list]
-        bioenergy_threshold_breached.append(int((bioenergy_seq_values > beccs_threshold).any().any()))
-
+        if any(i > beccs_threshold for i in bioenergy_seq_values):
+            bioenergy_threshold_breached.append(1)
+        else:
+            bioenergy_threshold_breached.append(0)
+        
         # Append the forest cover change values to the list
-        forest_change_2050.append(forest_cover_values.loc[2050].values[0])
-        forest_change_2100.append(forest_cover_values.loc[2100].values[0])
-        
-        # # Filter out the data for the required scenario
-        # scenario_df = df.filter(scenario=scenario)
-        # scenario__model_df = scenario_df.filter(model=model)
-
-        # base_value = 0
-        # forest_cover_values = []
-        # bioenergy_seq_values = []
-        
-        # # Iterate through the years
-        # for year in year_list:    
-
-        #     # Filter out the data for the required year
-        #     year_df = scenario__model_df.filter(year=year)
-        #     year_df = year_df.as_pandas()
-
-        #     # extract necessary values 
-        #     land_cover = year_df['value'][year_df['variable'] == 'Land Cover'].values
-        #     forest_cover = year_df['value'][year_df['variable'] == 'Land Cover|Forest|Natural Forest'].values
-        #     bioenergy_seq = year_df['value'][year_df['variable'] == 'Primary Energy|Biomass'].values 
-        #     share_of_forest = forest_cover[0] / land_cover[0]
-
-        #     # if 2020 store as 'base' year for given scenario 
-        #     if year == 2020:
-        #         base_value = share_of_forest
-        #     # for all other 
-        #     else:
-        #         forest_cover_values.append(share_of_forest - base_value)
-
-        #     bioenergy_seq_values.append(bioenergy_seq[0])   
-
-        # # Check if the beccs threshold is breached
-        # if any(i > beccs_threshold for i in bioenergy_seq_values):
-        #     bioenergy_threshold_breached.append(1)
-        # else:
-        #     bioenergy_threshold_breached.append(0)
-        
-        # # Append the forest cover change values to the list
-        # forest_change_2050.append(forest_cover_values[2])
-        # forest_change_2100.append(forest_cover_values[-1])
+        forest_change_2050.append(forest_cover_values[2])
+        forest_change_2100.append(forest_cover_values[-1])
 
 
     # Create a dataframe with the mean value and mean value up to 2050
@@ -150,7 +141,7 @@ def forest_cover_change(pyam_df, end_year, scenario_model_list, beccs_threshold,
         return output_df
     
     else:
-        output_df.to_csv('outputs/environmental_metrics' + str(categories) + '.csv')
+        output_df.to_csv(OUTPUT_DIR + 'environmental_metrics' + str(categories) + '.csv')
 
         
 
