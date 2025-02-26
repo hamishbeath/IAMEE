@@ -1,5 +1,4 @@
 from .utils import (
-    Data,
     mandatory_variables_scenarios,
     create_variable_scenario_count,
     data_download,
@@ -14,7 +13,6 @@ from .file_parser import (
 )
 
 __all__ = [
-    'Data',
     'mandatory_variables_scenarios',
     'create_variable_scenario_count',
     'data_download',

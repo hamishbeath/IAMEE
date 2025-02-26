@@ -1,71 +1,83 @@
 import numpy as np
 import pyam
 import pandas as pd
-# from utils import Utils
-from utils import Data
+from constants import *
+from utils.file_parser import *
+from utils import data_download
 import country_converter as coco
 from pygini import gini
 import math
 
-class Resilience:
 
-    energy_variables = variable=['Primary Energy|Coal','Primary Energy|Oil', 
-                        'Primary Energy|Gas', 'Primary Energy|Nuclear',
-                        'Primary Energy|Biomass', 'Primary Energy|Non-Biomass Renewables']
+def main(run_regional=None, pyamdf=None, categories=None, scenarios=None, meta=None) -> None:
 
-    gini_between_countries = pd.read_csv('inputs/gini_btw_6.csv')
-    ssp_gini_data = pd.read_csv('inputs/ssp_population_gdp_projections.csv')
-    regional_gini = pd.read_csv('outputs/within_region_gini.csv')
-    baseline_prices = pyam.IamDataFrame(data='inputs/baseline_data_R10' + str(Data.categories) + '.csv')
 
-def main() -> None:
+    if run_regional is None:
+        run_regional = True
 
+    if categories is None:
+        categories = CATEGORIES_ALL[:2]
+
+    if meta is None:
+        meta = read_meta_data(META_FILE)
+    
+    if pyamdf is None:
+        pyamdf = read_pyam_add_metadata(PROCESSED_DIR + 'Framework_pyam' + str(categories) + '.csv', meta)
+
+    if scenarios is None:
+        scenarios = read_csv(PROCESSED_DIR + 'Framework_scenarios' + str(categories))
+    
+    # Read in the data
+    between_country_gini_data = read_csv(INPUT_DIR + 'gini_ssp_data.csv')
+    ssp_gini_data = read_csv(INPUT_DIR + 'ssp_population_gdp_projections.csv')
+    regional_gini = read_csv(OUTPUT_DIR + 'within_region_gini.csv')
+    country_region_conversion = read_csv(ISO3C_REGIONS)
+
+    try:
+        scenario_baselines = read_csv(BASELINE_SCENARIOS_FILEPATH + str(categories) + '.csv')
+    except FileNotFoundError:
+        print('No baselines file found for the category of', categories, '. Ensure baseline data is available')
+        
+    try:
+        baseline_prices = read_pyam_df(BASELINE_DATA_FILEPATH + str(categories) + '.csv')
+    
+    except FileNotFoundError:
+        
+        baseline_models = scenario_baselines['model'].to_list()
+        baseline_scenarios = scenario_baselines['baseline'].to_list()
+        data_download(BASELINE_DATA_VARIABLES, models=baseline_models,
+                      scenarios=baseline_scenarios,  region=R10_R5, 
+                      categories=CATEGORIES_ALL, end_year=2101, file_name=BASELINE_DATA_FILEPATH + str(categories))
+        
+        baseline_prices = read_pyam_df(BASELINE_DATA_FILEPATH + str(categories) + '.csv')
+    
     # Run global indicators
-    # shannon_index_energy_mix(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories, regional=None)
-    # final_energy_demand(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories, regional=None)
-    # gini_between_countries(Data.regional_dimensions_pyamdf,
-    #                     Data.model_scenarios, 
-    #                     2100, 
-    #                     Data.meta_df,
-    #                     Resilience.gini_between_countries,
-    #                     Data.categories, regional=None)
-
+    shannon_index_energy_mix(pyamdf, scenarios, 2100, categories, regional=None)
+    final_energy_demand(pyamdf, scenarios, 2100, categories, regional=None)
+    gini_between_countries(pyamdf,scenarios, 2100, meta, between_country_gini_data, categories, regional=None)
+    electricity_price(pyamdf, scenarios, 2100, categories, scenario_baselines, baseline_prices, 
+                      country_region_conversion, regional=None)
     # Run regional indicators
-    # final_energy = pd.DataFrame()
-    # shannon = pd.DataFrame()
-    # gini = pd.DataFrame()
-    # for region in Data.R10:
-    #     # to_append = shannon_index_energy_mix(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories, regional=region)
-    #     to_append_energy = final_energy_demand(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories, regional=region)
-    #     to_append_shannon = shannon_index_energy_mix(Data.regional_dimensions_pyamdf, Data.model_scenarios, 2100, Data.categories, regional=region)
-    #     to_append_gini = gini_between_countries(Data.dimensions_pyamdf, Data.model_scenarios, 2100, Data.meta_df, Resilience.gini_between_countries, Data.categories, regional=region)
-    #     final_energy = pd.concat([final_energy, to_append_energy], ignore_index=True, axis=0)
-    #     shannon = pd.concat([shannon, to_append_shannon], ignore_index=True, axis=0)
-    #     gini = pd.concat([gini, to_append_gini], ignore_index=True, axis=0)
-    # shannon.to_csv('outputs/shannon_diversity_index_regional' + str(Data.categories) + '.csv')
-    # final_energy.to_csv('outputs/final_energy_demand_regional' + str(Data.categories) + '.csv')
-    # gini.to_csv('outputs/gini_coefficient_regional' + str(Data.categories) + '.csv')
-    # 
-    electricity_price(Data.regional_dimensions_pyamdf, 
-                      Data.model_scenarios, 2100, Data.categories,
-                      Data.scenario_baselines, Resilience.baseline_prices, 
-                      Data.region_country_df, regional=None)
-    # prices = pd.DataFrame()
-    # for region in Data.R10:
-    #     if region == 'World':
-    #         continue
-    #     to_append = electricity_price(Data.regional_dimensions_pyamdf, 
-    #                                   Data.model_scenarios, 2100, 
-    #                                   Data.categories, 
-    #                                   Data.scenario_baselines,
-    #                                   Resilience.baseline_prices,
-    #                                   Data.region_country_df,
-    #                                   regional=region)
-    #     prices = pd.concat([prices, to_append], ignore_index=True, axis=0)   
-    # prices.to_csv('outputs/electricity_prices_regional' + str(Data.categories) + '.csv')
+    final_energy = pd.DataFrame()
+    shannon = pd.DataFrame()
+    gini = pd.DataFrame()
+    prices = pd.DataFrame()
+    for region in R10_CODES:
+        to_append_energy = final_energy_demand(pyamdf, scenarios, 2100, categories, regional=region)
+        to_append_shannon = shannon_index_energy_mix(pyamdf, scenarios, 2100, categories, regional=region)
+        to_append_gini = gini_between_countries(pyamdf, scenarios, 2100, meta, between_country_gini_data, categories, regional_gini=regional_gini, regional=region)
+        to_append_prices = electricity_price(pyamdf, scenarios, 2100, categories, scenario_baselines, baseline_prices, country_region_conversion, regional=region)
+        final_energy = pd.concat([final_energy, to_append_energy], ignore_index=True, axis=0)
+        shannon = pd.concat([shannon, to_append_shannon], ignore_index=True, axis=0)
+        gini = pd.concat([gini, to_append_gini], ignore_index=True, axis=0)
+        prices = pd.concat([prices, to_append_prices], ignore_index=True, axis=0)   
+    shannon.to_csv(OUTPUT_DIR + 'shannon_diversity_index_regional' + str(categories) + '.csv', index=False)
+    final_energy.to_csv(OUTPUT_DIR + 'final_energy_demand_regional' + str(categories) + '.csv', index=False)
+    gini.to_csv(OUTPUT_DIR + 'gini_coefficient_regional' + str(categories) + '.csv', index=False)
+    prices.to_csv(OUTPUT_DIR + 'electricity_prices_regional' + str(categories) + '.csv', index=False)
 
-    # get_within_region_gini(Resilience.ssp_gini_data, Data.region_country_df, 
-    #                        Data.R10_codes, 2025)
+    # get_within_region_gini(ssp_gini_data, country_region_conversion, R10_CODES, 2025)
+
 
 
 # Function that calculates the shannon index for the energy mix for each scenario
@@ -78,7 +90,7 @@ def shannon_index_energy_mix(pyam_df, scenario_model_list, end_year, categories,
         region = 'World'
 
     # filter for the variables needed
-    df = pyam_df.filter(variable=Resilience.energy_variables,
+    df = pyam_df.filter(variable=ENERGY_VARIABLES,
                         region=region,
                         year=range(2020, end_year+1),
                         scenario=scenario_model_list['scenario'], 
@@ -96,7 +108,7 @@ def shannon_index_energy_mix(pyam_df, scenario_model_list, end_year, categories,
         energy_summed = {}
         total = 0
         # loop through the energy variables to interpolate and sum the values
-        for variable in Resilience.energy_variables:
+        for variable in ENERGY_VARIABLES:
             # Filter out the data for the required variable
             variable_df = scenario__model_df.filter(variable=variable) 
             # make pandas series with the values and years as index
@@ -110,7 +122,7 @@ def shannon_index_energy_mix(pyam_df, scenario_model_list, end_year, categories,
         #  and calculate the shannon index
         proportions = {}
         shannon_total = 0
-        for variable in Resilience.energy_variables:
+        for variable in ENERGY_VARIABLES:
             proportion = energy_summed[variable] / total
             proportions[variable] = proportion
             shannon_index_value = proportion * np.log(proportion)
@@ -125,7 +137,7 @@ def shannon_index_energy_mix(pyam_df, scenario_model_list, end_year, categories,
         shannon_df['region'] = region
         return shannon_df
     else:
-        shannon_df.to_csv('outputs/shannon_diversity_index' + str(categories) + '.csv', index=False)
+        shannon_df.to_csv(OUTPUT_DIR + 'shannon_diversity_index' + str(categories) + '.csv', index=False)
 
 
 # Function that calculates the cumulative final energy demand for each scenario
@@ -180,11 +192,12 @@ def final_energy_demand(pyam_df, scenario_model_list, end_year, categories, regi
         return final_energy_demand_df
 
     else:
-        final_energy_demand_df.to_csv('outputs/final_energy_demand' + str(categories) + '.csv', index=False)
+        final_energy_demand_df.to_csv(OUTPUT_DIR + 'final_energy_demand' + str(categories) + '.csv', index=False)
 
     
 # Function that gives the gini coefficient and SSP population for each scenario
-def gini_between_countries(pyam_df, scenario_model_list, end_year, meta_df, gini_df, categories, regional=None):
+def gini_between_countries(pyam_df, scenario_model_list, end_year, meta_df, gini_df, categories, regional_gini=None, 
+                           regional=None):
     
 
     if regional is not None:
@@ -199,22 +212,14 @@ def gini_between_countries(pyam_df, scenario_model_list, end_year, meta_df, gini
                         scenario=scenario_model_list['scenario'], 
                         model=scenario_model_list['model'])
     
-
     if regional is not None:
         
-
-        gini_df = Resilience.regional_gini
-        # get list position for the region
-        region_position = Data.R10.index(region)
-        region_code = Data.R10_codes[region_position]
-        region_gini = gini_df[region_code]
-        print(region_gini)
+        region_gini = regional_gini[region]
         region_ssp_dict = {}
         count = 0
         for row in region_gini:
             region_ssp_dict['SSP' + str(count+1)] = region_gini[count]
             count += 1
-        print(region_ssp_dict)
         ssp_ginis = region_ssp_dict
     else:
         # loop through the ssps and the gini data to get the between country 
@@ -231,16 +236,13 @@ def gini_between_countries(pyam_df, scenario_model_list, end_year, meta_df, gini
             current_ssp_cells_gini = np.mean(ssp_cells['gini_world_mig'])
             ssp_ginis[ssp_string] = current_ssp_cells_gini
             
-        print(ssp_ginis)
-
     ssp_gini_coefficients = []
     ssps = []
+    meta_df = meta_df.reset_index()
     # loop through models and scenarios
     for scenario, model in zip(scenario_model_list['scenario'], scenario_model_list['model']):
         
         # Filter out the data for the required scenario
-        # scenario_df = df.filter(scenario=scenario)
-        # scenario_model_df = scenario_df.filter(model=model)
         scenario_ssp = meta_df[meta_df['model'] == model]
         scenario_model_ssp = scenario_ssp[scenario_ssp['scenario'] == scenario]    
         try:
@@ -266,10 +268,9 @@ def gini_between_countries(pyam_df, scenario_model_list, end_year, meta_df, gini
         return gini_df
     
     else:
-        gini_df.to_csv('outputs/gini_coefficient' + str(categories) +  '.csv', index=False)
+        gini_df.to_csv(OUTPUT_DIR + 'gini_coefficient' + str(categories) +  '.csv', index=False)
         ssp_gini_coefficients = pd.DataFrame({'ssp': list(ssp_ginis.keys()), 
                                             'gini_coefficient': list(ssp_ginis.values())})
-
 
 
 
@@ -301,7 +302,6 @@ def electricity_price(pyam_df, scenario_model_list, end_year, categories, baseli
         for scenario, model in zip(scenario_model_list['scenario'], scenario_model_list['model']):
 
 
-            
             scenario_baseline = baseline_scenarios[(baseline_scenarios['scenario'] == scenario) & (baseline_scenarios['model'] == model)]['baseline'].values[0]
             
             # Extract baseline data for the scenario
@@ -310,21 +310,19 @@ def electricity_price(pyam_df, scenario_model_list, end_year, categories, baseli
                                                           variable='Price|Secondary Energy|Electricity')
 
             # Now try and get the region values
-
-            scenario_baseline_region_data = scenario_baseline_data.filter(region=region)
+            R10_region_full = R10[R10_CODES.index(region)]
+            scenario_baseline_region_data = scenario_baseline_data.filter(region=R10_region_full)
             baseline_mean_price = pd.Series(scenario_baseline_region_data.data['value'].values, index=scenario_baseline_region_data.data['year']).mean()
 
             if math.isnan(baseline_mean_price):
+                
                 print('No regional baseline data found, using R5 proxy')
-                # get region location in R10 list
-                region_position = Data.R10.index(region)
-                if Data.R10[0] == 'World':
-                    region_position -= 1
-                region_code = Data.R10_codes[region_position]
                 # get the R5 region
-                r5_region = regions_mapping[regions_mapping['r10_iamc'] == region_code]['r5_iamc'].values[0]
+                r5_region = regions_mapping[regions_mapping['r10_iamc'] == region]['r5_iamc'].values[0]
+                r5_region_full = R5[R5_CODES.index(r5_region)]
+                
                 # get the baseline data for the R5 region
-                scenario_baseline_region_data = scenario_baseline_data.filter(region=r5_region)
+                scenario_baseline_region_data = scenario_baseline_data.filter(region=r5_region_full)
                 baseline_mean_price = pd.Series(scenario_baseline_region_data.data['value'].values, index=scenario_baseline_region_data.data['year']).mean()
             
             # Filter out the data for the required scenario
@@ -349,7 +347,6 @@ def electricity_price(pyam_df, scenario_model_list, end_year, categories, baseli
         
         electricity_prices = []
         for scenario, model in zip(scenario_model_list['scenario'], scenario_model_list['model']):
-            
             # Extract the baseline scenario
             scenario_baseline = baseline_scenarios[(baseline_scenarios['scenario'] == scenario) & (baseline_scenarios['model'] == model)]['baseline'].values[0]
 
@@ -370,21 +367,24 @@ def electricity_price(pyam_df, scenario_model_list, end_year, categories, baseli
                 total_baseline_gdp = 0
                 
                 # Sum of  all the price * GDP for each region over the gdp for the region
-                for region in Data.R10:
+                for region in R10_CODES:
+                    # get full region name
+                    index_position = R10_CODES.index(region)
+                    region_full = R10[index_position]
                     region_df = variable_df.filter(region=region)
                     try:
-                        baseline_price = scenario_baseline_data.filter(variable='Price|Secondary Energy|Electricity', region=region).data['value'].values[0]
+                        baseline_price = scenario_baseline_data.filter(variable='Price|Secondary Energy|Electricity', region=region_full).data['value'].values[0]
                         baseline_gdp = region_df.filter(variable='GDP|MER').data['value'].values[0]
+                    
                     except IndexError:
-                        # get region location in R10 list
-                        region_position = Data.R10.index(region)
-                        if Data.R10[0] == 'World':
-                            region_position -= 1
-                        region_code = Data.R10_codes[region_position]
+                        
+                        print('No regional baseline data found, using R5 proxy')
                         # get the R5 region
-                        r5_region = regions_mapping[regions_mapping['r10_iamc'] == region_code]['r5_iamc'].values[0]
+                        r5_region = regions_mapping[regions_mapping['r10_iamc'] == region]['r5_iamc'].values[0]
                         # get the baseline data for the R5 region
-                        baseline_price = scenario_baseline_data.filter(variable='Price|Secondary Energy|Electricity',region=r5_region).data['value'].values[0]
+                        r5_index_position = R5_CODES.index(r5_region)
+                        r5_region_full = R5[r5_index_position] 
+                        baseline_price = scenario_baseline_data.filter(variable='Price|Secondary Energy|Electricity',region=r5_region_full).data['value'].values[0]
                         baseline_gdp = region_df.filter(variable='GDP|MER').data['value'].values[0]
 
                     total_baseline_price += baseline_price * baseline_gdp
@@ -401,7 +401,7 @@ def electricity_price(pyam_df, scenario_model_list, end_year, categories, baseli
             electricity_prices.append(np.array(decadal_price_gap).mean())
 
         electricity_prices_df = pd.DataFrame({'model': scenario_model_list['model'], 'scenario': scenario_model_list['scenario'], 'electricity_price': electricity_prices})
-        electricity_prices_df.to_csv('outputs/electricity_prices' + str(categories) + '.csv', index=False)
+        electricity_prices_df.to_csv(OUTPUT_DIR + 'electricity_prices' + str(categories) + '.csv', index=False)
 
 
 # calculate regional within region Gini by SSP
@@ -492,9 +492,7 @@ def get_within_region_gini(ssp_data, regions_breakdown, region_codes, start_year
     # columns as region codes
     region_codes.append('ssp')
     output_ginis.columns = region_codes
-    output_ginis.to_csv('outputs/within_region_gini.csv', index=False)
-
-
+    output_ginis.to_csv(OUTPUT_DIR + 'within_region_gini.csv', index=False)
 
 
 

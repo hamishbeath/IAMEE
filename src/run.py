@@ -1,13 +1,15 @@
 import env_sus
 import econ_feas
-# import robust
+
+import robust
 import resources
-# import resilience
+import fairness
+import resilience
+import transition_speed
 from utils.file_parser import *
 from constants import *
 from utils import mandatory_variables_scenarios
 import os
-
 
 
 categories = CATEGORIES_ALL[:2]
@@ -22,7 +24,18 @@ def main():
     # print('Environmental sustainability done')
     # econ_feas.main()
     # print('Economic feasibility done')
-    resources.main(categories=categories)
+    # resources.main(categories=categories)
+    # print('Resource efficiency done')
+    # robust.main(categories=categories)
+    # print('Robustness done')
+    # fairness.main(categories=categories)
+    # print('Fairness done')
+    # resilience.main(categories=categories)
+    # print('Resilience done')
+    transition_speed.main(categories=categories)
+    
+    # fairness.main(categories=categories)
+    print('Framework run complete')
 
 # set up function that ensures all the necessary data/files are ready
 def setup(categories=list, regional=True):
@@ -36,7 +49,6 @@ def setup(categories=list, regional=True):
     Inputs:
     - categories: The category(ies) that will be compared in the analysis
     - regional: Whether the analysis is regional or global
-    - redownload: True if overwrite existing files
 
     Outputs:
     - The pyam dataframe database snippet ready for the analysis
@@ -113,15 +125,5 @@ if __name__ == '__main__':
     main()
 
 
-# print('Running the framework')
-# env_sus.main()
 
-# print('Economic feasibility done')
-# robust.main()
-# print('Robustness done')
-# resources.main()
-# print('Resource efficiency done')
-# resilience.main()
-# print('Resilience done')
 
-# print('Framework run complete')

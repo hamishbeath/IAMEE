@@ -17,10 +17,13 @@ DATABASE_DIR = "src/database/"
 # LOG_FILE = "logs/app.log"
 
 
-# File Names
+# File Names/Paths
 DATABASE_FILE = DATABASE_DIR + "AR6_Scenarios_Database_World_v1.1.csv"
 REGIONAL_DATABASE_FILE = DATABASE_DIR + "AR6_Scenarios_Database_R10_regions_v1.1.csv"
 META_FILE = DATABASE_DIR + "meta_data.csv"
+BASELINE_SCENARIOS_FILEPATH = INPUT_DIR + "baselines"
+BASELINE_DATA_FILEPATH = INPUT_DIR + "baseline_data"
+ISO3C_REGIONS = INPUT_DIR + 'iso3c_regions.csv' #https://github.com/setupelz/regioniso3c/blob/main/iso3c_region_mapping_20240319.csv    
 
 # IAM Data constants
 CATEGORIES_ALL = ['C1', 'C2', 'C3', 'C4', 'C5','C6', 'C7', 'C8']
@@ -35,7 +38,7 @@ C1AR10_SCENARIOS = ['EN_NPi2020_300f', 'SSP1-DACCS-1p9-3pctHR', 'SSP1-noDACCS-1p
                     'DeepElec_SSP2_def_Budg900', 'DISCRATE_cb400_cdrno_dr5p', 'EN_NPi2020_450f', 'EN_NPi2020_500f']
 
 PRESENT_WARMING = 1.25
-
+REMAINING_2030_BUDGET = 250000 # in MtCO2
 
 # Framework Constants
 FRAMEWORK_MANDATORY_VARIABLES = ['Emissions|CO2',
@@ -70,6 +73,13 @@ ENERGY_VARIABLES = ['Primary Energy|Coal','Primary Energy|Oil',
                     'Primary Energy|Gas', 'Primary Energy|Nuclear',
                     'Primary Energy|Biomass', 'Primary Energy|Non-Biomass Renewables']
 
+LOW_CARBON_ENERGY_VARIABLES = ['Primary Energy|Nuclear', 'Primary Energy|Biomass', 
+                                   'Primary Energy|Non-Biomass Renewables', 'Primary Energy|Fossil|w/ CCS']
+
+TRANSITION_SPEED_VARIABLES = ['Final Energy', 'Final Energy|Electricity', 
+                              'Food Demand|Crops', 'Food Demand|Livestock']
+
+BASELINE_DATA_VARIABLES = ['Price|Secondary Energy|Electricity', 'GDP|MER']
 
 # Regions
 R10 = ['Countries of Latin America and the Caribbean','Countries of South Asia; primarily India',
@@ -119,7 +129,7 @@ R5_DICT = {'Asian countries except Japan': 'R5ASIA',
 
 R5_CODES = ['R5ASIA', 'R5REF', 'R5MAF', 'R5LAM', 'R5OECD90+EU'] #r5_iamc
 
-
+R10_R5 = R10_CODES + R5_CODES
 
 
 

@@ -10,39 +10,8 @@ cc = coco.CountryConverter()
 
 """
 This is a set of utils that are used by different scripts in the framework analysis
-
 """
 
-class Data:
-
-
-    region_country_df = pd.read_csv('iso3c_regions.csv')
-    #https://github.com/setupelz/regioniso3c/blob/main/iso3c_region_mapping_20240319.csv    
-
-
-    # ar6_world = pyam.IamDataFrame(data='database/AR6_Scenarios_Database_World_v1.1.csv', meta='database/meta_data.csv')
-    # ar6_world = pyam.read_datapackage('database/', data='AR6_Scenarios_Database_World_v1.1.csv', meta='meta_data.csv')
-    
-    # ar6_R10 = pyam.IamDataFrame(data='database/AR6_Scenarios_Database_Regions_v1.1.csv', meta='database/meta_data.csv')
-    # ar6_meta = pd.DataFrame('database/metadata.csv')
-    categories = ['C1', 'C2']
-
-    # model_scenarios = pd.read_csv('Countries of Sub-Saharan Africa_mandatory_variables_scenarios' + str(categories) + '.csv')
-    # dimensions_pyamdf = cat_df = pyam.IamDataFrame(data='cat_df' + str(categories) + '.csv')
-    # meta_df = pd.read_csv('cat_meta' + str(categories) + '.csv') 
-
-
-    # try:
-    #     regional_dimensions_pyamdf = pyam.IamDataFrame(data='pyamdf_dimensions_data_R10' + str(categories) + '.csv')
-    # except FileNotFoundError:
-    #     print('No regional dimensions data found')
-    
-
-
-    # try:
-    #     scenario_baselines = pd.read_csv('baselines' + str(categories) + '.csv')
-    # except FileNotFoundError:
-    #     print('No baselines file found for the category of', categories)
 
 
 
@@ -140,8 +109,10 @@ def data_download(variables, models, scenarios, region, categories,
                 auth_url='https://api.manager.ece.iiasa.ac.at')    
 
     df = connAr6.query(model=models, scenario=scenarios,
-        variable=variables, region=region, category=categories,
+        variable=variables, region=region,
         year=range(2020, end_year+1))
+    
+    print(df)
     df = df.filter(Category=categories)
 
     df.to_csv(file_name + '.csv')
