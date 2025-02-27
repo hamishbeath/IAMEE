@@ -33,9 +33,8 @@ class IndexBuilder:
         between_region_gini = pd.read_csv('outputs/between_region_gini' + str(Data.categories) + '.csv')
         carbon_budget_fairness = pd.read_csv('outputs/carbon_budget_fairness' + str(Data.categories) + '.csv')
 
-
     except FileNotFoundError:
-        print('Index data are not available yet')
+        print('Index data are not available yet. Please ensure you have run all the analysis scripts.')
 
     try:
         regional_investment_metrics = pd.read_csv('outputs/energy_supply_investment_score_regional' + str(Data.categories) + '.csv')
@@ -55,7 +54,8 @@ class IndexBuilder:
         regional_CDR_2050 = pd.read_csv('outputs/total_CDR_regional' + str(Data.categories) + '.csv')
 
     except FileNotFoundError:
-        print('Regional index data for your chosen categories not available yet')
+        print('Regional index data for your chosen categories not available yet. Please ensure you have run the analysis scripts for the regional data')
+
 
 class Selection:
 
@@ -77,7 +77,6 @@ class Selection:
         centroid_scenarios = pd.read_csv('outputs/closest_to_centroids' + str(Data.categories) + '.csv', index_col=0)
     except:
         print('find_scenario_archetypes function has not been run yet')
-
 
 
 
@@ -418,6 +417,7 @@ def robustness_score(flexibility_scores, shannon_index, carbon_budgets, CDR_2050
     else:
         # create the composite robustness score
         output_df.to_csv('outputs/robustness_scores' + str(Data.categories) + '.csv', index=False)
+
 
 # calculate the fairness score (higher score = more fairness challenges)
 def fairness_score(between_region_gini, carbon_budget_fairness):

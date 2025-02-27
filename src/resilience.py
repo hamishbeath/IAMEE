@@ -57,24 +57,26 @@ def main(run_regional=None, pyamdf=None, categories=None, scenarios=None, meta=N
     gini_between_countries(pyamdf,scenarios, 2100, meta, between_country_gini_data, categories, regional=None)
     electricity_price(pyamdf, scenarios, 2100, categories, scenario_baselines, baseline_prices, 
                       country_region_conversion, regional=None)
-    # Run regional indicators
-    final_energy = pd.DataFrame()
-    shannon = pd.DataFrame()
-    gini = pd.DataFrame()
-    prices = pd.DataFrame()
-    for region in R10_CODES:
-        to_append_energy = final_energy_demand(pyamdf, scenarios, 2100, categories, regional=region)
-        to_append_shannon = shannon_index_energy_mix(pyamdf, scenarios, 2100, categories, regional=region)
-        to_append_gini = gini_between_countries(pyamdf, scenarios, 2100, meta, between_country_gini_data, categories, regional_gini=regional_gini, regional=region)
-        to_append_prices = electricity_price(pyamdf, scenarios, 2100, categories, scenario_baselines, baseline_prices, country_region_conversion, regional=region)
-        final_energy = pd.concat([final_energy, to_append_energy], ignore_index=True, axis=0)
-        shannon = pd.concat([shannon, to_append_shannon], ignore_index=True, axis=0)
-        gini = pd.concat([gini, to_append_gini], ignore_index=True, axis=0)
-        prices = pd.concat([prices, to_append_prices], ignore_index=True, axis=0)   
-    shannon.to_csv(OUTPUT_DIR + 'shannon_diversity_index_regional' + str(categories) + '.csv', index=False)
-    final_energy.to_csv(OUTPUT_DIR + 'final_energy_demand_regional' + str(categories) + '.csv', index=False)
-    gini.to_csv(OUTPUT_DIR + 'gini_coefficient_regional' + str(categories) + '.csv', index=False)
-    prices.to_csv(OUTPUT_DIR + 'electricity_prices_regional' + str(categories) + '.csv', index=False)
+        
+    if run_regional:
+        # Run regional indicators
+        final_energy = pd.DataFrame()
+        shannon = pd.DataFrame()
+        gini = pd.DataFrame()
+        prices = pd.DataFrame()
+        for region in R10_CODES:
+            to_append_energy = final_energy_demand(pyamdf, scenarios, 2100, categories, regional=region)
+            to_append_shannon = shannon_index_energy_mix(pyamdf, scenarios, 2100, categories, regional=region)
+            to_append_gini = gini_between_countries(pyamdf, scenarios, 2100, meta, between_country_gini_data, categories, regional_gini=regional_gini, regional=region)
+            to_append_prices = electricity_price(pyamdf, scenarios, 2100, categories, scenario_baselines, baseline_prices, country_region_conversion, regional=region)
+            final_energy = pd.concat([final_energy, to_append_energy], ignore_index=True, axis=0)
+            shannon = pd.concat([shannon, to_append_shannon], ignore_index=True, axis=0)
+            gini = pd.concat([gini, to_append_gini], ignore_index=True, axis=0)
+            prices = pd.concat([prices, to_append_prices], ignore_index=True, axis=0)   
+        shannon.to_csv(OUTPUT_DIR + 'shannon_diversity_index_regional' + str(categories) + '.csv', index=False)
+        final_energy.to_csv(OUTPUT_DIR + 'final_energy_demand_regional' + str(categories) + '.csv', index=False)
+        gini.to_csv(OUTPUT_DIR + 'gini_coefficient_regional' + str(categories) + '.csv', index=False)
+        prices.to_csv(OUTPUT_DIR + 'electricity_prices_regional' + str(categories) + '.csv', index=False)
 
     # get_within_region_gini(ssp_gini_data, country_region_conversion, R10_CODES, 2025)
 
