@@ -27,6 +27,7 @@ ISO3C_REGIONS = INPUT_DIR + 'iso3c_regions.csv' #https://github.com/setupelz/reg
 
 # IAM Data constants
 CATEGORIES_ALL = ['C1', 'C2', 'C3', 'C4', 'C5','C6', 'C7', 'C8']
+CATEGORIES_DEFAULT = CATEGORIES_ALL[:2]
 
 # probably remove?
 C1AR10_SCENARIOS = ['EN_NPi2020_300f', 'SSP1-DACCS-1p9-3pctHR', 'SSP1-noDACCS-1p9-3pctHR', 'SSP4-noDACCS-1p9-3pctHR', 

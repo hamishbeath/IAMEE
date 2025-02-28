@@ -16,6 +16,7 @@
 !src/plotting.py
 !src/resources.py
 !src/resilience.py
+!src/transition_speed.py
 !src/robust.py
 !src/main.py
 !src/run.py

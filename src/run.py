@@ -1,18 +1,18 @@
 import env_sus
 import econ_feas
-
 import robust
 import resources
 import fairness
 import resilience
 import transition_speed
+import analysis
 from utils.file_parser import *
 from constants import *
 from utils import mandatory_variables_scenarios
 import os
 
 
-categories = CATEGORIES_ALL[:2]
+categories = CATEGORIES_DEFAULT
 regional = True
 
 def main():
@@ -32,7 +32,10 @@ def main():
     # print('Fairness done')
     # resilience.main(categories=categories)
     # print('Resilience done')
-    transition_speed.main(categories=categories)
+    # transition_speed.main(categories=categories)
+    # print('Transition speed done')
+    analysis.main(categories=categories, run_regional=True)
+
     
     # fairness.main(categories=categories)
     print('Framework run complete')

@@ -9,8 +9,8 @@ import pandas as pd
 from matplotlib import rcParams
 from utils import Data, Utils
 from src.constants import *
-from main import Selection
-from main import IndexBuilder
+from src.analysis import Selection
+from src.analysis import IndexBuilder
 import matplotlib.lines as mlines
 # plt.rcParams['font.size'] = 7
 # plt.rcParams['axes.titlesize'] = 7

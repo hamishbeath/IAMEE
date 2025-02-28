@@ -11,8 +11,8 @@ from utils.file_parser import *
 def main(pyamdf=None, categories=None, scenarios=None, meta=None) -> None:
 
     if categories is None:
-        categories = CATEGORIES_ALL[:2]
-
+        categories = CATEGORIES_DEFAULT
+        
     if meta is None:
         meta = read_meta_data(META_FILE)
     
