@@ -32,10 +32,9 @@ def main():
     # print('Fairness done')
     # resilience.main(categories=categories)
     # print('Resilience done')
-    # transition_speed.main(categories=categories)
-    # print('Transition speed done')
+    transition_speed.main(categories=categories)
+    print('Transition speed done')
     analysis.main(categories=categories, run_regional=True)
-
     
     # fairness.main(categories=categories)
     print('Framework run complete')

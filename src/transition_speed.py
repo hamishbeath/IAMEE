@@ -41,15 +41,15 @@ def main(run_regional=None, pyamdf=None, categories=None, scenarios=None, meta=N
 
     calculate_transition_speed_metrics(pyamdf, categories, scenarios, 2100)
 
-    # if run_regional:
+    if run_regional:
         
-    #     output_df = pd.DataFrame()
-    #     for region in R10_CODES:
-    #         print('Running regional transition speed analysis for ' + region)
-    #         to_append = calculate_transition_speed_metrics(pyamdf, categories, scenarios, 2100, regional=region)
-    #         output_df = pd.concat([output_df, to_append], ignore_index=True, axis=0)
+        output_df = pd.DataFrame()
+        for region in R10_CODES:
+            print('Running regional transition speed analysis for ' + region)
+            to_append = calculate_transition_speed_metrics(pyamdf, categories, scenarios, 2100, regional=region)
+            output_df = pd.concat([output_df, to_append], ignore_index=True, axis=0)
         
-    #     output_df.to_csv(OUTPUT_DIR + 'transition_speed_metrics_regional' + str(categories) + '.csv', index=False)
+        output_df.to_csv(OUTPUT_DIR + 'transition_speed_metrics_regional' + str(categories) + '.csv', index=False)
     
 
 # Function that calculates the necessary metrics for the transition speed analysis
@@ -90,6 +90,9 @@ def calculate_transition_speed_metrics(pyamdf, categories, scenarios, end_year, 
     # Calculate the max decadal values for each indicator 
     df = df.pivot_table(index=['model', 'scenario', 'year'], columns='variable', values='value').reset_index()
     
+    # final energy per capita
+    df['Final Energy per capita'] = df['Final Energy'] / df['Population']
+
     # share of final energy from electricity
     df['Final energy share electricity'] = df['Final Energy|Electricity'] / df['Final Energy']
 
@@ -115,7 +118,7 @@ def calculate_transition_speed_metrics(pyamdf, categories, scenarios, end_year, 
         scenario_model_df = df[(df['model'] == model) & (df['scenario'] == scenario)]
 
         # final demand reductions
-        final_demand_reductions.append(scenario_model_df['Final Energy'].diff().groupby((scenario_model_df['year'] // 10) * 10).sum().min())
+        final_demand_reductions.append(scenario_model_df['Final Energy per capita'].diff().groupby((scenario_model_df['year'] // 10) * 10).sum().min())
 
         # share of final energy from electricity
         electrification_increases.append(scenario_model_df['Final energy share electricity'].diff().groupby((scenario_model_df['year'] // 10) * 10).sum().max())
@@ -124,7 +127,7 @@ def calculate_transition_speed_metrics(pyamdf, categories, scenarios, end_year, 
         crop_share_increases.append(scenario_model_df['Share of food demand from crops'].diff().groupby((scenario_model_df['year'] // 10) * 10).sum().max())
 
     output_df = pd.DataFrame({'model': scenarios['model'], 'scenario': scenarios['scenario'],
-                              'Final demand reductions': final_demand_reductions,
+                              'Final energy per cap reductions': final_demand_reductions,
                               'Share of final energy from electricity': electrification_increases,
                               'Share of food demand from crops': crop_share_increases})
 

@@ -78,7 +78,8 @@ LOW_CARBON_ENERGY_VARIABLES = ['Primary Energy|Nuclear', 'Primary Energy|Biomass
                                    'Primary Energy|Non-Biomass Renewables', 'Primary Energy|Fossil|w/ CCS']
 
 TRANSITION_SPEED_VARIABLES = ['Final Energy', 'Final Energy|Electricity', 
-                              'Food Demand|Crops', 'Food Demand|Livestock']
+                              'Food Demand|Crops', 'Food Demand|Livestock',
+                              'Population']
 
 BASELINE_DATA_VARIABLES = ['Price|Secondary Energy|Electricity', 'GDP|MER']
 
