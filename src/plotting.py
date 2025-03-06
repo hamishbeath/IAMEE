@@ -4,14 +4,23 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import matplotlib.patches as mpatches
-from itertools import product, combinations
+from itertools import combinations
+import re
 import pandas as pd
 from matplotlib import rcParams
-from utils import Data, Utils
-from src.constants import *
-from src.analysis import Selection
-from src.analysis import IndexBuilder
 import matplotlib.lines as mlines
+
+
+from constants import *
+from utils.file_parser import *
+from scipy import stats
+
+# from src.analysis import Selection
+# from src.analysis import IndexBuilder
+
+
+
+
 # plt.rcParams['font.size'] = 7
 # plt.rcParams['axes.titlesize'] = 7
 # plt.rcParams['figure.dpi'] = 150
@@ -42,17 +51,20 @@ from the main dimension specific scripts.
 
 def main() -> None:
     
-    
-    
-    try:
-        scenario_archetypes = pd.read_csv('outputs/scenario_archetypes '+ str(categories) + '.csv')
-    except:
-        print('No scenario archetypes file found for the category of', categories)
-    
+
+
+    scenario_archetypes = pd.read_csv(OUTPUT_DIR + 'scenario_archetypes'+ str(CATEGORIES_DEFAULT) + '.csv')
+
+
+
+
+    scenarios = read_csv(PROCESSED_DIR + 'Framework_scenarios' + str(CATEGORIES_DEFAULT))
+
+
     # Plotting.polar_bar_plot_variables(Plotting, 'stats_datasheet.csv', Plotting.dimensions, 'C1a_NZGHGs')
     # Plotting.box_plot_variables(Plotting, 'variable_categories.csv', 'robust', 'C1a_NZGHGs', [2050, 2100])
     # Plotting.single_variable_box_line(Plotting, Data.c1aR10_scenarios, 'Land Cover|Forest', 'C1a_NZGHGs', 'World',years=range(2020, 2101))
-    # Plotting.plot_metrics_vertical(Plotting, Plotting.bright_modern_colors, Data.model_scenarios,  Plotting.model_families)
+    # Plotting.plot_metrics_vertical(Plotting, scenarios,  Plotting.model_families)
     # Plotting.create_radar_plots(Plotting, 
     #                             Data.model_scenarios, 
     #                             Selection.economic_scores, 
@@ -65,37 +77,35 @@ def main() -> None:
     # clostest_cluster_centroid = pd.read_csv('outputs/closest_to_centroids' + str(Data.categories) + '.csv')
     # Plotting.radar_plot_scenario_archetypes(Plotting, Data.model_scenarios, Selection.archetypes, Plotting.bright_modern_colors,
     #                                          clostest_cluster_centroid)
-    # Plotting.radar_plot_scenario_archetypes(Plotting, Data.model_scenarios, Selection.archetypes, Plotting.bright_modern_colors,
-    #                                         Plotting.selected_scenarios)
-    Plotting.line_plot_narrative_variables(Plotting, 'Energy Service|Transportation|Freight', Selection.centroid_scenarios, 
-                                                    Data.briefing_paper_data, base_normalisation=False, 
-                                                    secondary_variable=None, region=Data.briefing_paper_regions[0])
+    Plotting.radar_plot_scenario_archetypes(Plotting, scenarios, scenario_archetypes, Plotting.selected_scenarios, Plotting.clustered_scores, add_all_clustered=True)
+    # Plotting.line_plot_narrative_variables(Plotting, 'Energy Service|Transportation|Freight', Selection.centroid_scenarios, 
+    #                                                 Data.briefing_paper_data, base_normalisation=False, 
+    #                                                 secondary_variable=None, region=Data.briefing_paper_regions[0])
     
     # Plotting.energy_system_stackplot(Plotting, Selection.centroid_scenarios, Data.briefing_paper_data, 
     #                                  Plotting.energy_shares_variables, region=Data.briefing_paper_regions[1])
     # Plotting.transport_stackplot(Plotting, Selection.centroid_scenarios, Data.briefing_paper_data, region=Data.briefing_paper_regions[1])
     # Plotting.land_use_stacked_shares(Plotting, Selection.centroid_scenarios, Data.briefing_paper_data, region=Data.briefing_paper_regions[1])
     # Plotting.CDR_stacked_shares(Plotting, Selection.centroid_scenarios, Data.briefing_paper_data, region=Data.briefing_paper_regions[1])
-    # Plotting.radar_plot_model_fingerprint_single_panel(Plotting, Data.model_scenarios, Plotting.model_families, Plotting.model_colours, Plotting.clustered_scores)
+    # Plotting.radar_plot_model_fingerprint_single_panel(Plotting, scenarios, Plotting.model_families, Plotting.model_colours, Plotting.clustered_scores)
     # Plotting.regional_differences_across_scenarios(Plotting, Plotting.normalised_scores, Plotting.regional_normalised_scores, Data.model_scenarios, Plotting.selected_scenarios, cross_regional_norm=None)
     # Plotting.specific_dimension_regional_analysis(Plotting, Plotting.normalised_scores, Plotting.regional_normalised_scores, 
     #                                               Data.R10[3], Data.R10[6], Plotting.model_families)
-    # Plotting.radar_plot_ssp_pairs(Plotting, Data.model_scenarios, IndexBuilder.gini_coefficient, Plotting.clustered_scores)
+    # Plotting.radar_plot_ssp_pairs(Plotting, scenarios, Plotting.gini_coefficient, Plotting.clustered_scores)
     # Plotting.radar_plot(Plotting, Data.model_scenarios, Plotting.clustered_scores)
     # Plotting.convex_hull(Plotting, Plotting.clustered_scores, 10)
     # Plotting.duplicate_scenarios_plot(Plotting, Plotting.clustered_scores)
     # Plotting.count_pairwise_low_scores(Plotting, Plotting.clustered_scores, low_score_threshold=0.2)
-    # Plotting.radar_plot_temp_category(Plotting, Data.meta_df, Plotting.clustered_scores)
-    # Plotting.emissions_spaghetti_plot(Plotting, Data.model_scenarios, Data.regional_dimensions_pyamdf, 'World', 'Emissions|CO2',
-    #                                   Plotting.normalised_scores, weighted=False, selected_scenarios=None)
-    # pyam_df = pyam.IamDataFrame(data='plotting_data_ccmf_electrification.csv')
-    # Plotting.electrification_plots(pyam_df, 2020, 2051)
+    # meta = read_meta_data(META_FILE)
+    # Plotting.radar_plot_temp_category(Plotting, meta, Plotting.clustered_scores)
 
+    # Plotting.parallel_coord_plot(Plotting, Plotting.clustered_scores, Plotting.archetype_colours)
+    # Plotting.correlation_heatmap(Plotting, Plotting.normalised_scores)
 
 class Plotting:
 
-    dimensions = ['economic', 'environment', 'resilience', 'resource', 'robust', 'fairness']
-    dimension_names = ['Economic', 'Environment', 'Resource', 'Resilience', 'Robust', 'Fairness']
+    dimensions = ['economic', 'environment', 'resilience', 'resource', 'robust', 'fairness', 'transition_speed']
+    dimension_names = ['Economic', 'Environment', 'Resource', 'Resilience', 'Robust', 'Fairness', 'Transition Speed']
     dimension_colours = {'economic': 'red', 'environment': 'green', 'resilience': 'blue', 'resource': 'orange', 'robust': 'purple'}
     dimension_titles = {'economic': 'Economic Feasibility', 'environment': 'Non-climate Environmental Sustainability', 'resilience': 'Societal Resilience', 'resource': 'Resource Availability', 'robust': 'Scenario Robustness'}
     dimention_cmaps = {'economic': 'Reds', 'environment': 'Greens', 'resilience': 'Blues', 'resource': 'Oranges', 'robust': 'Purples'}
@@ -112,249 +122,48 @@ class Plotting:
                              'Primary Energy|Biomass': 'green', 
                              'Primary Energy|Non-Biomass Renewables': 'lightgreen'}
 
-    model_families = pd.read_csv('inputs/model_family.csv')
+    model_families = read_csv(INPUT_DIR + 'model_family.csv')
 
     try:
-        clustered_scores = pd.read_csv('outputs/clustered_scores' + str(Data.categories) + '.csv')
+        clustered_scores = pd.read_csv(OUTPUT_DIR + 'clustered_scores' + str(CATEGORIES_DEFAULT) + '.csv')
     except FileNotFoundError:
         print('No clustered scores file found')
 
-
-    selected_scenarios = pd.read_csv('outputs/selected_scenarios' + str(Data.categories) + '.csv')
-    c1a_data = pyam.IamDataFrame('c1a_selected_scenario_narrative_data.csv')
+    selected_scenarios = pd.read_csv(OUTPUT_DIR + 'selected_scenarios' + str(CATEGORIES_DEFAULT) + '.csv')
 
     model_colours = {'IMAGE': '#E69F00', 'AIM':'#090059','GCAM':'#D57501', 'MESSAGE':'#56B4E9', 'REMIND':'#009E73', 'WITCH':'#CC79A7'}
 
-    regional_normalised_scores = pd.read_csv('outputs/regional_normalised_dimension_scores' + str(Data.categories) + '.csv')
-    regional_normalised_scores_cross_regional = pd.read_csv('outputs/regional_normalised_dimension_scores_cross_regional_normalisation' + str(Data.categories) + '.csv')
-    normalised_scores = pd.read_csv('outputs/normalised_scores' + str(Data.categories) + '.csv')
+    regional_normalised_scores = pd.read_csv(OUTPUT_DIR + 'regional_normalised_dimension_scores' + str(CATEGORIES_DEFAULT) + '.csv')
+    regional_normalised_scores_cross_regional = pd.read_csv(OUTPUT_DIR + 'regional_normalised_dimension_scores_cross_regional_normalisation' + str(CATEGORIES_DEFAULT) + '.csv')
+    normalised_scores = pd.read_csv(OUTPUT_DIR + 'normalised_scores' + str(CATEGORIES_DEFAULT) + '.csv')
+    # clustered_scores = pd.read_csv(OUTPUT_DIR + 'clustered_scores' + str(CATEGORIES_DEFAULT) + '.csv')
+    
+    archetype_colours = ['#FFB000', '#648FFF', '#DC267F', '#FE6100']
 
 
-    # Create a detailed polar bar plot that categorises 
-    def polar_bar_plot_variables(self, file_name, dimensions, category):
+    categories = CATEGORIES_DEFAULT
         
-        variable_data = pd.read_csv(file_name)
-        variable_data = variable_data[variable_data['category_1'].isin(dimensions)]
+    investment_metrics = pd.read_csv(OUTPUT_DIR + 'energy_supply_investment_score' + str(categories) + '.csv')
+    environment_metrics = pd.read_csv(OUTPUT_DIR + 'environmental_metrics' + str(categories) + '.csv')
+    resource_metrics = pd.read_csv(OUTPUT_DIR + 'material_use_ratios' + str(categories) + '.csv')
+    transition_speed_metrics = pd.read_csv(OUTPUT_DIR + 'transition_speed_metrics' + str(categories) + '.csv')
 
-        # print(variable_data)
+    # import resilience metrics
+    final_energy_demand = pd.read_csv(OUTPUT_DIR + 'final_energy_demand' + str(categories) + '.csv')    
+    # energy_diversity = pd.read_csv(OUTPUT_DIR + 'shannon_diversity_index' + str(categories) + '.csv')   
+    gini_coefficient = pd.read_csv(OUTPUT_DIR + 'gini_coefficient' + str(categories) + '.csv')
+    # electricity_price = pd.read_csv(OUTPUT_DIR + 'electricity_prices' + str(categories) + '.csv')
 
-        for dimension in dimensions:
-            
-            print(dimension)
-            
-            # Filter the data to only include the dimension of interest, whether it is found in category_1 or category_2
-            dimension_data = variable_data[(variable_data['category_1'] == dimension) | (variable_data['category_2'] == dimension)]
-            
-            # Rank the variables largest to smallest on the column of world value
-            dimension_data = dimension_data.sort_values(by=["('World', '" + category +"', 'percentage')"], ascending=False)
-            
-            with plt.style.context('fivethirtyeight'):
-                fig, ax = plt.subplots(subplot_kw={'projection': 'polar'}, figsize=(10,10))
+    # import robustness metrics
+    # energy_system_flexibility = pd.read_csv(OUTPUT_DIR + 'flexibility_scores' + str(categories) + '.csv')
+    carbon_budgets = pd.read_csv(OUTPUT_DIR + 'carbon_budget_shares' + str(categories) + '.csv')
+    # low_carbon_diversity = pd.read_csv(OUTPUT_DIR + 'low_carbon_shannon_diversity_index' + str(categories) + '.csv')
+    # CDR_2050 = pd.read_csv(OUTPUT_DIR + 'total_CDR' + str(categories) + '.csv')
 
-                angles = np.linspace(0, 2*np.pi, len(dimension_data), endpoint=False)
-                indexes = list(range(0, len(dimension_data)))
-                width = 2*np.pi / len(dimension_data)
-                angles = [element * width for element in indexes]
+    # import fairness metrics
+    between_region_gini = pd.read_csv(OUTPUT_DIR + 'between_region_gini' + str(categories) + '.csv')
+    # carbon_budget_fairness = pd.read_csv(OUTPUT_DIR + 'carbon_budget_fairness' + str(categories) + '.csv')
 
-                label_loc = np.linspace(start=0, stop=2 * np.pi, num=len(dimension_data))
-                bars_bg = ax.bar(x = angles, height=100, width=width, color='grey',
-                        edgecolor='black', zorder=1, alpha=0.1)
-
-                rankings = dimension_data["('World', '" + category +"', 'percentage')"].tolist()    
-                rankings_r5 = dimension_data["('Asian countries except Japan', '" + category +"', 'percentage')"].tolist()                
-                rankings_r10 = dimension_data["('Countries of Sub-Saharan Africa', '" + category +"', 'percentage')"].tolist()
-
-                variables = dimension_data['variable']
-                bars = ax.bar(x = angles, height=rankings, width=width, color=self.dimension_colours[dimension],
-                        edgecolor='white', zorder=2, alpha=0.5)
-                bars_r5 = ax.bar(x = angles, height=rankings_r5, width=width, color='black',
-                        edgecolor='white', zorder=3, alpha=0.3)
-                bars_r10 = ax.bar(x = angles, height=rankings_r10, width=width, color='gray',
-                        edgecolor='white', zorder=4, alpha=0.3)
-
-                for angle, height, variables in zip(angles, rankings, variables):
-                    rotation_angle = np.degrees(angle)
-                    if angle < np.pi:
-                        rotation_angle -= 90
-                    elif angle == np.pi:
-                        rotation_angle -= 90
-                    else:
-                        rotation_angle += 90
-                    ax.text(angle, 105, variables, 
-                            ha='center', va='bottom', 
-                            rotation=rotation_angle, rotation_mode='anchor', fontsize=9)
-
-                ax.set_xticks([])
-                ax.grid(alpha=0.1, color='white', lw=3)
-                plt.ylim(0, 100)
-                ax.yaxis.set_zorder(10)
-                ax.yaxis.set_tick_params(zorder=10)
-                
-                title = self.dimension_titles[dimension] + '\n% ' + category + ' Scenarios with Variables Provided'
-                # add title at the top of the plot in bold
-                ax.set_title(title, fontsize=13, y=1.07, fontweight='bold')
-                
-                # add a legend for the different regions R5 and World
-                ax.legend([bars, bars_r5, bars_r10], ['World', 'R5', 'R10'], loc='upper right', bbox_to_anchor=(1.1, 1.1))
-
-                plt.show()
-
-                # Save the figure
-                fig.savefig('figures/' + dimension + '_polar_bar_r10.png', dpi=300, bbox_inches='tight')
-
-    # Create a box plot showing the levels of each variable for each dimension in 
-    # 2020 and 2050. The box plot contains boxes for all the variables for the 
-    # dimension of interest, with 2050 and 2100 values plotted in adjacent boxes. 
-
-    def box_plot_variables(self, file_name, dimension, category, years):
-        
-        # import the data
-        variable_data = pd.read_csv(file_name)
-        
-        # filter out all variables with low R10
-        variable_data = variable_data[variable_data["sufficientR10"] > 0]
-        
-        # Filter the data to only include the dimension of interest, whether it is found in category_1 or category_2
-        dimension_data = variable_data[(variable_data['category_1'] == dimension) | (variable_data['category_2'] == dimension)]
-
-        variables = dimension_data['variable']
-        variables = variables.unique()
-        variables = variables.tolist()
-
-        # import util for getting the data 
-        from utils import Utils
-
-        df = Utils.connAr6.query(model='*', scenario='*',
-            variable=variables, year=[2050,2100], region=['Countries of Sub-Saharan Africa','World']
-            )
-        
-        df_category = df.filter(Category_subset=category)
-        
-        
-        # Find R10 scenarios
-        df_R10_scenarios = df_category.filter(region='Countries of Sub-Saharan Africa')
-        df_R10_scenarios = df_R10_scenarios.filter(year=2050)
-        R10_scenarios = df_R10_scenarios['scenario'].unique().tolist()
-        print(R10_scenarios)
-
-
-        # Filter for just R10 scenarios
-        df_category = df_category.filter(scenario=R10_scenarios)
-
-        # Filter for the world
-        df_category = df_category.filter(region='World')
-
-        # set up subplots for the number of variables
-        fig, axs = plt.subplots(1, len(variables), figsize=(30,10))
-        axs = axs.flatten()
-
-        # add space between subplots
-        fig.subplots_adjust(wspace=0.7)
-
-        # loop through each variable
-        for i, variable in enumerate(variables):
-            
-
-            # filter the data to only include the variable of interest
-            df_variable = df_category.filter(variable=variable)
-            if df_variable.empty:
-                continue
-            
-            # make a subplot for the variable
-            ax = axs[i]
-
-
-            units = df_variable['unit'].unique().tolist()
-            units = units[0]
-
-
-            data = pd.DataFrame()
-            for year in range(2050, 2150, 50):
-                
-                print(year)
-                # get the values for the variable in the year of interest
-                df_values = df_variable.filter(year=year)
-                
-                data[year] = df_values['value']
-
-                # set the box plot in seaborn
-            sns.boxplot(data=data, ax=ax, palette=Plotting.dimention_cmaps[dimension],showfliers=False)
-            sns.stripplot(data=data, ax=ax, 
-            color=".3") # get the values for the variable in the year of interest
-
-            # set the title of the plot
-            ax.set_title(variable, fontsize=10,fontweight='bold')
-            
-            # set the units of the y axis
-            ax.set_ylabel(units)
-
-            # Add ticks on the right hand y axis as well as left
-            ax.yaxis.set_ticks_position('both')
-            
-        # set the title of the plot
-        title = 'Box plots of ' + dimension + ' variable values for '+ category + ' scenarios in 2050 and 2100'
-        fig.suptitle(title, fontsize=20)
-        
-        
-        plt.show()
-
-
-    def single_variable_box_line(self, scenarios, variable, category,region, years):
-        
-        # import util for getting the data 
-        from utils import Utils
-
-        df = Utils.connAr6.query(model='*', scenario=scenarios,
-            variable=variable, year=years, region=region
-            )
-        
-        df_category = df.filter(Category_subset=category)
-        
-        # set up subplots for the box plot and line plot.
-        fig = plt.figsize=(10,15)
-
-        gs = gridspec.GridSpec(1, 2, width_ratios=[1, 3]) 
-
-        ax1 = plt.subplot(gs[0])
-        ax2 = plt.subplot(gs[1])
-
-
-        # set the box plot in seaborn
-
-        units = df_category['unit'].unique().tolist()
-        units = units[0]
-        data = pd.DataFrame()
-        for year in range(2050, 2150, 50):
-            
-            # get the values for the variable in the year of interest
-            df_values = df_category.filter(year=year)
-            
-            data[year] = df_values['value']
-
-        sns.boxplot(data=data, ax=ax1, palette='cool',showfliers=False)
-        sns.stripplot(data=data, ax=ax1,color=".3")     
-
-        # set the units of the y axis
-        ax1.set_ylabel(units)
-        
-        # Add ticks on the right hand y axis as well as left
-        ax1.yaxis.set_ticks_position('both')
-        ax1.xaxis.set_ticks_position('both')
-        ax1.set_xlabel('Year')
-        # set up the line plot showing all scenarios for the variable
-        # sns.lineplot(data=df_category,x='year', y='value', hue='scenario', ax=axs[1]) #'PuBuGn'
-        pyam.plotting.line(df_category, x='year', y='value', legend=None, color='scenario', ax=ax2, 
-                           cmap='winter', title=False)
-        
-        ax2.set_xlim(2020, 2100)
-
-        ax2.yaxis.set_ticks_position('both')
-        ax2.xaxis.set_ticks_position('both')
-
-        # set the title of the plot
-
-        # fig.title = 'Distribution of values for ' + variable + '2020-2100'
-        plt.show()
 
 
     # plot the metrics as raw values for each dimension
@@ -511,7 +320,7 @@ class Plotting:
         plt.show()
 
     # plot the metrics as raw values for each dimension
-    def plot_metrics_vertical(self, colours, scenario_list, model_families):
+    def plot_metrics_vertical(self, scenario_list, model_families):
 
         
         colour_map = ['#E69F00','#56B4E9', '#009E73', '#CC79A7']
@@ -539,14 +348,15 @@ class Plotting:
 
 
 
-        investment_info = IndexBuilder.investment_metrics
+        investment_info = Plotting.investment_metrics
         investment_info = investment_info.reset_index()
-        environmental_info = IndexBuilder.environment_metrics
+        environmental_info = Plotting.environment_metrics
         environmental_info = environmental_info.reset_index()
-        resource_info = IndexBuilder.resource_metrics
-        final_energy_demand = IndexBuilder.final_energy_demand
-        robustness_info = IndexBuilder.carbon_budgets
-        fairness_info = IndexBuilder.between_region_gini
+        resource_info = Plotting.resource_metrics
+        final_energy_demand = Plotting.final_energy_demand
+        robustness_info = Plotting.carbon_budgets
+        fairness_info = Plotting.between_region_gini
+        transition_speed_info = Plotting.transition_speed_metrics
 
         # put columns together into one dataframe
         investment_info['forest_change_2100'] = environmental_info['forest_change_2100']
@@ -554,19 +364,27 @@ class Plotting:
         investment_info['final_energy_demand'] = final_energy_demand['final_energy_demand']
         investment_info['carbon_budget_share'] = robustness_info['carbon_budget_share']
         investment_info['between_region_gini'] = fairness_info['between_region_gini']
-        
+        investment_info['Share of final energy from electricity'] = transition_speed_info['Share of final energy from electricity']
 
+        print(investment_info)
 
-        column_list = ['mean_value', 'forest_change_2100', 'Cd', 'final_energy_demand', 'carbon_budget_share', 'between_region_gini']
+        column_list = ['mean_value', 'forest_change_2100', 'Cd', 'final_energy_demand', 'carbon_budget_share', 'between_region_gini', 'Share of final energy from electricity']
         # header_list = ['mean_value', 'mean_value_2050']
         # y_labels = ['Mean Ratio of Energy Supply\n Investment (2020-2100)', 'Mean Ratio of Energy Supply\n Investment (2020-2050)']
-        y_labels = ['Mean Ratio of Energy Supply\n Investment (2020-2100)', 'Change in Forest Land\n Cover (2020-2100)', 'Neodymium', 'Final Energy Demand (EJ)', 'Carbon Budget Share\n used by 2030', 'Between Region Gini Coefficient']
+        y_labels = ['Mean Ratio of Energy Supply\n Investment (2020-2100)', 
+                    'Change in Forest Land\n Cover (2020-2100)', 
+                    'Neodymium', 
+                    'Final Energy Demand (EJ)',
+                    'Carbon Budget Share\n used by 2030', 
+                    'Between Region Gini Coefficient',
+                    'Max decade increase in the share of final energy from electricity']
+        
         # # make a list of numbers accending for each scenario
         zero_list = [1] * len(investment_info)
         investment_info['x'] = zero_list
         fig_length = 3 * len(column_list)
         fig, axs = plt.subplots(1,len(column_list), figsize=(5, fig_length))
-        count = 0
+        count_column = 0
         for ax, investment_column in zip(axs, column_list):
             # create a box plot for the investment data with each scenario a different color
             ax.boxplot(investment_info[investment_column], showfliers=False)
@@ -579,19 +397,18 @@ class Plotting:
             count = 0
             for model in model_families:
                 
-                colour = colours[count]
                 model_info = investment_info[investment_info['model_family'] == model]
                 ax.scatter(x=model_info['x'], y=model_info[investment_column], c=colour_map[count], marker='o', s=40, alpha=0.35)
                 count += 1
             # ax.scatter(x=investment_info['x'], y=investment_info[investment_column], marker='o',c=colours[:len(investment_info)], s=50, alpha=0.5)
             # ax.scatter(y=investment_info['x'], x=investment_info[investment_column] + np.random.normal(0, 0.02, len(investment_info)), marker='o', s=50, alpha=0.5)
-            ax.set_title(y_labels[count])
+            ax.set_title(column_list[count_column])
             # set y min and max
             # ax.set_ylim(0.4, 1.3)
             # remove x tick and label
             ax.set_xticks([])
             ax.set_xlabel('')
-            count += 1
+            count_column += 1
         
         # make a ledgend with a swatch of each color and the scenario name and model
         # # make a list of the scenario names
@@ -804,15 +621,15 @@ class Plotting:
         plt.show()
         
 
-    def radar_plot_scenario_archetypes(self, scenario_model_list, archetypes, colours, selected_scenarios):
+    def radar_plot_scenario_archetypes(self, scenario_model_list, archetypes, selected_scenarios, clustered_scores, add_all_clustered=False):
 
         # plt.rcParams['font.size'] = 7
         # Number of variables we're plotting.
-        categories = list(archetypes)[0:6]
+        categories = list(archetypes)[0:7]
         # archetype_names = ['Warning lights', 'Resource risk', 'Sustainability struggle', 'Clear path']
         archetype_names = ['A','B', 'C', 'D']
-        # archetype_colours = ['#648FFF', '#DC267F', '#FE6100', '#FFB000']
-        archetype_colours = ['#FFB000', '#648FFF', '#DC267F', '#FE6100']
+        archetype_colours = ['#648FFF', '#DC267F', '#FE6100', '#FFB000']
+        # archetype_colours = ['#FFB000', '#648FFF', '#DC267F', '#FE6100']
         # make a fig with 4 subplots, 2 rows
         fig, axs = plt.subplots(2, 2, figsize=(10, 10), subplot_kw=dict(polar=True))
 
@@ -832,14 +649,28 @@ class Plotting:
             angles += angles[:1]
             
             stats_illustrative = selected_scenarios[selected_scenarios['cluster'] == archetype].values.flatten().tolist()
-            stats_illustrative = stats_illustrative[0:6]
+            stats_illustrative = stats_illustrative[0:7]
             stats_illustrative += stats_illustrative[:1]
 
             # Draw the outline of our data.
-            ax.fill(angles, stats, color=archetype_colours[archetype], alpha=0.27, zorder=10)
+            ax.fill(angles, stats, color=archetype_colours[archetype], alpha=0.2, zorder=10)
             ax.plot(angles, stats, color=archetype_colours[archetype], linewidth=3, zorder=11)
             ax.fill(angles, stats_illustrative, color='black', alpha=0.1)
-            ax.plot(angles, stats_illustrative, color='black', linewidth=1)
+            ax.plot(angles, stats_illustrative, color='black', linewidth=1)            # Add the other scenarios in the cluster as faint outlines
+            
+            if add_all_clustered:
+
+                cluster_scenarios = clustered_scores[clustered_scores['cluster'] == archetype]['scenario']
+                print(cluster_scenarios)
+                cluster_models = clustered_scores[clustered_scores['cluster'] == archetype]['model']
+
+                for scenario, model in zip(cluster_scenarios, cluster_models):
+
+                    print(scenario)
+                    scenario_stats = clustered_scores.loc[(clustered_scores['scenario'] == scenario) & (clustered_scores['model'] == model), categories].values.flatten().tolist()
+                    print(scenario_stats)
+                    scenario_stats += scenario_stats[:1]
+                    ax.plot(angles, scenario_stats, color=archetype_colours[archetype], alpha=0.2, zorder=9, linewidth=1)
 
             # # Labels for each point
             ax.set_xticks(angles[:-1])
@@ -880,7 +711,7 @@ class Plotting:
 
         # add a column to the scenario scores with the model family
         scenario_scores['model_family'] = scenario_scores['model'].map(model_families.set_index('model')['model_family'])
-        scenario_scores.to_csv('outputs/model_families' +  str(Data.categories) + '.csv')
+        scenario_scores.to_csv('outputs/model_families' +  str(CATEGORIES_DEFAULT) + '.csv')
 
 
         # get the unique model families
@@ -980,7 +811,10 @@ class Plotting:
 
         # add a column to the scenario scores with the model family
         scenario_scores['model_family'] = scenario_scores['model'].map(model_families.set_index('model')['model_family'])
-        scenario_scores.to_csv('outputs/model_families' +  str(Data.categories) + '.csv')
+        scenario_scores.to_csv(OUTPUT_DIR + 'model_families' +  str(CATEGORIES_DEFAULT) + '.csv')
+
+        # filter for EN_NPi2020_400f
+        scenario_scores = scenario_scores[scenario_scores['scenario'].str.contains('EN_NPi2020_400f')]
 
 
         # get the unique model families
@@ -989,7 +823,7 @@ class Plotting:
         print(model_families, len(model_families))
 
         # Number of variables we're plotting.
-        categories = list(scenario_scores)[2:8]
+        categories = list(scenario_scores)[2:9]
 
         # make a fig with 6 subplots, 2 rows
         fig, ax = plt.subplots(1, 1, figsize=(10, 10), subplot_kw=dict(polar=True))
@@ -1084,7 +918,8 @@ class Plotting:
         ssps = scenario_scores['ssp'].unique().tolist()
 
         # Number of variables we're plotting.
-        categories = list(scenario_scores)[2:8]
+        categories = list(scenario_scores)[2:9]
+        print(categories)
 
         # make a fig with 2 subplots, 1 row
         fig, axs = plt.subplots(2, 1, figsize=(10, 10), subplot_kw=dict(polar=True))
@@ -1169,7 +1004,7 @@ class Plotting:
         # ssps = scenario_scores['ssp'].unique().tolist()
 
         # Number of variables we're plotting.
-        categories = list(scenario_scores)[2:8]
+        categories = list(scenario_scores)[2:9]
 
         # make a fig with 2 subplots, 1 row
         fig, ax = plt.subplots(1, 1, figsize=(10, 10), subplot_kw=dict(polar=True))
@@ -1238,7 +1073,7 @@ class Plotting:
 
         # plt.rcParams['font.size'] = 7
         # Number of variables we're plotting.
-        categories = list(scenario_scores)[2:8]
+        categories = list(scenario_scores)[2:9]
 
         # make a fig with 3 subplots, 1 row
         fig, ax = plt.subplots(1, 1, figsize=(10, 10), subplot_kw=dict(polar=True))
@@ -1246,13 +1081,13 @@ class Plotting:
         N = len(categories)
 
         # get the unique temperature categories
-        temp_categories = meta_data['Category'].unique().tolist()
+        temp_categories = ['C1', 'C2']
 
         # filter the metadata for world and emissions co2
-        meta_data = meta_data[(meta_data['region'] == 'Countries of Sub-Saharan Africa') & (meta_data['variable'] == 'Emissions|CO2') & (meta_data['year'] == 2030)]
-        print(meta_data)
+        # meta_data = meta_data[(meta_data['region'] == 'Countries of Sub-Saharan Africa') & (meta_data['variable'] == 'Emissions|CO2') & (meta_data['year'] == 2030)]
+        # print(meta_data)
         # set the index as the scenario and model
-        meta_data.set_index(['scenario', 'model'], inplace=True)
+        # meta_data.set_index(['scenario', 'model'], inplace=True)
         scenario_scores.set_index(['scenario', 'model'], inplace=True)
         
         # merge the scenario scores with the temperature category
@@ -2134,18 +1969,19 @@ class Plotting:
         scenario_scores = scenario_scores.drop(columns=['cluster'])
         
         # Define the low score threshold for each dimension (assuming a percentile for simplicity)
-        # thresholds = scenario_scores.quantile(low_score_threshold)
+        thresholds = scenario_scores.quantile(low_score_threshold)
         # print(thresholds)
-        thresholds = low_score_threshold
+        # thresholds = low_score_threshold
 
         # Initialize a DataFrame to store the counts
         dimensions = scenario_scores.columns
+        print(dimensions)
         pairwise_counts = pd.DataFrame(0, index=dimensions, columns=dimensions)
         
         # Calculate the pairwise counts
         for dim1, dim2 in combinations(dimensions, 2):
-            low_dim1 = scenario_scores[dim1] < thresholds #thresholds[dim1]
-            low_dim2 = scenario_scores[dim2] < thresholds #thresholds[dim2]
+            low_dim1 = scenario_scores[dim1] < thresholds[dim1]
+            low_dim2 = scenario_scores[dim2] < thresholds[dim2]
             count = np.sum(low_dim1 & low_dim2)
             pairwise_counts.loc[dim1, dim2] = count
             pairwise_counts.loc[dim2, dim1] = count
@@ -2159,11 +1995,11 @@ class Plotting:
         heatmap = sns.heatmap(
             pairwise_counts, 
             annot=True, 
-            cmap="YlGnBu_r", 
+            cmap="plasma", 
             cbar_kws={'label': 'Count of Low Scores', 'format': '%.0f'},
             linewidths=0.1,
             square=True,
-            vmax=20,  # Add lines between squares for clarity
+            vmax=15,  # Add lines between squares for clarity
               # Ensures each cell is square square=True
         )
 
@@ -2184,79 +2020,6 @@ class Plotting:
     # df = pd.read_csv('your_scenario_scores.csv')
     
     # print(pairwise_low_counts)
-
-
-    # Plot that plots timeseries variable for the scenarios, with various options
-    def emissions_spaghetti_plot(self, scenario_models, pyam_df, region, variable, 
-                                 scenario_scores, weighted=False, selected_scenarios=None): 
-        
-        """
-        Function for making spaghetti plots of the emissions trajectories for the scenarios
-        with options for different versions or the plot, including weighting (alpha) by
-        the feasibility score of the scenario
-
-        Inputs: 
-        - scenario_models: a list of the scenario models
-        - pyam_df: the pyam dataframe containing the emissions data
-        - region: the region to plot
-        - variable: the variable to plot
-        - scenario_scores: the dataframe containing the scenario scores
-        - weighted: whether to weight the plot by the feasibility score
-        - selected_scenarios: a dataframe containing the selected scenarios
-
-        Outputs:
-        - spaghetti plot of the emissions trajectories for the scenarios
-
-        """
-        # set the params
-        plt.rcParams['ytick.minor.visible'] = True
-        
-        # set up the figure
-        fig, ax = plt.subplots(figsize=(12, 8))
-
-        df = pyam_df.filter(region=region, variable=variable, year=range(2020, 2101))
-
-        scenario_scores['log_resource_score'] = np.log(1 + scenario_scores['resource_score'])
-        # scenario_scores['norm_log_resource_score'] = (scenario_scores['log_resource_score'] - scenario_scores['log_resource_score'].min()) / (scenario_scores['log_resource_score'].max() - scenario_scores['log_resource_score'].min())
-
-        print(scenario_scores)
-
-        # loop through each scenario
-        for scenario, model in zip(scenario_models['scenario'], scenario_models['model']):
-
-            # filter the data for the scenario
-            scenario_data = df.filter(scenario=scenario, model=model)
-
-            # interpolate the data
-            interpolated_data = scenario_data.interpolate(range(2020, 2101), method='slinear').data.copy()
-
-            # plot the data
-            if weighted:
-                # get the feasibility score
-                feasibility_score = scenario_scores.loc[scenario_scores['scenario'] == scenario, 'log_resource_score'].values[0]
-                ax.plot(interpolated_data['year'], interpolated_data['value'], alpha=0.05+feasibility_score, color='green')
-            else:
-                ax.plot(interpolated_data['year'], interpolated_data['value'], alpha=0.07, color='green')
-
-        if selected_scenarios is not None:
-            for i, scenario in selected_scenarios.iterrows():
-                scenario_data = df.filter(scenario=scenario['scenario'], model=scenario['model'])
-                interpolated_data = scenario_data.interpolate(range(2020, 2101)).data.copy()
-                ax.plot(interpolated_data['year'], interpolated_data['value'], alpha=1, linestyle='--', linewidth=2)
-
-        # set x min and max
-        ax.set_xlim(2020, 2100)
-        
-        # set the y axis label
-        ax.set_ylabel(variable)
-
-        # set the x axis label
-        ax.set_xlabel('Year')
-
-        plt.tight_layout()
-        plt.show()
-
-
 
     # make a plot of a given variable / calculated variable for all the scenarios given showing median, 25th and 75th percentiles
     def electrification_plots(pyam_df, start_year, end_year):
@@ -2334,6 +2097,90 @@ class Plotting:
 
         plt.tight_layout()
         plt.show()
+        
+
+
+    # function that creates a parallel coordinate plot with the normalised scores for each dimension, coloured by cluster
+    # this function is currently designed for global data
+    def parallel_coord_plot(self, clustered_normalised_scores, colours):
+
+        
+        # Plot Parallel Coordinates
+        plt.figure(figsize=(12, 6))
+        
+        # Select only columns that match 'dimension' + '_score' and rename them
+        dimension_columns = [col for col in clustered_normalised_scores.columns if col.endswith("_score")]
+        renamed_columns = {col: re.sub(r"_score$", "", col) for col in dimension_columns}
+        data_selected = clustered_normalised_scores[dimension_columns + ["cluster"]].rename(columns=renamed_columns)
+
+        # Create parallel coordinates plot
+        pd.plotting.parallel_coordinates(
+            data_selected,
+            'cluster',
+            color=colours,
+            alpha=0.5,
+            axvlines=True
+        )
+
+        # Customize plot
+        plt.xticks(rotation=45)
+        plt.ylabel('Normalized Score')
+        plt.title('Scenario Dimension Scores by Cluster')
+        plt.grid(True, alpha=0.3)
+
+        plt.tight_layout()
+        plt.show()
+
+    
+    # function that creates a correlation heatmap with each score representing the correlation between the dimensions
+    # this function is currently designed for global data
+    def correlation_heatmap(self, normalised_scores):
+        
+        # set index to scenario and model
+        normalised_scores = normalised_scores.set_index(['scenario', 'model'])
+
+        # Calculate correlation matrix and p-values
+        cols = normalised_scores.columns
+        corr_matrix = normalised_scores.corr()
+        p_matrix = pd.DataFrame(np.zeros_like(corr_matrix), columns=cols, index=cols)
+        
+        # Fill p-value matrix
+        for i in cols:
+            for j in cols:
+                corr, p = stats.pearsonr(normalised_scores[i], normalised_scores[j])
+                p_matrix.loc[i,j] = p
+
+        # Create mask for significant correlations (p < 0.05)
+
+        # Plot heatmap
+        plt.figure(figsize=(10, 8))
+        
+        # Plot correlation heatmap with stars for significant values
+        sns.heatmap(corr_matrix, 
+                    annot=True, 
+                    cmap='coolwarm', 
+                    vmin=-1, 
+                    vmax=1,
+                     # This will hide non-significant correlations
+                    fmt='.2f')  # Format to 2 decimal places
+        
+        # Add asterisks for significance levels
+        for i in range(len(cols)):
+            for j in range(len(cols)):
+                if p_matrix.iloc[i,j] <= 0.001:
+                    plt.text(j+0.5, i+0.85, '***', ha='center', va='center')
+                elif p_matrix.iloc[i,j] <= 0.01:
+                    plt.text(j+0.5, i+0.85, '**', ha='center', va='center')
+                elif p_matrix.iloc[i,j] <= 0.05:
+                    plt.text(j+0.5, i+0.85, '*', ha='center', va='center')
+                elif p_matrix.iloc[i,j] > 0.05:
+                    plt.text(j+0.5, i+0.85, '', ha='center', va='center')
+
+        plt.title('Correlation Matrix of Normalised Dimension Scores\n* p<0.05, ** p<0.01, *** p<0.001')
+        plt.tight_layout()
+        plt.show()
+
+
 
 
 
