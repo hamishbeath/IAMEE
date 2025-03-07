@@ -62,7 +62,8 @@ FRAMEWORK_MANDATORY_VARIABLES = ['Emissions|CO2',
                                  'Price|Secondary Energy|Electricity',
                                  'Food Demand|Crops', 
                                  'Food Demand|Livestock', 
-                                 'Primary Energy|Fossil|w/ CCS', 
+                                 'Primary Energy|Fossil|w/ CCS',
+                                 'Primary Energy|Fossil|w/o CCS', 
                                  'Land Cover|Forest|Natural Forest']
 
 FRAMEWORK_VARIABLES = FRAMEWORK_MANDATORY_VARIABLES + ['Carbon Sequestration|Direct Air Capture']

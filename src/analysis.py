@@ -51,18 +51,18 @@ def main(categories=None, scenarios=None, run_regional=None) -> None:
     except FileNotFoundError:
         print('Index data are not available yet. Please ensure you have run all the analysis scripts.')
 
-    economic_score(investment_metrics, categories)
-    environment_score(environment_metrics, categories)
-    resource_score(NaturalResources.minerals, resource_metrics, categories)
-    resilience_score(final_energy_demand,
-                    energy_diversity,
-                    gini_coefficient, electricity_price, categories)
-    fairness_score(between_region_gini, carbon_budget_fairness, categories)
-    robustness_score(energy_system_flexibility, 
-                               low_carbon_diversity, 
-                               carbon_budgets,
-                               CDR_2050, categories)
-    transition_speed_score(transition_speed_metrics, categories)
+    # economic_score(investment_metrics, categories)
+    # environment_score(environment_metrics, categories)
+    # resource_score(NaturalResources.minerals, resource_metrics, categories)
+    # resilience_score(final_energy_demand,
+    #                 energy_diversity,
+    #                 gini_coefficient, electricity_price, categories)
+    # fairness_score(between_region_gini, carbon_budget_fairness, categories)
+    # robustness_score(energy_system_flexibility, 
+    #                            low_carbon_diversity, 
+    #                            carbon_budgets,
+    #                            CDR_2050, categories)
+    # transition_speed_score(transition_speed_metrics, categories)
 
     # import regional scores
     print('Calculting framework scores')
@@ -76,15 +76,15 @@ def main(categories=None, scenarios=None, run_regional=None) -> None:
 
     # combine and normalise the scores
     print('Combining and normalising scores')
-    normalise_scores(economic_scores, environment_scores, resource_scores, 
-                            resilience_scores, robustness_scores, fairness_scores, 
-                            transition_speed_scores,
-                            categories)
+    # normalise_scores(economic_scores, environment_scores, resource_scores, 
+    #                         resilience_scores, robustness_scores, fairness_scores, 
+    #                         transition_speed_scores,
+    #                         categories)
     
 
     # get the scenario archetypes and illustrative scenarios
     print('Finding scenario archetypes and illustrative scenarios')
-    find_scenario_archetypes(categories, cluster_number=4)
+    # find_scenario_archetypes(categories, cluster_number=4)
 
 
     if run_regional == True:
@@ -116,7 +116,7 @@ def main(categories=None, scenarios=None, run_regional=None) -> None:
                             regional_energy_diversity, regional_gini_coefficient,
                             regional_electricity_price, regional_energy_system_flexibility,
                             regional_low_carbon_diversity, regional_carbon_budgets, 
-                            regional_CDR_2050, regional_transition_speed_metrics, categories, cross_region_norm=None)
+                            regional_CDR_2050, regional_transition_speed_metrics, categories, cross_region_norm=True)
 
 
 # calculate the economic score (higher score = more economic challenges)
@@ -744,6 +744,7 @@ def find_scenario_archetypes(categories, cluster_number=int):
 
     # return the four scenarios most similar to the cluster centroids
     closest_to_centroids = return_centroid_illustrative_scenarios(cluster_centroids, data, cluster_number)
+    closest_to_centroids = closest_to_centroids.reset_index()
     closest_to_centroids.to_csv(OUTPUT_DIR + 'closest_to_centroids' + str(categories) + '.csv', index=False)
 
     

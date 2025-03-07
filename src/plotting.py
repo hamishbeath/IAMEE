@@ -77,18 +77,20 @@ def main() -> None:
     # clostest_cluster_centroid = pd.read_csv('outputs/closest_to_centroids' + str(Data.categories) + '.csv')
     # Plotting.radar_plot_scenario_archetypes(Plotting, Data.model_scenarios, Selection.archetypes, Plotting.bright_modern_colors,
     #                                          clostest_cluster_centroid)
-    Plotting.radar_plot_scenario_archetypes(Plotting, scenarios, scenario_archetypes, Plotting.selected_scenarios, Plotting.clustered_scores, add_all_clustered=True)
+    # Plotting.radar_plot_scenario_archetypes(Plotting, scenarios, scenario_archetypes, Plotting.closest_to_centroids, Plotting.clustered_scores, add_all_clustered=True)
     # Plotting.line_plot_narrative_variables(Plotting, 'Energy Service|Transportation|Freight', Selection.centroid_scenarios, 
     #                                                 Data.briefing_paper_data, base_normalisation=False, 
     #                                                 secondary_variable=None, region=Data.briefing_paper_regions[0])
     
-    # Plotting.energy_system_stackplot(Plotting, Selection.centroid_scenarios, Data.briefing_paper_data, 
-    #                                  Plotting.energy_shares_variables, region=Data.briefing_paper_regions[1])
+    pyam_df = read_pyam_df(PROCESSED_DIR + 'Framework_pyam' + str(CATEGORIES_DEFAULT) + '.csv')
+    # Plotting.energy_system_stackplot(Plotting,Plotting.closest_to_centroids, pyam_df, 
+    #                                  Plotting.energy_shares_variables, region=None)
+    
     # Plotting.transport_stackplot(Plotting, Selection.centroid_scenarios, Data.briefing_paper_data, region=Data.briefing_paper_regions[1])
     # Plotting.land_use_stacked_shares(Plotting, Selection.centroid_scenarios, Data.briefing_paper_data, region=Data.briefing_paper_regions[1])
-    # Plotting.CDR_stacked_shares(Plotting, Selection.centroid_scenarios, Data.briefing_paper_data, region=Data.briefing_paper_regions[1])
+    # Plotting.CDR_stacked_shares(Plotting, Plotting.closest_to_centroids, pyam_df, region=None)
     # Plotting.radar_plot_model_fingerprint_single_panel(Plotting, scenarios, Plotting.model_families, Plotting.model_colours, Plotting.clustered_scores)
-    # Plotting.regional_differences_across_scenarios(Plotting, Plotting.normalised_scores, Plotting.regional_normalised_scores, Data.model_scenarios, Plotting.selected_scenarios, cross_regional_norm=None)
+    Plotting.regional_differences_across_scenarios(Plotting, Plotting.normalised_scores, Plotting.regional_normalised_scores_cross_regional, scenarios, Plotting.closest_to_centroids, cross_regional_norm=True)
     # Plotting.specific_dimension_regional_analysis(Plotting, Plotting.normalised_scores, Plotting.regional_normalised_scores, 
     #                                               Data.R10[3], Data.R10[6], Plotting.model_families)
     # Plotting.radar_plot_ssp_pairs(Plotting, scenarios, Plotting.gini_coefficient, Plotting.clustered_scores)
@@ -164,7 +166,7 @@ class Plotting:
     between_region_gini = pd.read_csv(OUTPUT_DIR + 'between_region_gini' + str(categories) + '.csv')
     # carbon_budget_fairness = pd.read_csv(OUTPUT_DIR + 'carbon_budget_fairness' + str(categories) + '.csv')
 
-
+    closest_to_centroids = pd.read_csv(OUTPUT_DIR + 'closest_to_centroids' + str(categories) + '.csv')
 
     # plot the metrics as raw values for each dimension
     def plot_metrics(self, colours, scenario_list):
@@ -649,7 +651,8 @@ class Plotting:
             angles += angles[:1]
             
             stats_illustrative = selected_scenarios[selected_scenarios['cluster'] == archetype].values.flatten().tolist()
-            stats_illustrative = stats_illustrative[0:7]
+            stats_illustrative = stats_illustrative[2:9]
+            # stats_illustrative = stats_illustrative[0:7]
             stats_illustrative += stats_illustrative[:1]
 
             # Draw the outline of our data.
@@ -1265,6 +1268,7 @@ class Plotting:
         plt.rcParams['ytick.minor.visible'] = True
         # names = ['Warning lights', 'Resource risk', 'Sustainability struggle', 'Eco balance']
         names = ['A', 'B', 'C', 'D']
+        
         print(energy_variables)
         
         """
@@ -1325,7 +1329,7 @@ class Plotting:
             axs.flatten()[i].set_xlim(2020, 2100)
 
             # set y limits
-            axs.flatten()[i].set_ylim(0, 100)
+            axs.flatten()[i].set_ylim(0, 1200)
 
         colours = list(Plotting.energy_shares_colours.values())
 
@@ -1565,7 +1569,7 @@ class Plotting:
             axs.flatten()[i].set_xlim(2020, 2100)
 
             # set y limits
-            axs.flatten()[i].set_ylim(0, 1000)
+            axs.flatten()[i].set_ylim(0, 14000)
         
         # create legend
         labels = CDR_variables
@@ -1577,13 +1581,15 @@ class Plotting:
         plt.show()
 
 
+
     def regional_differences_across_scenarios(self, dimension_scores_global, dimension_scores_regional, scenarios_list, selected_scenarios, cross_regional_norm=None):
 
+        
         dimensions_list = ['economic','resilience','robustness']
         
         output_df = pd.DataFrame() 
         
-        for region in Data.R10:
+        for region in R10_CODES:
             
             region_df = pd.DataFrame()
             print(region)
@@ -1606,6 +1612,7 @@ class Plotting:
             print(region_df)
             output_df = pd.concat([output_df, region_df], axis=0)
         print(output_df)
+        
         if cross_regional_norm == None:
             # add global scores as 'World' region
             global_df = pd.DataFrame()
@@ -1673,7 +1680,7 @@ class Plotting:
                 #             axs[i].scatter(val, y_mid, marker=icon_list[j], s=100, color='black')
 
         # set the y axis labels as data.R10_codes
-        axs[0].set_yticklabels(Data.R10)
+        axs[0].set_yticklabels(R10_CODES)
 
         # make a list of the markers
         markers = icon_list
