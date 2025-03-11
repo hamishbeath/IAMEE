@@ -90,14 +90,19 @@ def main() -> None:
     # Plotting.land_use_stacked_shares(Plotting, Selection.centroid_scenarios, Data.briefing_paper_data, region=Data.briefing_paper_regions[1])
     # Plotting.CDR_stacked_shares(Plotting, Plotting.closest_to_centroids, pyam_df, region=None)
     # Plotting.radar_plot_model_fingerprint_single_panel(Plotting, scenarios, Plotting.model_families, Plotting.model_colours, Plotting.clustered_scores)
-    Plotting.regional_differences_across_scenarios(Plotting, Plotting.normalised_scores, Plotting.regional_normalised_scores_cross_regional, scenarios, Plotting.closest_to_centroids, cross_regional_norm=True)
+    # Plotting.regional_differences_across_scenarios(Plotting, 
+    #                                                Plotting.normalised_scores, 
+    #                                                Plotting.regional_normalised_scores_cross_regional, 
+    #                                                scenarios, Plotting.closest_to_centroids, cross_regional_norm=True,
+    #                                                arrange_by=True, regional_pyam=pyam_df)
     # Plotting.specific_dimension_regional_analysis(Plotting, Plotting.normalised_scores, Plotting.regional_normalised_scores, 
-    #                                               Data.R10[3], Data.R10[6], Plotting.model_families)
+    #                                               R10_CODES[2], R10_CODES[5], Plotting.model_families)
+    
     # Plotting.radar_plot_ssp_pairs(Plotting, scenarios, Plotting.gini_coefficient, Plotting.clustered_scores)
     # Plotting.radar_plot(Plotting, Data.model_scenarios, Plotting.clustered_scores)
     # Plotting.convex_hull(Plotting, Plotting.clustered_scores, 10)
     # Plotting.duplicate_scenarios_plot(Plotting, Plotting.clustered_scores)
-    # Plotting.count_pairwise_low_scores(Plotting, Plotting.clustered_scores, low_score_threshold=0.2)
+    Plotting.count_pairwise_low_scores(Plotting, Plotting.clustered_scores, low_score_threshold=0.1)
     # meta = read_meta_data(META_FILE)
     # Plotting.radar_plot_temp_category(Plotting, meta, Plotting.clustered_scores)
 
@@ -157,10 +162,16 @@ class Plotting:
     # electricity_price = pd.read_csv(OUTPUT_DIR + 'electricity_prices' + str(categories) + '.csv')
 
     # import robustness metrics
-    # energy_system_flexibility = pd.read_csv(OUTPUT_DIR + 'flexibility_scores' + str(categories) + '.csv')
+    energy_system_flexibility = pd.read_csv(OUTPUT_DIR + 'flexibility_scores' + str(categories) + '.csv')
     carbon_budgets = pd.read_csv(OUTPUT_DIR + 'carbon_budget_shares' + str(categories) + '.csv')
-    # low_carbon_diversity = pd.read_csv(OUTPUT_DIR + 'low_carbon_shannon_diversity_index' + str(categories) + '.csv')
-    # CDR_2050 = pd.read_csv(OUTPUT_DIR + 'total_CDR' + str(categories) + '.csv')
+    low_carbon_diversity = pd.read_csv(OUTPUT_DIR + 'low_carbon_shannon_diversity_index' + str(categories) + '.csv')
+    CDR_2050 = pd.read_csv(OUTPUT_DIR + 'total_CDR' + str(categories) + '.csv')
+
+    # import regional robustness metrics
+    regional_energy_system_flexibility = pd.read_csv(OUTPUT_DIR + 'flexibility_scores_regional' + str(categories) + '.csv')
+    regional_carbon_budgets = pd.read_csv(OUTPUT_DIR + 'carbon_budget_shares_regional' + str(categories) + '.csv')
+    regional_low_carbon_diversity = pd.read_csv(OUTPUT_DIR + 'low_carbon_shannon_diversity_index_regional' + str(categories) + '.csv')
+    regional_CDR_2050 = pd.read_csv(OUTPUT_DIR + 'total_CDR_regional' + str(categories) + '.csv')
 
     # import fairness metrics
     between_region_gini = pd.read_csv(OUTPUT_DIR + 'between_region_gini' + str(categories) + '.csv')
@@ -1581,21 +1592,52 @@ class Plotting:
         plt.show()
 
 
-
-    def regional_differences_across_scenarios(self, dimension_scores_global, dimension_scores_regional, scenarios_list, selected_scenarios, cross_regional_norm=None):
+    def regional_differences_across_scenarios(self, dimension_scores_global, 
+                                              dimension_scores_regional, scenarios_list, 
+                                              selected_scenarios, cross_regional_norm=None,
+                                              arrange_by=None, regional_pyam=None):
 
         
         dimensions_list = ['economic','resilience','robustness']
         
         output_df = pd.DataFrame() 
+
+        if arrange_by != None:
+
+ 
+            # use pyam_df regional to calculate the accending mean of the variable
+            pyam_df = regional_pyam.filter(variable=['GDP|MER', 'Population'], year=range(2020, 2101))
+            df = pyam_df.data
+            df = df.pivot_table(index=['model', 'scenario', 'year', 'region'], columns='variable', values='value')
+            df['GDP_capita'] = df['GDP|MER'] / df['Population']
+
+            # calculate the mean across all years by region
+            df = df.groupby(['region', 'year']).mean().reset_index()
+            df = df.pivot_table(index='region', columns='year', values='GDP_capita')
+
+            print(df)
+
+            df['mean'] = df.mean(axis=1)
+
+            # order R10_codes based on GDP/capita
+            df = df.sort_values(by='mean', ascending=arrange_by)
+            print(df)
+
+            R10_CODES = df.index.tolist()
+            print(R10_CODES)
         
+        # remove world from the list of regions
+        if 'World' in R10_CODES:
+            R10_CODES.remove('World')
+
+
         for region in R10_CODES:
             
             region_df = pd.DataFrame()
             print(region)
             dimension_scores_regional_selected = dimension_scores_regional[dimension_scores_regional['region'] == region]
             dimension_scores_regional_selected = dimension_scores_regional_selected.reset_index(drop=True)
-            print(dimension_scores_regional_selected)
+            # print(dimension_scores_regional_selected)
             region_df['scenario'] = dimension_scores_regional_selected['scenario']
             region_df['model'] = dimension_scores_regional_selected['model']
             region_df['region'] = dimension_scores_regional_selected['region']
@@ -1605,13 +1647,10 @@ class Plotting:
             # region_df['resilience_diff'] = dimension_scores_regional_selected['resilience_dimension_score'] - dimension_scores_global['resilience_score']
             # region_df['robustness_diff'] = dimension_scores_regional_selected['robustness_dimension_score'] - dimension_scores_global['robustness_score']
             region_df['economic_diff'] = dimension_scores_regional_selected['economic_dimension_score'] 
-
-  
             region_df['resilience_diff'] = dimension_scores_regional_selected['resilience_dimension_score'] 
             region_df['robustness_diff'] = dimension_scores_regional_selected['robustness_dimension_score'] 
-            print(region_df)
             output_df = pd.concat([output_df, region_df], axis=0)
-        print(output_df)
+        
         
         if cross_regional_norm == None:
             # add global scores as 'World' region
@@ -1624,6 +1663,14 @@ class Plotting:
             global_df['robustness_diff'] = dimension_scores_global['robustness_score']
             output_df = pd.concat([output_df, global_df], axis=0)
 
+        
+        # reorganise output_df regions according to new R10_codes
+        output_df['region'] = pd.Categorical(output_df['region'], categories=R10_CODES, ordered=True)
+        
+        # remove world values
+        output_df = output_df[output_df['region'] != 'World']
+        
+        
         # output_df.to_csv('regional_differences.csv')
         # set up the figure so that it is a Overlapping densities (‘ridge plot’) from seaborn
         # with the regions on the y axis and the distribution of the differences on the x axis
@@ -1659,7 +1706,6 @@ class Plotting:
 
             # y_coords_list.append((region, region_position))
                     
-            print(y_coords_list)
             
             
             marker_colours = ['black', 'red', 'grey', 'lightgrey']
@@ -1697,7 +1743,8 @@ class Plotting:
         plt.show()
 
 
-    def specific_dimension_regional_analysis(self, input_dimension_scores_global, input_dimension_scores_regional,
+    def specific_dimension_regional_analysis(self, input_dimension_scores_global, 
+                                             input_dimension_scores_regional,
                                              selected_region_south, selected_region_north,
                                              model_families):
 
@@ -1716,8 +1763,8 @@ class Plotting:
         for the selected region and scenarios compared to the global scores
 
         """
+        print(selected_region_south, selected_region_north)
 
-        dimension = 'robustness'
 
         # import relevant dimension scores
         scores_output = pd.DataFrame()
@@ -1745,38 +1792,31 @@ class Plotting:
         scores_output['scenario'] = input_dimension_scores_regional['scenario']
         scores_output['model'] = input_dimension_scores_regional['model']
         scores_output['x_variable'] = [0] * len(scores_output)
-        model_families = model_families
-        print(model_families)
-        scores_output['model_family'] = scores_output['model'].map(model_families.set_index('model')['model_family'])
 
-        # Calculate median scores
-        median_scores_global = scores_output[scores_output['region']=='global'].groupby('model_family')['scores'].median().reset_index()
-        median_scores_regional_south = scores_output[scores_output['region']==selected_region_south].groupby('model_family')['scores'].median().reset_index()
-        median_scores_regional_north = scores_output[scores_output['region']==selected_region_north].groupby('model_family')['scores'].median().reset_index()
 
         # import indicator scores 
-        global_energy_system_flexiblity = IndexBuilder.energy_system_flexibility['flexibility_score']
-        south_regional_energy_system_flexibility = IndexBuilder.regional_energy_system_flexibility[IndexBuilder.regional_energy_system_flexibility['region'] == selected_region_south]['flexibility_score']
+        global_energy_system_flexiblity = Plotting.energy_system_flexibility['flexibility_score']
+        south_regional_energy_system_flexibility = Plotting.regional_energy_system_flexibility[Plotting.regional_energy_system_flexibility['region'] == selected_region_south]['flexibility_score']
         south_regional_energy_system_flexibility = south_regional_energy_system_flexibility.reset_index(drop=True)
-        north_regional_energy_system_flexibility = IndexBuilder.regional_energy_system_flexibility[IndexBuilder.regional_energy_system_flexibility['region'] == selected_region_north]['flexibility_score']
+        north_regional_energy_system_flexibility = Plotting.regional_energy_system_flexibility[Plotting.regional_energy_system_flexibility['region'] == selected_region_north]['flexibility_score']
         north_regional_energy_system_flexibility = north_regional_energy_system_flexibility.reset_index(drop=True)
 
-        global_carbon_budgets = IndexBuilder.carbon_budgets['carbon_budget_share']
-        south_regional_carbon_budgets = IndexBuilder.regional_carbon_budgets[IndexBuilder.regional_carbon_budgets['region'] == selected_region_south]['carbon_budget_share']
+        global_carbon_budgets = Plotting.carbon_budgets['carbon_budget_share']
+        south_regional_carbon_budgets = Plotting.regional_carbon_budgets[Plotting.regional_carbon_budgets['region'] == selected_region_south]['carbon_budget_share']
         south_regional_carbon_budgets = south_regional_carbon_budgets.reset_index(drop=True)
-        north_regional_carbon_budgets = IndexBuilder.regional_carbon_budgets[IndexBuilder.regional_carbon_budgets['region'] == selected_region_north]['carbon_budget_share']
+        north_regional_carbon_budgets = Plotting.regional_carbon_budgets[Plotting.regional_carbon_budgets['region'] == selected_region_north]['carbon_budget_share']
         north_regional_carbon_budgets = north_regional_carbon_budgets.reset_index(drop=True)
 
-        global_low_carbon_diversity = IndexBuilder.low_carbon_diversity['shannon_index']
-        south_regional_low_carbon_diversity = IndexBuilder.regional_low_carbon_diversity[IndexBuilder.regional_low_carbon_diversity['region'] == selected_region_south]['shannon_index']
+        global_low_carbon_diversity = Plotting.low_carbon_diversity['shannon_index']
+        south_regional_low_carbon_diversity = Plotting.regional_low_carbon_diversity[Plotting.regional_low_carbon_diversity['region'] == selected_region_south]['shannon_index']
         south_regional_low_carbon_diversity = south_regional_low_carbon_diversity.reset_index(drop=True)
-        north_regional_low_carbon_diversity = IndexBuilder.regional_low_carbon_diversity[IndexBuilder.regional_low_carbon_diversity['region'] == selected_region_north]['shannon_index']
+        north_regional_low_carbon_diversity = Plotting.regional_low_carbon_diversity[Plotting.regional_low_carbon_diversity['region'] == selected_region_north]['shannon_index']
         north_regional_low_carbon_diversity = north_regional_low_carbon_diversity.reset_index(drop=True)
 
-        global_CDR_2050 = IndexBuilder.regional_CDR_2050[IndexBuilder.regional_CDR_2050['region'] == 'World']['total_CDR_land']
-        south_regional_CDR_2050 = IndexBuilder.regional_CDR_2050[IndexBuilder.regional_CDR_2050['region'] == selected_region_south]['total_CDR_land']
+        global_CDR_2050 = Plotting.CDR_2050[Plotting.regional_CDR_2050['region'] == 'World']['total_CDR_land']
+        south_regional_CDR_2050 = Plotting.regional_CDR_2050[Plotting.regional_CDR_2050['region'] == selected_region_south]['total_CDR_land']
         south_regional_CDR_2050 = south_regional_CDR_2050.reset_index(drop=True)
-        north_regional_CDR_2050 = IndexBuilder.regional_CDR_2050[IndexBuilder.regional_CDR_2050['region'] == selected_region_north]['total_CDR_land']
+        north_regional_CDR_2050 = Plotting.regional_CDR_2050[Plotting.regional_CDR_2050['region'] == selected_region_north]['total_CDR_land']
         north_regional_CDR_2050 = north_regional_CDR_2050.reset_index(drop=True)
 
         #minmax scale the CDR_2050 scores
@@ -1793,11 +1833,6 @@ class Plotting:
                        'carbon_budgets', 
                        'low_carbon_diversity',
                          'CDR_2050']
-        # indicator_keys = ['flexibility_score',
-        #                   'carbon_budget_share',
-        #                   'shannon_index',
-        #                   'CDR_2050_score']
-        
         
         plt.rcParams['ytick.minor.visible'] = True
         # set up the figure with 1 + n items from list
@@ -1815,20 +1850,12 @@ class Plotting:
         south_regional_x_pos = 0.1
         north_regional_x_pos = 0.15
 
-        # Plot medians and connecting lines
-        for model_family in median_scores_global['model_family'].unique():
-            global_score = median_scores_global[median_scores_global['model_family'] == model_family]['scores'].values[0]
-            south_regional_score = median_scores_regional_south[median_scores_regional_south['model_family'] == model_family]['scores'].values[0]
-            north_regional_score = median_scores_regional_north[median_scores_regional_north['model_family'] == model_family]['scores'].values[0]
-
-            # axs[0].scatter(x=[global_x_pos], y=[global_score], color=Plotting.model_colours[model_family], label=f'{model_family} Global' if model_family == median_scores_global['model_family'].unique()[0] else "")
-            # axs[0].scatter(x=[south_regional_x_pos], y=[south_regional_score], color=Plotting.model_colours[model_family], label=f'{model_family} Regional' if model_family == median_scores_global['model_family'].unique()[0] else "")
-            # axs[0].scatter(x=[north_regional_x_pos], y=[north_regional_score], color=Plotting.model_colours[model_family], label=f'{model_family} Regional' if model_family == median_scores_global['model_family'].unique()[0] else "")
-            # # axs[0].plot([global_x_pos, regional_x_pos], [global_score, regional_score], color=Plotting.model_colours[model_family], linestyle='--', alpha=0.5)
-
 
         # now iterate through the indicators and plot them in the same way
         for i, indicator in enumerate(indicators):
+            
+            print(indicator)
+
             global_indicator = indicators_dict[indicator][0]
             south_regional_indicator = indicators_dict[indicator][1]
             north_regional_indicator = indicators_dict[indicator][2]
@@ -1839,6 +1866,8 @@ class Plotting:
             indicator_output['scenario'] = input_dimension_scores_regional['scenario']
             indicator_output['model'] = input_dimension_scores_regional['model']
             indicator_output['x_variable'] = [0] * len(indicator_output)
+
+            print(indicator_output)
 
             to_append_regional_south = pd.DataFrame()
             to_append_regional_south['scores'] = south_regional_indicator
@@ -1855,17 +1884,19 @@ class Plotting:
             to_append_regional_north['x_variable'] = [0] * len(to_append_regional_north)
 
             indicator_output = pd.concat([indicator_output, to_append_regional_south, to_append_regional_north], axis=0)
-            indicator_output['model_family'] = indicator_output['model'].map(model_families.set_index('model')['model_family'])
+
+            # indicator_output['model_family'] = indicator_output['model'].map(model_families.set_index('model')['model_family'])
 
             # Calculate median scores
-            median_scores_global = indicator_output[indicator_output['region']=='global'].groupby('model_family')['scores'].median().reset_index()
-            median_scores_regional_south = indicator_output[indicator_output['region']==selected_region_south].groupby('model_family')['scores'].median().reset_index()
-            median_scores_regional_north = indicator_output[indicator_output['region']==selected_region_north].groupby('model_family')['scores'].median().reset_index()
+            # median_scores_global = indicator_output[indicator_output['region']=='global'].groupby('model_family')['scores'].median().reset_index()
+            # median_scores_regional_south = indicator_output[indicator_output['region']==selected_region_south].groupby('model_family')['scores'].median().reset_index()
+            # median_scores_regional_north = indicator_output[indicator_output['region']==selected_region_north].groupby('model_family')['scores'].median().reset_index()
 
             # First split violin looking at dimension scores 
             # sns.violinplot(data=indicator_output, x='x_variable', y="scores", ax=axs[i+1], hue="region",
             #        split=True, inner="quart", fill=False, cut=0, palette={selected_region: "#20DFA3", "global": ".35"}, linewidth=0.8,
             #        legend=False)
+            print(indicator_output)
             sns.boxplot(data=indicator_output, x='x_variable', y="scores", ax=axs[i+1], hue="region",
                     palette={selected_region_south: "#A2D5AF", selected_region_north: '#DDD898', "global": "#DADAE2"}, linewidth=0.8)
             axs[i].legend().set_visible(False)
@@ -1876,10 +1907,10 @@ class Plotting:
             north_regional_x_pos = 0.15
 
             # Plot medians and connecting lines
-            for model_family in median_scores_global['model_family'].unique():
-                global_score = median_scores_global[median_scores_global['model_family'] == model_family]['scores'].values[0]
-                south_regional_score = median_scores_regional_south[median_scores_regional_south['model_family'] == model_family]['scores'].values[0]
-                north_regional_score = median_scores_regional_north[median_scores_regional_north['model_family'] == model_family]['scores'].values[0]
+            # for model_family in median_scores_global['model_family'].unique():
+            #     global_score = median_scores_global[median_scores_global['model_family'] == model_family]['scores'].values[0]
+            #     south_regional_score = median_scores_regional_south[median_scores_regional_south['model_family'] == model_family]['scores'].values[0]
+            #     north_regional_score = median_scores_regional_north[median_scores_regional_north['model_family'] == model_family]['scores'].values[0]
 
                 # axs[i+1].scatter(x=[global_x_pos], y=[global_score], color=Plotting.model_colours[model_family], label=f'{model_family} Global' if model_family == median_scores_global['model_family'].unique()[0] else "")
                 # axs[i+1].scatter(x=[south_regional_x_pos], y=[south_regional_score], color=Plotting.model_colours[model_family], label=f'{model_family} Regional' if model_family == median_scores_global['model_family'].unique()
@@ -2171,19 +2202,20 @@ class Plotting:
                      # This will hide non-significant correlations
                     fmt='.2f')  # Format to 2 decimal places
         
-        # Add asterisks for significance levels
-        for i in range(len(cols)):
-            for j in range(len(cols)):
-                if p_matrix.iloc[i,j] <= 0.001:
-                    plt.text(j+0.5, i+0.85, '***', ha='center', va='center')
-                elif p_matrix.iloc[i,j] <= 0.01:
-                    plt.text(j+0.5, i+0.85, '**', ha='center', va='center')
-                elif p_matrix.iloc[i,j] <= 0.05:
-                    plt.text(j+0.5, i+0.85, '*', ha='center', va='center')
-                elif p_matrix.iloc[i,j] > 0.05:
-                    plt.text(j+0.5, i+0.85, '', ha='center', va='center')
+        # # Add asterisks for significance levels
+        # for i in range(len(cols)):
+        #     for j in range(len(cols)):
+        #         if p_matrix.iloc[i,j] <= 0.001:
+        #             plt.text(j+0.5, i+0.85, '***', ha='center', va='center')
+        #         elif p_matrix.iloc[i,j] <= 0.01:
+        #             plt.text(j+0.5, i+0.85, '**', ha='center', va='center')
+        #         elif p_matrix.iloc[i,j] <= 0.05:
+        #             plt.text(j+0.5, i+0.85, '*', ha='center', va='center')
+        #         elif p_matrix.iloc[i,j] > 0.05:
+        #             plt.text(j+0.5, i+0.85, '', ha='center', va='center')
 
-        plt.title('Correlation Matrix of Normalised Dimension Scores\n* p<0.05, ** p<0.01, *** p<0.001')
+        # plt.title('Correlation Matrix of Normalised Dimension Scores\n* p<0.05, ** p<0.01, *** p<0.001')
+        plt.title('Correlation Matrix of Normalised Dimension Scores')
         plt.tight_layout()
         plt.show()
 
