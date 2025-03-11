@@ -6,6 +6,7 @@
 
 !src
 !src/data/
+!src/database/
 !src/utils/
 !src/data/inputs/
 
@@ -25,4 +26,5 @@
 
 !src/data/inputs/*
 !src/data/outputs/*
+!src/data/processed/*
 !src/utils/*
