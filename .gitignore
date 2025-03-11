@@ -9,6 +9,8 @@
 !src/database/
 !src/utils/
 !src/data/inputs/
+!src/data/outputs/
+!src/data/processed/
 
 !src/fairness.py
 !src/run.py
