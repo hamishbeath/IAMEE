@@ -1,0 +1,7 @@
+numpy>=1.22
+pandas>=1.5
+pyam-iamc>=1.5
+scipy>=1.9
+scikit-learn>=1.2
+country_converter>=0.8
+pygini>=0.3
