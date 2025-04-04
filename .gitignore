@@ -4,6 +4,7 @@
 # Except
 !.gitignore
 
+!requirements.txt
 !src
 !src/data/
 !src/database/
