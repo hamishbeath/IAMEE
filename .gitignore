@@ -30,3 +30,4 @@
 !src/data/outputs/*
 !src/data/processed/*
 !src/utils/*
+!src/database/meta_data.csv
