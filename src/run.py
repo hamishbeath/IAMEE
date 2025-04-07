@@ -19,7 +19,9 @@ def main():
     """
     Main function that runs the framework analysis
     """
-    # setup(categories, regional)
+    setup(categories, regional)
+    print('Setup complete')
+    
     # env_sus.main(categories=categories)
     # print('Environmental sustainability done')
     # econ_feas.main()
@@ -33,11 +35,11 @@ def main():
     # resilience.main(categories=categories)
     # print('Resilience done')
     # transition_speed.main(categories=categories)
-    print('Transition speed done')
-    analysis.main(categories=categories, run_regional=True)
+    # print('Transition speed done')
+    # analysis.main(categories=categories, run_regional=True)
     
     # fairness.main(categories=categories)
-    print('Framework run complete')
+    # print('Framework run complete')
 
 # set up function that ensures all the necessary data/files are ready
 def setup(categories=list, regional=True):
