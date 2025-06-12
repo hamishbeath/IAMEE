@@ -1,5 +1,4 @@
-# Integrated Assessment Model Scenario Exploration Evaluation Framework (IAMEE Framework) (BETA)
-
+# Integrated Assessment Model Scenario Exploration Evaluation Framework (IAMEE Framework) 
 This tool allows users to explore, evaluate, and select integrated assessment model scenarios. It takes Pyam dataframe inputs and performs analysis across seven dimensions to consider scenarios' relative feasibility and desirability.
 The seven dimensions are:
 - Economic Feasibility
