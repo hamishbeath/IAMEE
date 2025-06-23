@@ -506,6 +506,7 @@ def wind_shares_calc_sub(scenario, model,
     scenario_wind_mineral_intensities = pd.DataFrame()
     
     for year in range(2020, end_year+1, 5):
+        
         # filter for the year
         year_wind_shares = scenario_wind_shares
         # calculate the total capacity added for on and offshore wind
@@ -521,7 +522,7 @@ def wind_shares_calc_sub(scenario, model,
         # calculate the shares
         onshore_share = onshore_capacity_added / (onshore_capacity_added + offshore_capacity_added)
         offshore_share = offshore_capacity_added / (onshore_capacity_added + offshore_capacity_added)
-        # print(onshore_share, offshore_share)
+
         # calculate the material intensity for on and offshore wind
         year_mineral_intensity_onshore = wind_on_intensity[str(year)]
         year_mineral_intensity_offshore = wind_off_intensity[str(year)]
@@ -530,11 +531,7 @@ def wind_shares_calc_sub(scenario, model,
         year_mineral_quantities_wind = (year_mineral_intensity_onshore * onshore_share) + (year_mineral_intensity_offshore * offshore_share)
         scenario_wind_mineral_intensities[str(year)] = year_mineral_quantities_wind
 
-    # save the dictionary to a dataframe
-    
-    # scenario_wind_mineral_intensities = pd.DataFrame(scenario_wind_mineral_intensities, index=[0])
-    # print(scenario_wind_mineral_intensities)
-    # print('The scenario is', scenario)
+
     return scenario_wind_mineral_intensities
 
 
