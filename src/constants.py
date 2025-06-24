@@ -9,11 +9,11 @@ APP_NAME = "IAMEE"
 VERSION = "0.0b"
 
 # # File Paths
-DATA_DIR = "src/data/"
+DATA_DIR = "data/"
 OUTPUT_DIR = DATA_DIR + "outputs/"
 INPUT_DIR = DATA_DIR + "inputs/"
 PROCESSED_DIR = DATA_DIR + "processed/"
-DATABASE_DIR = "src/database/"
+DATABASE_DIR = "database/"
 # LOG_FILE = "logs/app.log"
 
 

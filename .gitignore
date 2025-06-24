@@ -6,12 +6,12 @@
 
 !requirements.txt
 !src
-!src/data/
-!src/database/
+!data/
+!database/
 !src/utils/
-!src/data/inputs/
-!src/data/outputs/
-!src/data/processed/
+!data/inputs/
+!data/outputs/
+!data/processed/
 
 !src/fairness.py
 !src/run.py
@@ -26,8 +26,8 @@
 !src/constants.py
 !src/data_sources.md
 
-!src/data/inputs/*
-!src/data/outputs/*
-!src/data/processed/*
+!data/inputs/*
+!data/outputs/*
+!data/processed/*
 !src/utils/*
-!src/database/meta_data.csv
+!database/meta_data.csv
