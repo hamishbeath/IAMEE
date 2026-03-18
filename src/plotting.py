@@ -112,7 +112,7 @@ def main() -> None:
 class Plotting:
 
     dimensions = ['economic', 'environment', 'resilience', 'resource', 'robust', 'fairness', 'transition_speed']
-    dimension_names = ['Economic', 'Environment', 'Resource', 'Resilience', 'Robust', 'Fairness', 'Transition Speed']
+    dimension_names = ['Economic', 'Environment', 'Resilience', 'Resource', 'Robustness', 'Fairness', 'Transition Speed']
     dimension_colours = {'economic': 'red', 'environment': 'green', 'resilience': 'blue', 'resource': 'orange', 'robust': 'purple'}
     dimension_titles = {'economic': 'Economic Feasibility', 'environment': 'Non-climate Environmental Sustainability', 'resilience': 'Societal Resilience', 'resource': 'Resource Availability', 'robust': 'Scenario Robustness'}
     dimention_cmaps = {'economic': 'Reds', 'environment': 'Greens', 'resilience': 'Blues', 'resource': 'Oranges', 'robust': 'Purples'}
