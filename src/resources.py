@@ -25,8 +25,11 @@ class NaturalResources:
     solar_base_capacity_added = 171 # GW (2022 values from IRENA)
     wind_base_capacity_added = 75 # GW (2022 values from IRENA) https://www.irena.org/News/pressreleases/2023/Mar/Record-9-point-6-Percentage-Growth-in-Renewables-Achieved-Despite-Energy-Crisis
     material_thresholds = pd.read_csv(os.path.join(INPUT_DIR, 'mineral_renewables_amounts.csv'))
+    solar_variable = 'Capacity|Electricity|Solar|PV'
+    wind_aggregate_variable = 'Capacity|Electricity|Wind'
     wind_variables = ['Capacity|Electricity|Wind|Onshore', 
                      'Capacity|Electricity|Wind|Offshore']
+    resource_capacity_variables = [solar_variable, wind_aggregate_variable] + wind_variables
 
 
 def main(pyamdf=None, categories=None, scenarios=None, meta=None ) -> None:
@@ -73,6 +76,7 @@ def main(pyamdf=None, categories=None, scenarios=None, meta=None ) -> None:
     #                                        NaturalResources.minerals, 
     #                                        2050)
     # calculate_base_shares_minerals()
+
 
 # function with adjustable parameters that calculates the total global availability of each material
 def calculate_global_availability(recycling, reserves, production, reserve_growth):
@@ -128,6 +132,7 @@ def calculate_global_availability(recycling, reserves, production, reserve_growt
                 total_recycling[year] = recycling_current
                 total_availability[year] = total_availability[str(previous_year)] + production_current
                 total_availability[year] -= stock_outflows
+
         # add the dictionary to the dataframe
         historical_availability[mineral] = total_availability
 
@@ -138,7 +143,7 @@ def calculate_global_availability(recycling, reserves, production, reserve_growt
         average_growth_rate = compound_average_growth_rate
 
         # calculate the annual improvement in the recycling rate based on the 2050 recycling rate and the current recycling rate
-        first_future_year = 2023
+        first_future_year = 2025
         rate_2050 = future_recycling_rate
         rate_current = recycling_current_rate
         annual_improvement = (rate_2050 - rate_current) / (2050 - int(first_future_year))
@@ -149,7 +154,7 @@ def calculate_global_availability(recycling, reserves, production, reserve_growt
         reserves_remaining = reserves_total
         
         # this loop is for the future mineral availability
-        for future_year in range(2024, 2101):
+        for future_year in range(2026, 2101):
             
             # update the reserve total based on per mineral growth rate (based on historical data)
             new_reserves_found = reserves_remaining * mineral_reserve_growth
@@ -163,7 +168,7 @@ def calculate_global_availability(recycling, reserves, production, reserve_growt
                 future_recycling_rate = NaturalResources.maximum_circularity_rate
             
             # get stock outflow and number as basis for recycling from previous year
-            if (future_year - 2024) > NaturalResources.product_life:
+            if (future_year - 2026) > NaturalResources.product_life:
                 try:
                     stock_outflows = future_availability[future_year - NaturalResources.product_life]
                 except:
@@ -172,11 +177,11 @@ def calculate_global_availability(recycling, reserves, production, reserve_growt
                 stock_outflows = total_availability[str(2016)]
 
             # calculate the future production value depending on which data is available
-            if future_year == 2024:
+            if future_year == 2026:
                 future_year_production = mineral_production[-1] * (1 + average_growth_rate)
-                previous_availability = total_availability[str(2023)]
+                previous_availability = total_availability[str(2025)]
             else:
-                future_year_production = future_year_production_dict[2024] * (1 + (average_growth_rate * (future_year - 2024)))
+                future_year_production = future_year_production_dict[2026] * (1 + (average_growth_rate * (future_year - 2026)))
                 previous_availability = future_availability[future_year-1]
             # add the future production to the dictionary
             future_year_production_dict[future_year] = future_year_production
@@ -214,6 +219,76 @@ def calculate_global_availability(recycling, reserves, production, reserve_growt
     all_availability.to_csv(PROCESSED_DIR + 'mineral_availability.csv')
 
             
+def _capacity_value(iamdf, variable, year):
+    data = iamdf.data
+    data = data[(data['variable'] == variable) & (data['year'] == year)]
+    if data.empty:
+        return None
+    values = pd.to_numeric(data['value'], errors='coerce').dropna()
+    if values.empty:
+        return None
+    return values.iloc[0]
+
+
+def _capacity_added(iamdf, variable, year):
+    current = _capacity_value(iamdf, variable, year)
+    previous = _capacity_value(iamdf, variable, year - 5)
+    if current is None or previous is None:
+        return None
+    return current - previous
+
+
+def _intensity_for_year(material_intensity, year, fixed_material_intensities):
+    intensity_year = 2020 if fixed_material_intensities else year
+    return material_intensity[str(intensity_year)]
+
+
+def _wind_material_quantities(scenario_model_df, year, aggregate_wind_intensity,
+                              wind_on_intensity, wind_off_intensity,
+                              fixed_material_intensities):
+    aggregate_added = _capacity_added(
+        scenario_model_df, NaturalResources.wind_aggregate_variable, year
+    )
+    onshore_added = _capacity_added(
+        scenario_model_df, NaturalResources.wind_variables[0], year
+    )
+    offshore_added = _capacity_added(
+        scenario_model_df, NaturalResources.wind_variables[1], year
+    )
+
+    has_onshore = onshore_added is not None
+    has_offshore = offshore_added is not None
+
+    if has_onshore or has_offshore:
+        onshore_added = 0 if onshore_added is None else onshore_added
+        offshore_added = 0 if offshore_added is None else offshore_added
+
+        if aggregate_added is not None:
+            if has_onshore and not has_offshore:
+                offshore_added = aggregate_added - onshore_added
+            elif has_offshore and not has_onshore:
+                onshore_added = aggregate_added - offshore_added
+
+        onshore_intensity = _intensity_for_year(
+            wind_on_intensity, year, fixed_material_intensities
+        )
+        offshore_intensity = _intensity_for_year(
+            wind_off_intensity, year, fixed_material_intensities
+        )
+        return (onshore_intensity * onshore_added) + (offshore_intensity * offshore_added)
+
+    if aggregate_added is None:
+        raise ValueError(
+            'Missing wind capacity data for '
+            f"{scenario_model_df.data['model'].iloc[0]} / "
+            f"{scenario_model_df.data['scenario'].iloc[0]} in {year}"
+        )
+
+    wind_intensity = _intensity_for_year(
+        aggregate_wind_intensity, year, fixed_material_intensities
+    )
+    return wind_intensity * aggregate_added
+
 
 # function that takes input of the scenarios and assesses 
 def scenario_assessment_minerals(pyam_df, minerals, scenario_model_list, base_thresholds, end_year, categories, 
@@ -221,33 +296,20 @@ def scenario_assessment_minerals(pyam_df, minerals, scenario_model_list, base_th
 
     print('Assessing the mineral use for the scenarios')
     # filter for the variables needed
-    df = pyam_df.filter(variable=['Capacity|Electricity|Wind','Capacity|Electricity|Solar|PV'],region='World',
+    df = pyam_df.filter(variable=NaturalResources.resource_capacity_variables,region='World',
                         year=range(2020, end_year+1),
                         scenario=scenario_model_list['scenario'], 
                         model=scenario_model_list['model'])
 
     # check whether shares of wind types files and scenario list exist 
     try: 
-        wind_shares_scenarios = pyam.IamDataFrame(data=os.path.join(OUTPUT_DIR + 'wind_shares_scenarios' + str(categories) + '.csv')) 
-        wind_shares_list = pd.read_csv(OUTPUT_DIR + 'wind_shares_list' + str(categories) + '.csv')
+        wind_shares_scenarios = pyam.IamDataFrame(data=os.path.join(OUTPUT_DIR, 'wind_shares_scenarios' + str(categories) + '.csv'))
+        wind_shares_list = pd.read_csv(os.path.join(OUTPUT_DIR, 'wind_shares_list' + str(categories) + '.csv'))
     
     except FileNotFoundError:
-        
-        print('Wind shares files not found, downloading data')
-        scenarios = scenario_model_list['scenario'].tolist()
-        models = scenario_model_list['model'].tolist()
-
-        wind_shares_scenarios = data_download_sub(NaturalResources.wind_variables,
-                                                        models,
-                                                        scenarios,
-                                                        categories,
-                                                        'World', end_year)
-        wind_shares_scenarios.to_csv(OUTPUT_DIR+ 'wind_shares_scenarios' + str(categories) + '.csv')
-        wind_shares_list = mandatory_variables_scenarios(categories, False, 
-                                                                  NaturalResources.wind_variables,
-                                                                  wind_shares_scenarios, 
-                                                                       subset=False)
-        wind_shares_list.to_csv(OUTPUT_DIR+ 'wind_shares_list' + str(categories) + '.csv')
+        print('Wind shares files not found, using default wind material intensities')
+        wind_shares_scenarios = None
+        wind_shares_list = pd.DataFrame(columns=['model', 'scenario'])
 
     # extract the material intensities for the different technologies
     material_intensities = mineral_intensities_timeseries.set_index('category')
@@ -265,7 +327,10 @@ def scenario_assessment_minerals(pyam_df, minerals, scenario_model_list, base_th
     # material_intensities = NaturalResources.material_intensities
     # wind_material_intensity = material_intensities.loc['wind_neu']
     # solar_material_intensity = material_intensities.loc['solar_neu']
-    mineral_availability = pd.read_csv(OUTPUT_DIR + 'mineral_availability' + str(categories) + '.csv', index_col=0)
+    mineral_availability_path = OUTPUT_DIR + 'mineral_availability' + str(categories) + '.csv'
+    if not os.path.isfile(mineral_availability_path):
+        mineral_availability_path = PROCESSED_DIR + 'mineral_availability.csv'
+    mineral_availability = pd.read_csv(mineral_availability_path, index_col=0)
 
     material_use_ratios = pd.DataFrame(columns=minerals)
     
@@ -299,26 +364,29 @@ def scenario_assessment_minerals(pyam_df, minerals, scenario_model_list, base_th
 
             # calculate the total capacity added for solar and wind. Capacity additions variable has lower coverage so is necessary
             # Note, could switch to using Pyam built in functionality for this.
-            solar_capacity_current = scenario_model_df.filter(variable='Capacity|Electricity|Solar|PV', year=year).data['value'].values
-            wind_capacity_current = scenario_model_df.filter(variable='Capacity|Electricity|Wind', year=year).data['value'].values
-            solar_capacity_previous = scenario_model_df.filter(variable='Capacity|Electricity|Solar|PV', year=year-5).data['value'].values
-            wind_capacity_previous = scenario_model_df.filter(variable='Capacity|Electricity|Wind', year=year-5).data['value'].values
-            solar_capacity_added = solar_capacity_current - solar_capacity_previous
-            wind_capacity_added = wind_capacity_current - wind_capacity_previous
-            solar_capacity_added = solar_capacity_added[0]
-            wind_capacity_added = wind_capacity_added[0]
-            
-            # calculate the material intensity for solar and wind
-            year_wind_material_intensity = wind_material_intensity[str(year)]
-            year_solar_material_intensity = solar_material_intensity[str(year)]
+            solar_capacity_added = _capacity_added(
+                scenario_model_df, NaturalResources.solar_variable, year
+            )
+            if solar_capacity_added is None:
+                raise ValueError(
+                    'Missing solar PV capacity data for '
+                    f'{model} / {scenario} in {year}'
+                )
 
             if fixed_material_intensities == True:
                 scenario_solar_material_quantities = solar_material_intensity[str(2020)] * solar_capacity_added
-                scenario_wind_material_quantities = wind_material_intensity[str(2020)] * wind_capacity_added
             
             elif fixed_material_intensities == False:
                 scenario_solar_material_quantities = solar_material_intensity[str(year)] * solar_capacity_added
-                scenario_wind_material_quantities = wind_material_intensity[str(year)] * wind_capacity_added
+
+            scenario_wind_material_quantities = _wind_material_quantities(
+                scenario_model_df,
+                year,
+                wind_material_intensity,
+                wind_on_material_intensity,
+                wind_off_material_intensity,
+                fixed_material_intensities,
+            )
             total_scenario_material_quantities = scenario_solar_material_quantities + scenario_wind_material_quantities
 
             # calculate the mineral quantities for solar and wind from relevant decade
@@ -510,18 +578,28 @@ def wind_shares_calc_sub(scenario, model,
         # filter for the year
         year_wind_shares = scenario_wind_shares
         # calculate the total capacity added for on and offshore wind
-        onshore_capacity = year_wind_shares.filter(variable='Capacity|Electricity|Wind|Onshore', year=year).data['value'].values
-        offshore_capacity = year_wind_shares.filter(variable='Capacity|Electricity|Wind|Offshore',year=year).data['value'].values
-        onshore_capacity_previous = year_wind_shares.filter(variable='Capacity|Electricity|Wind|Onshore', year=year-5).data['value'].values
-        offshore_capacity_previous = year_wind_shares.filter(variable='Capacity|Electricity|Wind|Offshore', year=year-5).data['value'].values
-        onshore_capacity_added = onshore_capacity - onshore_capacity_previous
-        offshore_capacity_added = offshore_capacity - offshore_capacity_previous
-        onshore_capacity_added = onshore_capacity_added[0]
-        offshore_capacity_added = offshore_capacity_added[0]
+        onshore_capacity = _capacity_value(year_wind_shares, 'Capacity|Electricity|Wind|Onshore', year)
+        offshore_capacity = _capacity_value(year_wind_shares, 'Capacity|Electricity|Wind|Offshore', year)
+        onshore_capacity_added = _capacity_added(year_wind_shares, 'Capacity|Electricity|Wind|Onshore', year)
+        offshore_capacity_added = _capacity_added(year_wind_shares, 'Capacity|Electricity|Wind|Offshore', year)
+        onshore_capacity_added = 0 if onshore_capacity_added is None else onshore_capacity_added
+        offshore_capacity_added = 0 if offshore_capacity_added is None else offshore_capacity_added
         
         # calculate the shares
-        onshore_share = onshore_capacity_added / (onshore_capacity_added + offshore_capacity_added)
-        offshore_share = offshore_capacity_added / (onshore_capacity_added + offshore_capacity_added)
+        total_capacity_added = onshore_capacity_added + offshore_capacity_added
+        if total_capacity_added == 0:
+            onshore_capacity = 0 if onshore_capacity is None else onshore_capacity
+            offshore_capacity = 0 if offshore_capacity is None else offshore_capacity
+            total_capacity = onshore_capacity + offshore_capacity
+            if total_capacity == 0:
+                onshore_share = 0.5
+                offshore_share = 0.5
+            else:
+                onshore_share = onshore_capacity / total_capacity
+                offshore_share = offshore_capacity / total_capacity
+        else:
+            onshore_share = onshore_capacity_added / total_capacity_added
+            offshore_share = offshore_capacity_added / total_capacity_added
 
         # calculate the material intensity for on and offshore wind
         year_mineral_intensity_onshore = wind_on_intensity[str(year)]

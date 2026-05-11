@@ -1,0 +1,48 @@
+name: Deploy SCI dashboard to GitHub Pages
+
+on:
+  push:
+    branches:
+      - sci
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Prepare dashboard site
+        run: |
+          mkdir -p _site
+          cp dashboard/index.html _site/index.html
+          cp dashboard/styles.css _site/styles.css
+          cp dashboard/app.js _site/app.js
+          mkdir -p _site/data
+          cp dashboard/data/dashboard-data.json _site/data/dashboard-data.json
+          touch _site/.nojekyll
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload dashboard artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy dashboard
+        id: deployment
+        uses: actions/deploy-pages@v4

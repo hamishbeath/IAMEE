@@ -1,0 +1,24 @@
+dropped_iamee_variable,dropped_sci_variable,complete_scenarios_if_dropped,additional_vs_all_variables
+Capacity|Electricity|Solar|PV,Capacity|Electricity|Solar|PV,20,0
+Capacity|Electricity|Wind,Capacity|Electricity|Wind,20,0
+Carbon Sequestration|CCS|Biomass,Carbon Capture|Geological Storage|Biomass,20,0
+Carbon Sequestration|Land Use,Carbon Removal|Land Use,20,0
+Emissions|CO2,Emissions|CO2,20,0
+Final Energy,Final Energy,20,0
+Final Energy|Electricity,Final Energy|Electricity,20,0
+Food Demand|Crops,Food Availability|Crops [per capita],20,0
+Food Demand|Livestock,Food Availability|Livestock [per capita],20,0
+GDP|MER,GDP|MER,20,0
+Investment|Energy Supply,Investment|Energy Supply,20,0
+Land Cover,Land Cover,20,0
+Land Cover|Forest|Natural Forest,Land Cover|Forest,20,0
+Population,Population,20,0
+Price|Secondary Energy|Electricity,Price|Secondary Energy|Electricity,20,0
+Primary Energy|Biomass,Primary Energy|Biomass,20,0
+Primary Energy|Coal,Primary Energy|Coal,20,0
+Primary Energy|Fossil|w/ CCS,Primary Energy|Fossil|w/ CCS,20,0
+Primary Energy|Fossil|w/o CCS,Primary Energy|Fossil|w/o CCS,20,0
+Primary Energy|Gas,Primary Energy|Gas,20,0
+Primary Energy|Non-Biomass Renewables,Primary Energy|Non-Biomass Renewables,20,0
+Primary Energy|Nuclear,Primary Energy|Nuclear,20,0
+Primary Energy|Oil,Primary Energy|Oil,20,0

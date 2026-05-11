@@ -19,7 +19,7 @@ def main():
     """
     Main function that runs the framework analysis
     """
-    setup(categories, regional)
+    # setup(categories, regional)
     print('Setup complete')
     
     # env_sus.main(categories=categories)
@@ -123,6 +123,7 @@ def setup(categories=list, regional=True):
 
     else:
         print('Framework data already in directory')
+
 
 
 if __name__ == '__main__':

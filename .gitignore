@@ -12,6 +12,9 @@
 !data/inputs/
 !data/outputs/
 !data/processed/
+!dashboard/
+!.github/
+!.github/workflows/
 
 !src/fairness.py
 !src/run.py
@@ -31,3 +34,10 @@
 !data/processed/*
 !src/utils/*
 !database/meta_data.csv
+!dashboard/index.html
+!dashboard/styles.css
+!dashboard/app.js
+!dashboard/build_dashboard_data.py
+!dashboard/data/
+!dashboard/data/dashboard-data.json
+!.github/workflows/deploy-dashboard-pages.yml

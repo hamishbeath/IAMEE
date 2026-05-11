@@ -1,0 +1,7 @@
+drop_group,dropped_iamee_variables,complete_scenarios_if_dropped,additional_vs_all_variables
+food share indicator (crop + livestock food availability),Food Demand|Crops; Food Demand|Livestock,60,40
+transition speed variables,Final Energy; Final Energy|Electricity; Population; Food Demand|Crops; Food Demand|Livestock,60,40
+price indicator,Price|Secondary Energy|Electricity,20,0
+forest cover indicator,Land Cover; Land Cover|Forest|Natural Forest,20,0
+land / environment variables,Land Cover; Land Cover|Forest|Natural Forest; Primary Energy|Biomass,20,0
+economic investment indicator,Investment|Energy Supply,20,0

@@ -1,0 +1,24 @@
+iamee_variable,sci_variable,scenarios_all_10_r10_regions,scenarios_any_r10_region,mean_r10_regions_reported,min_r10_regions_reported,max_r10_regions_reported,candidate_scenarios,missing_scenarios_all_10_r10
+Food Demand|Crops,Food Availability|Crops [per capita],20,20,1.3605442176870748,0,10,147,127
+Food Demand|Livestock,Food Availability|Livestock [per capita],20,20,1.3605442176870748,0,10,147,127
+Price|Secondary Energy|Electricity,Price|Secondary Energy|Electricity,93,94,6.360544217687075,0,10,147,54
+Land Cover,Land Cover,101,102,6.904761904761905,0,10,147,46
+Land Cover|Forest|Natural Forest,Land Cover|Forest,101,102,6.904761904761905,0,10,147,46
+GDP|MER,GDP|MER,102,103,6.9727891156462585,0,10,147,45
+Investment|Energy Supply,Investment|Energy Supply,102,103,6.9727891156462585,0,10,147,45
+Population,Population,102,103,6.9727891156462585,0,10,147,45
+Primary Energy|Fossil|w/ CCS,Primary Energy|Fossil|w/ CCS,102,103,6.9727891156462585,0,10,147,45
+Primary Energy|Fossil|w/o CCS,Primary Energy|Fossil|w/o CCS,102,103,6.9727891156462585,0,10,147,45
+Primary Energy|Non-Biomass Renewables,Primary Energy|Non-Biomass Renewables,102,103,6.9727891156462585,0,10,147,45
+Carbon Sequestration|Land Use,Carbon Removal|Land Use,121,122,8.26530612244898,0,10,147,26
+Capacity|Electricity|Solar|PV,Capacity|Electricity|Solar|PV,128,129,8.741496598639456,0,10,147,19
+Capacity|Electricity|Wind,Capacity|Electricity|Wind,128,129,8.741496598639456,0,10,147,19
+Carbon Sequestration|CCS|Biomass,Carbon Capture|Geological Storage|Biomass,128,129,8.741496598639456,0,10,147,19
+Emissions|CO2,Emissions|CO2,128,129,8.741496598639456,0,10,147,19
+Final Energy,Final Energy,128,129,8.741496598639456,0,10,147,19
+Final Energy|Electricity,Final Energy|Electricity,128,129,8.741496598639456,0,10,147,19
+Primary Energy|Biomass,Primary Energy|Biomass,128,129,8.741496598639456,0,10,147,19
+Primary Energy|Coal,Primary Energy|Coal,128,129,8.741496598639456,0,10,147,19
+Primary Energy|Gas,Primary Energy|Gas,128,129,8.741496598639456,0,10,147,19
+Primary Energy|Nuclear,Primary Energy|Nuclear,128,129,8.741496598639456,0,10,147,19
+Primary Energy|Oil,Primary Energy|Oil,128,129,8.741496598639456,0,10,147,19

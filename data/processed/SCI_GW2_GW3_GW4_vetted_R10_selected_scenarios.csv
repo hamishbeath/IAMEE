@@ -1,0 +1,21 @@
+model,scenario,version,Climate Category|SCI 2025 [Tier III],Climate Category|SCI 2025 [Tier II],Climate Category|SCI 2025 [Tier I],Vetting|SCI 2025
+IMAGE 3.3,NAVIGATE Demand-1.5°C-ele_u,1,GW2-IIIb,GW2b,GW2,ok
+IMAGE 3.3,NAVIGATE Demand-1.5°C-tec_u,1,GW2-IIIb,GW2b,GW2,ok
+IMAGE 3.3,NAVIGATE Demand-2.0°C-ele_u,1,GW3-IIc,GW3b,GW3,ok
+IMAGE 3.3,NAVIGATE Demand-2.0°C-ref,1,GW3-IIc,GW3b,GW3,ok
+IMAGE 3.3,NAVIGATE Demand-2.0°C-tec_u,1,GW3-IIc,GW3b,GW3,ok
+MESSAGEix-GLOBIOM 2.0-M-R12-NGFS,NGFS Phase 5-Below 2°C,1,GW3-IIb,GW3b,GW3,ok
+MESSAGEix-GLOBIOM 2.0-M-R12-NGFS,NGFS Phase 5-Delayed Transition,1,GW3-IIb,GW3b,GW3,ok
+MESSAGEix-GLOBIOM 2.0-M-R12-NGFS,NGFS Phase 5-Low Demand,1,GW2-II,GW2a,GW2,ok
+MESSAGEix-GLOBIOM 2.0-M-R12-NGFS,NGFS Phase 5-Nationally Determined Contributions (NDCs),1,GW4-IIc,GW4,GW4,ok
+MESSAGEix-GLOBIOM 2.0-M-R12-NGFS,NGFS Phase 5-Net-Zero 2050,1,GW2-I,GW2a,GW2,ok
+REMIND-MAgPIE 3.2.0-4.8.0,RESCUE-End-of-Century-Budget-1150,1,GW4-IIa,GW4,GW4,ok
+REMIND-MAgPIE 3.2.0-4.8.0,RESCUE-End-of-Century-Budget-1150-with-OAE,1,GW4-IIa,GW4,GW4,ok
+REMIND-MAgPIE 3.2.0-4.8.0,RESCUE-End-of-Century-Budget-500,1,GW3-I,GW3a,GW3,ok
+REMIND-MAgPIE 3.2.0-4.8.0,RESCUE-End-of-Century-Budget-500-with-OAE,1,GW3-I,GW3a,GW3,ok
+REMIND-MAgPIE 3.2.0-4.8.0,RESCUE-Peak-Budget-1150,1,GW3-IIb,GW3b,GW3,ok
+REMIND-MAgPIE 3.2.0-4.8.0,RESCUE-Peak-Budget-1150-with-OAE,1,GW3-IIb,GW3b,GW3,ok
+REMIND-MAgPIE 3.3-4.8,NGFS Phase 5-Below 2°C,1,GW3-IIb,GW3b,GW3,ok
+REMIND-MAgPIE 3.3-4.8,NGFS Phase 5-Delayed Transition,1,GW3-IIb,GW3b,GW3,ok
+REMIND-MAgPIE 3.3-4.8,NGFS Phase 5-Low Demand,1,GW2-I,GW2a,GW2,ok
+REMIND-MAgPIE 3.3-4.8,NGFS Phase 5-Net-Zero 2050,1,GW2-II,GW2a,GW2,ok

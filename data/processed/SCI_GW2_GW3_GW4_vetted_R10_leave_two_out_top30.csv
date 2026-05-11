@@ -1,0 +1,31 @@
+dropped_iamee_variables,dropped_sci_variables,complete_scenarios_if_dropped,additional_vs_all_variables
+Food Demand|Crops + Food Demand|Livestock,Food Availability|Crops [per capita] + Food Availability|Livestock [per capita],60,40
+Capacity|Electricity|Solar|PV + Carbon Sequestration|CCS|Biomass,Capacity|Electricity|Solar|PV + Carbon Capture|Geological Storage|Biomass,20,0
+Capacity|Electricity|Solar|PV + Carbon Sequestration|Land Use,Capacity|Electricity|Solar|PV + Carbon Removal|Land Use,20,0
+Capacity|Electricity|Solar|PV + Final Energy,Capacity|Electricity|Solar|PV + Final Energy,20,0
+Capacity|Electricity|Solar|PV + Final Energy|Electricity,Capacity|Electricity|Solar|PV + Final Energy|Electricity,20,0
+Capacity|Electricity|Solar|PV + Food Demand|Crops,Capacity|Electricity|Solar|PV + Food Availability|Crops [per capita],20,0
+Capacity|Electricity|Solar|PV + Food Demand|Livestock,Capacity|Electricity|Solar|PV + Food Availability|Livestock [per capita],20,0
+Capacity|Electricity|Solar|PV + GDP|MER,Capacity|Electricity|Solar|PV + GDP|MER,20,0
+Capacity|Electricity|Solar|PV + Land Cover,Capacity|Electricity|Solar|PV + Land Cover,20,0
+Capacity|Electricity|Solar|PV + Land Cover|Forest|Natural Forest,Capacity|Electricity|Solar|PV + Land Cover|Forest,20,0
+Capacity|Electricity|Solar|PV + Population,Capacity|Electricity|Solar|PV + Population,20,0
+Capacity|Electricity|Solar|PV + Price|Secondary Energy|Electricity,Capacity|Electricity|Solar|PV + Price|Secondary Energy|Electricity,20,0
+Capacity|Electricity|Solar|PV + Primary Energy|Biomass,Capacity|Electricity|Solar|PV + Primary Energy|Biomass,20,0
+Capacity|Electricity|Solar|PV + Primary Energy|Coal,Capacity|Electricity|Solar|PV + Primary Energy|Coal,20,0
+Capacity|Electricity|Solar|PV + Primary Energy|Fossil|w/ CCS,Capacity|Electricity|Solar|PV + Primary Energy|Fossil|w/ CCS,20,0
+Capacity|Electricity|Solar|PV + Primary Energy|Fossil|w/o CCS,Capacity|Electricity|Solar|PV + Primary Energy|Fossil|w/o CCS,20,0
+Capacity|Electricity|Solar|PV + Primary Energy|Gas,Capacity|Electricity|Solar|PV + Primary Energy|Gas,20,0
+Capacity|Electricity|Solar|PV + Primary Energy|Non-Biomass Renewables,Capacity|Electricity|Solar|PV + Primary Energy|Non-Biomass Renewables,20,0
+Capacity|Electricity|Solar|PV + Primary Energy|Nuclear,Capacity|Electricity|Solar|PV + Primary Energy|Nuclear,20,0
+Capacity|Electricity|Solar|PV + Primary Energy|Oil,Capacity|Electricity|Solar|PV + Primary Energy|Oil,20,0
+Capacity|Electricity|Wind + Capacity|Electricity|Solar|PV,Capacity|Electricity|Wind + Capacity|Electricity|Solar|PV,20,0
+Capacity|Electricity|Wind + Carbon Sequestration|CCS|Biomass,Capacity|Electricity|Wind + Carbon Capture|Geological Storage|Biomass,20,0
+Capacity|Electricity|Wind + Carbon Sequestration|Land Use,Capacity|Electricity|Wind + Carbon Removal|Land Use,20,0
+Capacity|Electricity|Wind + Final Energy,Capacity|Electricity|Wind + Final Energy,20,0
+Capacity|Electricity|Wind + Final Energy|Electricity,Capacity|Electricity|Wind + Final Energy|Electricity,20,0
+Capacity|Electricity|Wind + Food Demand|Crops,Capacity|Electricity|Wind + Food Availability|Crops [per capita],20,0
+Capacity|Electricity|Wind + Food Demand|Livestock,Capacity|Electricity|Wind + Food Availability|Livestock [per capita],20,0
+Capacity|Electricity|Wind + GDP|MER,Capacity|Electricity|Wind + GDP|MER,20,0
+Capacity|Electricity|Wind + Land Cover,Capacity|Electricity|Wind + Land Cover,20,0
+Capacity|Electricity|Wind + Land Cover|Forest|Natural Forest,Capacity|Electricity|Wind + Land Cover|Forest,20,0

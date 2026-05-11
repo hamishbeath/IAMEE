@@ -4,9 +4,26 @@ import pandas as pd
 from itertools import combinations, product
 from resources import NaturalResources
 from scipy.spatial.distance import pdist, squareform
-from sklearn.cluster import KMeans
+try:
+    from sklearn.cluster import KMeans
+except ModuleNotFoundError:
+    KMeans = None
 from constants import *
 from utils.file_parser import *
+
+
+def _minmax_normalise(values, reference=None):
+    values = pd.Series(values, index=values.index, dtype=float)
+    reference_values = values if reference is None else pd.Series(reference, dtype=float)
+    reference_values = reference_values.dropna()
+    if reference_values.empty:
+        return pd.Series(np.nan, index=values.index)
+    min_value = reference_values.min()
+    max_value = reference_values.max()
+    denominator = max_value - min_value
+    if denominator == 0 or np.isnan(denominator):
+        return pd.Series(0, index=values.index, dtype=float)
+    return (values - min_value) / denominator
 
 
     # try:
@@ -193,37 +210,24 @@ def environment_score(environment_metrics, categories, regional=None, cross_regi
 
 
 # calculate the resource score (higher score = more resource challenges)
-def resource_score(minerals, resource_metrics, categories, regional=None):
+def resource_score(minerals, resource_metrics, categories, regional=None, normalise=True):
    
     output_df = pd.DataFrame()
     output_df['model'] = resource_metrics['model']
     output_df['scenario'] = resource_metrics['scenario']
-   
-    """
-    Weighting scheme:
 
-    If a mineral has a score less than the threshold then it doesnt count:
-    0-1 0 X mineral score
+    missing_minerals = [mineral for mineral in minerals if mineral not in resource_metrics.columns]
+    if missing_minerals:
+        raise KeyError(f'Missing resource ratio columns: {missing_minerals}')
 
-    """
-    
-    # loop through the materials and normalise the scores
-    for mineral in minerals:
-       
-        mineral_score = resource_metrics[mineral]
-        # make any values in the column that are less than 1 equal to 0
-        mineral_score[mineral_score < 1] = 0
-    #     mineral_score_normalised = (mineral_score - mineral_score.min()) / (mineral_score.max() - mineral_score.min())
-    #     output_df[mineral] = mineral_score_normalised
-        # try:
-        #     output_df['total'] += mineral_score
-        # except:
-        #     output_df['total'] = mineral_score
-        try:
-            output_df['resource_score'] += mineral_score
-        except:
-            output_df['resource_score'] = mineral_score
-    # output_df['resource_score'] = output_df['total'] / len(minerals)
+    mineral_ratios = resource_metrics[minerals].apply(pd.to_numeric, errors='coerce')
+    output_df['resource_ratio'] = mineral_ratios.mean(axis=1, skipna=True)
+    output_df['resource_score'] = (
+        _minmax_normalise(output_df['resource_ratio'])
+        if normalise
+        else output_df['resource_ratio']
+    )
+
     if regional != None:
         output_df['Region'] = regional
         return output_df
@@ -233,7 +237,7 @@ def resource_score(minerals, resource_metrics, categories, regional=None):
 
 
 # calculate the resilience score (higher score = more resilience challenges)
-def resilience_score(final_energy_demand, energy_diversity, gini_coefficient, electricity_price, categories, 
+def resilience_score(final_energy_demand, energy_diversity, gini_coefficient, electricity_price=None, categories=None,
                      regional=None, cross_region_norm=None):
     """
     composite of 
@@ -254,55 +258,63 @@ def resilience_score(final_energy_demand, energy_diversity, gini_coefficient, el
     
     energy_diversity = -1 * energy_diversity['shannon_index']
     gini_coefficient = gini_coefficient['ssp_gini_coefficient']
-    electricity_price = electricity_price['electricity_price']
+    include_electricity_price = electricity_price is not None
+    if include_electricity_price:
+        electricity_price = electricity_price['electricity_price']
 
     if cross_region_norm == None:
         # normalise the final energy demand
-        final_energy_demand_normalised = (final_energy_demand - final_energy_demand.min()) / (final_energy_demand.max() - final_energy_demand.min())
+        final_energy_demand_normalised = _minmax_normalise(final_energy_demand)
         outout_df['final_energy_demand'] = final_energy_demand_normalised
         
         # normalise the energy diversity
-        energy_diversity_normalised = (energy_diversity - energy_diversity.min()) / (energy_diversity.max() - energy_diversity.min())
+        energy_diversity_normalised = _minmax_normalise(energy_diversity)
         outout_df['energy_diversity'] = energy_diversity_normalised
 
         # normalise the gini coefficient
-        gini_coefficient_normalised = (gini_coefficient - gini_coefficient.min()) / (gini_coefficient.max() - gini_coefficient.min())
+        gini_coefficient_normalised = _minmax_normalise(gini_coefficient)
         outout_df['gini_coefficient'] = gini_coefficient_normalised
 
-        # normalise the electricity price
-        electricity_price_normalised = (electricity_price - electricity_price.min()) / (electricity_price.max() - electricity_price.min())
-        outout_df['electricity_price'] = electricity_price_normalised
+        if include_electricity_price:
+            # normalise the electricity price
+            electricity_price_normalised = _minmax_normalise(electricity_price)
+            outout_df['electricity_price'] = electricity_price_normalised
 
     else:
         # get the regional data
         regional_final_energy_demand = pd.read_csv(OUTPUT_DIR + 'final_energy_demand_regional' + str(categories) + '.csv')
         regional_energy_diversity = pd.read_csv(OUTPUT_DIR + 'shannon_diversity_index_regional' + str(categories) + '.csv')
         regional_gini_coefficient = pd.read_csv(OUTPUT_DIR + 'gini_coefficient_regional' + str(categories) + '.csv')
-        regional_electricity_price = pd.read_csv(OUTPUT_DIR + 'electricity_prices_regional' + str(categories) + '.csv')
+        if include_electricity_price:
+            regional_electricity_price = pd.read_csv(OUTPUT_DIR + 'electricity_prices_regional' + str(categories) + '.csv')
         
         # normalise the final energy demand across all regions
         all_regional_final_energy_demand = regional_final_energy_demand['energy_per_gdp']
-        final_energy_demand_normalised = (final_energy_demand - all_regional_final_energy_demand.min()) / (all_regional_final_energy_demand.max() - all_regional_final_energy_demand.min())
+        final_energy_demand_normalised = _minmax_normalise(final_energy_demand, all_regional_final_energy_demand)
         outout_df['final_energy_demand'] = final_energy_demand_normalised
         
         # normalise the energy diversity across all regions
         all_regional_energy_diversity = -1 * regional_energy_diversity['shannon_index']
-        energy_diversity_normalised = (energy_diversity - all_regional_energy_diversity.min()) / (all_regional_energy_diversity.max() - all_regional_energy_diversity.min())
+        energy_diversity_normalised = _minmax_normalise(energy_diversity, all_regional_energy_diversity)
         outout_df['energy_diversity'] = energy_diversity_normalised
 
         # normalise the gini coefficient across all regions
         all_regional_gini_coefficient = regional_gini_coefficient['ssp_gini_coefficient']
-        gini_coefficient_normalised = (gini_coefficient - all_regional_gini_coefficient.min()) / (all_regional_gini_coefficient.max() - all_regional_gini_coefficient.min())
+        gini_coefficient_normalised = _minmax_normalise(gini_coefficient, all_regional_gini_coefficient)
         outout_df['gini_coefficient'] = gini_coefficient_normalised
 
-        # normalise the electricity price across all regions
-        all_regional_electricity_price = regional_electricity_price['electricity_price']
-        electricity_price_normalised = (electricity_price - all_regional_electricity_price.min()) / (all_regional_electricity_price.max() - all_regional_electricity_price.min())
-        outout_df['electricity_price'] = electricity_price_normalised
+        if include_electricity_price:
+            # normalise the electricity price across all regions
+            all_regional_electricity_price = regional_electricity_price['electricity_price']
+            electricity_price_normalised = _minmax_normalise(electricity_price, all_regional_electricity_price)
+            outout_df['electricity_price'] = electricity_price_normalised
 
 
     # create the composite resilience score
-    outout_df['resilience_score'] = outout_df['final_energy_demand'] + outout_df['energy_diversity'] + outout_df['gini_coefficient'] + outout_df['electricity_price']
+    score_columns = ['final_energy_demand', 'energy_diversity', 'gini_coefficient']
+    if include_electricity_price:
+        score_columns.append('electricity_price')
+    outout_df['resilience_score'] = outout_df[score_columns].sum(axis=1)
     if regional != None:
         outout_df['Region'] = regional
         return outout_df
@@ -433,14 +445,17 @@ def transition_speed_score(transition_speed_metrics, categories, regional=None, 
 
     final_demand_reduction = -1 * transition_speed_metrics['Final energy per cap reductions']
     electrification = transition_speed_metrics['Share of final energy from electricity']
-    share_food_crop = transition_speed_metrics['Share of food demand from crops']
+    include_food_demand = 'Share of food demand from crops' in transition_speed_metrics.columns
+    if include_food_demand:
+        share_food_crop = transition_speed_metrics['Share of food demand from crops']
 
     if cross_region_norm == None: 
 
         # Normalise the metrics
         final_demand_reduction_normalised = (final_demand_reduction - final_demand_reduction.min()) / (final_demand_reduction.max() - final_demand_reduction.min())
         electrification_normalised = (electrification - electrification.min()) / (electrification.max() - electrification.min())
-        share_food_crop_normalised = (share_food_crop - share_food_crop.min()) / (share_food_crop.max() - share_food_crop.min())
+        if include_food_demand:
+            share_food_crop_normalised = (share_food_crop - share_food_crop.min()) / (share_food_crop.max() - share_food_crop.min())
 
     else:
         # get the regional data
@@ -449,18 +464,24 @@ def transition_speed_score(transition_speed_metrics, categories, regional=None, 
         # normalise the metrics but from the min and max of all regions
         all_regional_final_demand_reduction = -1 * regional_transition_speed_metrics['Final energy per cap reductions']
         all_regional_electrification = regional_transition_speed_metrics['Share of final energy from electricity']
-        all_regional_share_food_crop = regional_transition_speed_metrics['Share of food demand from crops']
+        if include_food_demand:
+            all_regional_share_food_crop = regional_transition_speed_metrics['Share of food demand from crops']
 
         final_demand_reduction_normalised = (final_demand_reduction - all_regional_final_demand_reduction.min()) / (all_regional_final_demand_reduction.max() - all_regional_final_demand_reduction.min())
         electrification_normalised = (electrification - all_regional_electrification.min()) / (all_regional_electrification.max() - all_regional_electrification.min())
-        share_food_crop_normalised = (share_food_crop - all_regional_share_food_crop.min()) / (all_regional_share_food_crop.max() - all_regional_share_food_crop.min())
+        if include_food_demand:
+            share_food_crop_normalised = (share_food_crop - all_regional_share_food_crop.min()) / (all_regional_share_food_crop.max() - all_regional_share_food_crop.min())
 
     output_df['final_demand_reduction'] = final_demand_reduction_normalised
     output_df['electrification'] = electrification_normalised
-    output_df['share_food_crop'] = share_food_crop_normalised
+    if include_food_demand:
+        output_df['share_food_crop'] = share_food_crop_normalised
 
     # create the composite transformation speed score
-    output_df['transition_speed_score'] = output_df['final_demand_reduction'] + output_df['electrification'] + output_df['share_food_crop']
+    score_columns = ['final_demand_reduction', 'electrification']
+    if include_food_demand:
+        score_columns.append('share_food_crop')
+    output_df['transition_speed_score'] = output_df[score_columns].sum(axis=1)
 
     if regional != None:
         output_df['Region'] = regional
@@ -501,14 +522,23 @@ def get_regional_scores(regional_investment_metrics, regional_environment_metric
         # resources
         regional_resource_scores = resource_metrics
         regional_resource_scores['region'] = region
-        region_resource_scores = resource_score(NaturalResources.minerals, regional_resource_scores, categories, region)
+        region_resource_scores = resource_score(
+            NaturalResources.minerals,
+            regional_resource_scores,
+            categories,
+            region,
+            normalise=False,
+        )
         resource_output = pd.concat([resource_output, region_resource_scores], axis=0)
 
         # resilience
         region_final_energy_demand = regional_final_energy_demand[regional_final_energy_demand['region'] == region]
         region_energy_diversity = regional_energy_diversity[regional_energy_diversity['region'] == region]
         region_gini_coefficient = regional_gini_coefficient[regional_gini_coefficient['region'] == region]
-        region_electricity_price = regional_electricity_price[regional_electricity_price['region'] == region]
+        if regional_electricity_price is not None:
+            region_electricity_price = regional_electricity_price[regional_electricity_price['region'] == region]
+        else:
+            region_electricity_price = None
         region_resilience = resilience_score(region_final_energy_demand, region_energy_diversity, region_gini_coefficient, region_electricity_price, 
                                              categories, region, cross_region_norm)
         resilience_output = pd.concat([resilience_output, region_resilience], axis=0)

@@ -5,7 +5,23 @@ from constants import *
 from utils.file_parser import *
 from utils import data_download
 import country_converter as coco
-from pygini import gini
+try:
+    from pygini import gini
+except ModuleNotFoundError:
+    def gini(values):
+        values = np.asarray(values, dtype=float).flatten()
+        values = values[~np.isnan(values)]
+        if len(values) == 0:
+            return np.nan
+        if values.min() < 0:
+            values = values - values.min()
+        total = values.sum()
+        if total == 0:
+            return 0
+        values = np.sort(values)
+        n = len(values)
+        index = np.arange(1, n + 1)
+        return np.sum((2 * index - n - 1) * values) / (n * total)
 import math
 
 
@@ -30,33 +46,40 @@ def main(run_regional=None, pyamdf=None, categories=None, scenarios=None, meta=N
     # Read in the data
     between_country_gini_data = read_csv(INPUT_DIR + 'gini_ssp_data.csv')
     ssp_gini_data = read_csv(INPUT_DIR + 'ssp_population_gdp_projections.csv')
-    regional_gini = read_csv(OUTPUT_DIR + 'within_region_gini.csv')
     country_region_conversion = read_csv(ISO3C_REGIONS)
+    try:
+        regional_gini = read_csv(OUTPUT_DIR + 'within_region_gini.csv')
+    except FileNotFoundError:
+        get_within_region_gini(ssp_gini_data, country_region_conversion, R10_CODES.copy(), 2025)
+        regional_gini = read_csv(OUTPUT_DIR + 'within_region_gini.csv')
 
-    try:
-        scenario_baselines = read_csv(BASELINE_SCENARIOS_FILEPATH + str(categories) + '.csv')
-    except FileNotFoundError:
-        print('No baselines file found for the category of', categories, '. Ensure baseline data is available')
+    run_electricity_price = 'Price|Secondary Energy|Electricity' in pyamdf.variable
+    if run_electricity_price:
+        try:
+            scenario_baselines = read_csv(BASELINE_SCENARIOS_FILEPATH + str(categories) + '.csv')
+        except FileNotFoundError:
+            print('No baselines file found for the category of', categories, '. Ensure baseline data is available')
+            
+        try:
+            baseline_prices = read_pyam_df(BASELINE_DATA_FILEPATH + str(categories) + '.csv')
         
-    try:
-        baseline_prices = read_pyam_df(BASELINE_DATA_FILEPATH + str(categories) + '.csv')
-    
-    except FileNotFoundError:
-        
-        baseline_models = scenario_baselines['model'].to_list()
-        baseline_scenarios = scenario_baselines['baseline'].to_list()
-        data_download(BASELINE_DATA_VARIABLES, models=baseline_models,
-                      scenarios=baseline_scenarios,  region=R10_R5, 
-                      categories=CATEGORIES_ALL, end_year=2101, file_name=BASELINE_DATA_FILEPATH + str(categories))
-        
-        baseline_prices = read_pyam_df(BASELINE_DATA_FILEPATH + str(categories) + '.csv')
+        except FileNotFoundError:
+            
+            baseline_models = scenario_baselines['model'].to_list()
+            baseline_scenarios = scenario_baselines['baseline'].to_list()
+            data_download(BASELINE_DATA_VARIABLES, models=baseline_models,
+                          scenarios=baseline_scenarios,  region=R10_R5, 
+                          categories=CATEGORIES_ALL, end_year=2101, file_name=BASELINE_DATA_FILEPATH + str(categories))
+            
+            baseline_prices = read_pyam_df(BASELINE_DATA_FILEPATH + str(categories) + '.csv')
     
     # Run global indicators
     shannon_index_energy_mix(pyamdf, scenarios, 2100, categories, regional=None)
     final_energy_demand(pyamdf, scenarios, 2100, categories, regional=None)
     gini_between_countries(pyamdf,scenarios, 2100, meta, between_country_gini_data, categories, regional=None)
-    electricity_price(pyamdf, scenarios, 2100, categories, scenario_baselines, baseline_prices, 
-                      country_region_conversion, regional=None)
+    if run_electricity_price:
+        electricity_price(pyamdf, scenarios, 2100, categories, scenario_baselines, baseline_prices, 
+                          country_region_conversion, regional=None)
         
     if run_regional:
         # Run regional indicators
@@ -68,15 +91,17 @@ def main(run_regional=None, pyamdf=None, categories=None, scenarios=None, meta=N
             to_append_energy = final_energy_demand(pyamdf, scenarios, 2100, categories, regional=region)
             to_append_shannon = shannon_index_energy_mix(pyamdf, scenarios, 2100, categories, regional=region)
             to_append_gini = gini_between_countries(pyamdf, scenarios, 2100, meta, between_country_gini_data, categories, regional_gini=regional_gini, regional=region)
-            to_append_prices = electricity_price(pyamdf, scenarios, 2100, categories, scenario_baselines, baseline_prices, country_region_conversion, regional=region)
             final_energy = pd.concat([final_energy, to_append_energy], ignore_index=True, axis=0)
             shannon = pd.concat([shannon, to_append_shannon], ignore_index=True, axis=0)
             gini = pd.concat([gini, to_append_gini], ignore_index=True, axis=0)
-            prices = pd.concat([prices, to_append_prices], ignore_index=True, axis=0)   
+            if run_electricity_price:
+                to_append_prices = electricity_price(pyamdf, scenarios, 2100, categories, scenario_baselines, baseline_prices, country_region_conversion, regional=region)
+                prices = pd.concat([prices, to_append_prices], ignore_index=True, axis=0)   
         shannon.to_csv(OUTPUT_DIR + 'shannon_diversity_index_regional' + str(categories) + '.csv', index=False)
         final_energy.to_csv(OUTPUT_DIR + 'final_energy_demand_regional' + str(categories) + '.csv', index=False)
         gini.to_csv(OUTPUT_DIR + 'gini_coefficient_regional' + str(categories) + '.csv', index=False)
-        prices.to_csv(OUTPUT_DIR + 'electricity_prices_regional' + str(categories) + '.csv', index=False)
+        if run_electricity_price:
+            prices.to_csv(OUTPUT_DIR + 'electricity_prices_regional' + str(categories) + '.csv', index=False)
 
     # get_within_region_gini(ssp_gini_data, country_region_conversion, R10_CODES, 2025)
 
@@ -117,17 +142,24 @@ def shannon_index_energy_mix(pyam_df, scenario_model_list, end_year, categories,
             variable_df = variable_df.data
             variable_series = pd.Series(variable_df['value'].values, index=variable_df['year'])
             cumulative_interpolated = pyam.timeseries.cumulative(variable_series, 2020, 2100)
+            cumulative_interpolated = max(cumulative_interpolated, 0)
             energy_summed[variable] = cumulative_interpolated
             total += cumulative_interpolated
         
         # make a new dictionary to store the proportions of the energy sources 
         #  and calculate the shannon index
+        if total == 0:
+            shannon_indexes.append(0)
+            continue
         proportions = {}
         shannon_total = 0
         for variable in ENERGY_VARIABLES:
             proportion = energy_summed[variable] / total
             proportions[variable] = proportion
-            shannon_index_value = proportion * np.log(proportion)
+            if proportion == 0:
+                shannon_index_value = 0
+            else:
+                shannon_index_value = proportion * np.log(proportion)
             shannon_total += shannon_index_value
         shannon_index = -1 * shannon_total
         shannon_indexes.append(shannon_index)
@@ -156,9 +188,8 @@ def final_energy_demand(pyam_df, scenario_model_list, end_year, categories, regi
                         year=range(2020, end_year+1),
                         scenario=scenario_model_list['scenario'], 
                         model=scenario_model_list['model'])
-    gdp = pyam_df.filter(variable='GDP|MER')
+    gdp = df.filter(variable='GDP|MER')
     df = df.filter(variable='Final Energy')
-    
     final_energy_demand = []
     gdp_values = []
 
@@ -492,8 +523,7 @@ def get_within_region_gini(ssp_data, regions_breakdown, region_codes, start_year
         output_ginis = pd.concat([output_ginis, ssp_ginis], axis=0)
 
     # columns as region codes
-    region_codes.append('ssp')
-    output_ginis.columns = region_codes
+    output_ginis.columns = list(region_codes) + ['ssp']
     output_ginis.to_csv(OUTPUT_DIR + 'within_region_gini.csv', index=False)
 
 

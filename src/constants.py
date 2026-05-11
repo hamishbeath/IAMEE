@@ -66,7 +66,13 @@ FRAMEWORK_MANDATORY_VARIABLES = ['Emissions|CO2',
                                  'Primary Energy|Fossil|w/o CCS', 
                                  'Land Cover|Forest|Natural Forest']
 
-FRAMEWORK_VARIABLES = FRAMEWORK_MANDATORY_VARIABLES + ['Carbon Sequestration|Direct Air Capture']
+FRAMEWORK_OPTIONAL_VARIABLES = [
+    'Carbon Sequestration|Direct Air Capture',
+    'Capacity|Electricity|Wind|Onshore',
+    'Capacity|Electricity|Wind|Offshore',
+]
+
+FRAMEWORK_VARIABLES = FRAMEWORK_MANDATORY_VARIABLES + FRAMEWORK_OPTIONAL_VARIABLES
 
 
 CDR_VARIABLES = ['Carbon Sequestration|Direct Air Capture', 'Carbon Sequestration|Land Use','Carbon Sequestration|CCS|Biomass']
@@ -152,5 +158,4 @@ REGIONAL_BASE_PATH = INPUT_DIR + 'energy_investment_regions.csv'
 # Error Messages
 ERROR_FILE_NOT_FOUND = "The requested file could not be found."
 ERROR_INVALID_INPUT = "The input provided is invalid."
-
 

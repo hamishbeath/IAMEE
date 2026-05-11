@@ -81,9 +81,17 @@ def calculate_transition_speed_metrics(pyamdf, categories, scenarios, end_year, 
     else:
         region = 'World'
 
+    transition_variables = ['Final Energy', 'Final Energy|Electricity', 'Population']
+    has_food_demand = all(
+        variable in pyamdf.variable
+        for variable in ['Food Demand|Crops', 'Food Demand|Livestock']
+    )
+    if has_food_demand:
+        transition_variables.extend(['Food Demand|Crops', 'Food Demand|Livestock'])
+
     # Filter the pyam dataframe for the necessary variables
     df = pyamdf.filter(scenario=scenarios['scenario'], model=scenarios['model'], year=range(2020, end_year+1), region=region,
-                       variable=TRANSITION_SPEED_VARIABLES)
+                       variable=transition_variables)
     # Get the data from the pyam dataframe
     df = df.data
 
@@ -96,8 +104,9 @@ def calculate_transition_speed_metrics(pyamdf, categories, scenarios, end_year, 
     # share of final energy from electricity
     df['Final energy share electricity'] = df['Final Energy|Electricity'] / df['Final Energy']
 
-    # share of food demand from crops
-    df['Share of food demand from crops'] = df['Food Demand|Crops'] / (df['Food Demand|Crops'] + df['Food Demand|Livestock'])
+    if has_food_demand:
+        # share of food demand from crops
+        df['Share of food demand from crops'] = df['Food Demand|Crops'] / (df['Food Demand|Crops'] + df['Food Demand|Livestock'])
 
     # df = df.to_csv(OUTPUT_DIR + 'transition_speed_data' + str(categories) + '.csv', index=False)
 
@@ -123,13 +132,16 @@ def calculate_transition_speed_metrics(pyamdf, categories, scenarios, end_year, 
         # share of final energy from electricity
         electrification_increases.append(scenario_model_df['Final energy share electricity'].diff().groupby((scenario_model_df['year'] // 10) * 10).sum().max())
 
-        # share of food demand from crops
-        crop_share_increases.append(scenario_model_df['Share of food demand from crops'].diff().groupby((scenario_model_df['year'] // 10) * 10).sum().max())
+        if has_food_demand:
+            # share of food demand from crops
+            crop_share_increases.append(scenario_model_df['Share of food demand from crops'].diff().groupby((scenario_model_df['year'] // 10) * 10).sum().max())
 
     output_df = pd.DataFrame({'model': scenarios['model'], 'scenario': scenarios['scenario'],
                               'Final energy per cap reductions': final_demand_reductions,
-                              'Share of final energy from electricity': electrification_increases,
-                              'Share of food demand from crops': crop_share_increases})
+                              'Share of final energy from electricity': electrification_increases})
+
+    if has_food_demand:
+        output_df['Share of food demand from crops'] = crop_share_increases
 
     if regional is not None:
         output_df['region'] = region
@@ -138,4 +150,3 @@ def calculate_transition_speed_metrics(pyamdf, categories, scenarios, end_year, 
     else:
         # Save the results to a .csv file
         output_df.to_csv(OUTPUT_DIR + 'transition_speed_metrics' + str(categories) + '.csv', index=False)
-

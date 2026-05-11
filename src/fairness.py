@@ -1,7 +1,23 @@
 import numpy as np
 import pyam
 import pandas as pd
-from pygini import gini
+try:
+    from pygini import gini
+except ModuleNotFoundError:
+    def gini(values):
+        values = np.asarray(values, dtype=float).flatten()
+        values = values[~np.isnan(values)]
+        if len(values) == 0:
+            return np.nan
+        if values.min() < 0:
+            values = values - values.min()
+        total = values.sum()
+        if total == 0:
+            return 0
+        values = np.sort(values)
+        n = len(values)
+        index = np.arange(1, n + 1)
+        return np.sum((2 * index - n - 1) * values) / (n * total)
 from robust import run_regional_carbon_budgets
 from constants import *
 from utils.file_parser import *

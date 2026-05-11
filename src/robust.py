@@ -55,7 +55,7 @@ def main(run_regional=None, pyamdf=None, categories=None, scenarios=None, meta=N
                                     regional=None) 
     flexibility_score(pyamdf, scenarios, 
                       2050, ENERGY_VARIABLES, Robust.flexibility_data, categories, regional=None)
-    calculate_total_CDR(scenarios, pyamdf, 2051, regional=None)
+    calculate_total_CDR(scenarios, pyamdf, 2051, categories=categories, regional=None)
     shannon_index_low_carbon_mix(pyamdf, scenarios, 2050, categories)
     
 
@@ -182,7 +182,7 @@ def run_regional_carbon_budgets(R10_historical_emissions, R10_budgets, pyamdf, s
                                             regional=region)
         output_df = pd.concat([output_df, to_append], ignore_index=True, axis=0)
     
-    output_df.to_csv(OUTPUT_DIR + 'carbon_budget_shares_regional' + str(Data.categories) + '.csv', index=False)
+    output_df.to_csv(OUTPUT_DIR + 'carbon_budget_shares_regional' + str(categories) + '.csv', index=False)
 
 
 # Harmonize a variable in a dataframe to match a reference dataframe
@@ -251,7 +251,10 @@ def harmonize_emissions_calc_budgets(df, var, scenario_model_list,
 
 # total CDR by 2050 from BECCS, DACC or land-based CDR
 def calculate_total_CDR(scenario_model_list, pyam_df,
-                        end_year, regional=None):
+                        end_year, categories=None, regional=None):
+
+    if categories is None:
+        categories = CATEGORIES_DEFAULT
     
     # Check if a regional filter is applied
     if regional is not None:
@@ -337,6 +340,7 @@ def calculate_total_CDR(scenario_model_list, pyam_df,
     if regional is not None:
 
         # divide the total CDR by the division basis
+        total_CDR_values = np.array(total_CDR_values)
         total_CDR_gdp = total_CDR_values / division_basis_df['gdp'].values
         total_CDR_land = total_CDR_values / division_basis_df['land_area'].values
 
@@ -354,7 +358,7 @@ def calculate_total_CDR(scenario_model_list, pyam_df,
                                     'scenario': scenario_model_list['scenario'], 
                                     'total_CDR': total_CDR_values})
         
-        total_CDR_df.to_csv(OUTPUT_DIR + 'total_CDR' + str(Data.categories) + '.csv', index=False)
+        total_CDR_df.to_csv(OUTPUT_DIR + 'total_CDR' + str(categories) + '.csv', index=False)
 
 
 # Function that calculates the shannon index for low-carbon energy mix for each scenario
@@ -392,17 +396,24 @@ def shannon_index_low_carbon_mix(pyam_df, scenario_model_list, end_year, categor
             variable_df = variable_df.data
             variable_series = pd.Series(variable_df['value'].values, index=variable_df['year'])
             cumulative_interpolated = pyam.timeseries.cumulative(variable_series, 2020, end_year)
+            cumulative_interpolated = max(cumulative_interpolated, 0)
             energy_summed[variable] = cumulative_interpolated
             total += cumulative_interpolated
         
         # make a new dictionary to store the proportions of the energy sources 
         #  and calculate the shannon index
+        if total == 0:
+            shannon_indexes.append(0)
+            continue
         proportions = {}
         shannon_total = 0
         for variable in LOW_CARBON_ENERGY_VARIABLES:
             proportion = energy_summed[variable] / total
             proportions[variable] = proportion
-            shannon_index_value = proportion * np.log(proportion)
+            if proportion == 0:
+                shannon_index_value = 0
+            else:
+                shannon_index_value = proportion * np.log(proportion)
             shannon_total += shannon_index_value
         shannon_index = -1 * shannon_total
         shannon_indexes.append(shannon_index)
@@ -543,5 +554,3 @@ def get_regional_level_remaining_budgets(emissions_by_country,
 
 if __name__ == "__main__":
     main()
-
-

@@ -101,14 +101,21 @@ def create_variable_scenario_count(self, df, variables, regions, categories):
 
 
     
-def data_download(variables, models, scenarios, region, categories,
-                    end_year, file_name=str):
+def data_download(variables, models, scenarios, region, categories, database,
+                    end_year, file_name='output'):
 
-    connAr6 = pyam.iiasa.Connection(name='ar6-public', 
-                creds=None, 
-                auth_url='https://api.manager.ece.iiasa.ac.at')    
+    if database == 'ar6':
+        # Connect to the AR6 database
+        database_connection = pyam.iiasa.Connection(name='ar6-public', 
+                    creds=None, 
+                    auth_url='https://api.manager.ece.iiasa.ac.at')
+    if database == 'sci':
+        
+        database_connection = pyam.iiasa.Connection(name='scenariocompass-dev', 
+                    creds=None, 
+                    auth_url='https://api.manager.ece.iiasa.ac.at')    
 
-    df = connAr6.query(model=models, scenario=scenarios,
+    df = database_connection.query(model=models, scenario=scenarios,
         variable=variables, region=region,
         year=range(2020, end_year+1))
     
@@ -118,19 +125,38 @@ def data_download(variables, models, scenarios, region, categories,
     df.to_csv(file_name + '.csv')
 
 
-def data_download_sub(variables, models, scenarios, categories, region, end_year):
+def data_download_sub(variables, models, scenarios, categories, region, end_year, database):
+    """
+    https://pyam-iamc.readthedocs.io/en/latest/api/database.html#pyam.read_ixmp4
 
-    connAr6 = pyam.iiasa.Connection(name='ar6-public', 
-                creds=None, 
-                auth_url='https://api.manager.ece.iiasa.ac.at')    
-
-    df = connAr6.query(model=models, scenario=scenarios, Category=categories,
+    """
+    if database == 'ar6':
+        # Connect to the AR6 database
+        database_connection = pyam.iiasa.Connection(name='ar6-public', 
+                    creds=None, 
+                    auth_url='https://api.manager.ece.iiasa.ac.at')
+        
+        df = database_connection.query(model=models, scenario=scenarios, Category=categories,
         variable=variables, region=region, year=range(2020, end_year+1)
         )
+        df = df.filter(Category=categories)
 
+    if database == 'sci':
+        
+        platform = ixmp4.Platform("scenariocompass-dev")
+        
+        # # if Carbon Sequestration|CCS in variables, replace with Carbon Capture
+        # if 'Carbon Sequestration|CCS' in variables:
+        #     variables = [var.replace('Carbon Sequestration|CCS', 'Carbon Capture') for var in variables]
+        print(pyam.iiasa.Connection().valid_connections)
+        df = pyam.read_ixmp4(
+                            platform,
+                            model=models,  
+                            scenario=scenarios,  
+                            variable=variables,  
+                            region=region)        
 
     return df
-
 
 def map_countries_to_regions(country_groups, country_data):
 

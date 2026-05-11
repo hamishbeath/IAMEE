@@ -1,0 +1,4 @@
+excluded_iamee_variable,excluded_sci_variable
+Food Demand|Crops,Food Availability|Crops [per capita]
+Food Demand|Livestock,Food Availability|Livestock [per capita]
+Price|Secondary Energy|Electricity,Price|Secondary Energy|Electricity
