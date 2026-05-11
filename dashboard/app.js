@@ -115,6 +115,7 @@ function createRadarTraces(rows, dimensions, options = {}) {
   const summaryStatistic = options.summaryStatistic === "mean" ? "mean" : "median";
   const summaryFunction = summaryStatistic === "mean" ? mean : median;
   const groupBy = options.groupBy || "category";
+  const minSummaryGroupSize = options.minSummaryGroupSize || 1;
 
   if (showScenarioPoints && showScenarioLines) {
     rows.forEach((row) => {
@@ -168,6 +169,7 @@ function createRadarTraces(rows, dimensions, options = {}) {
 
   rowsByGroup(rows, groupBy).forEach(({ group, rows: groupRows }) => {
     if (!groupRows.length) return;
+    if (groupRows.length < minSummaryGroupSize) return;
     const r = dimensions.map((dimension) => summaryFunction(groupRows.map((row) => getScore(row, dimension))));
     traces.push({
       type: "scatterpolar",
@@ -462,11 +464,21 @@ function renderTradeoffPlots() {
   const dimensions = activeTradeoffDimensions();
   const scope = state.tradeoffRegion === "World" ? "World" : regionLabel(state.tradeoffRegion);
   const groupLabel = state.tradeoffGroupBy === "modelFamily" ? "model family" : "temperature category";
-  $("#tradeoffSummary").textContent = `${after.length} of ${before.length} scenarios shown for ${scope}; medians by ${groupLabel}`;
+  const sparseGroups = rowsByGroup(after, state.tradeoffGroupBy)
+    .filter(({ rows }) => rows.length > 0 && rows.length < 10)
+    .map(({ group, rows }) => `${group.label} (${rows.length})`);
+  const sparseNote = sparseGroups.length
+    ? ` Median lines hidden for groups with fewer than 10 scenarios: ${sparseGroups.join(", ")}.`
+    : "";
+  $("#tradeoffSummary").textContent = `${after.length} of ${before.length} scenarios shown for ${scope}; medians by ${groupLabel}.${sparseNote}`;
   renderRadar("tradeoffRadar", after, dimensions, {
     groupBy: state.tradeoffGroupBy,
-    scenarioOpacity: 0.16,
+    scenarioOpacity: 0.24,
+    scenarioLineOpacity: 0.22,
+    medianWidth: 1.8,
+    markerSize: 5.2,
     fillMedians: false,
+    minSummaryGroupSize: 10,
   });
   renderStackPlot("energyStack", "primaryEnergy", after, state.tradeoffRegion, "#energyUnit", before);
   renderStackPlot("cdrStack", "cdr", after, state.tradeoffRegion, "#cdrUnit", before);
