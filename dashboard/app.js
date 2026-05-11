@@ -1,6 +1,8 @@
 const plotConfig = {
   displayModeBar: false,
   responsive: true,
+  scrollZoom: false,
+  doubleClick: false,
 };
 
 let DATA = null;
@@ -112,6 +114,8 @@ function createRadarTraces(rows, dimensions, options = {}) {
   const showScenarioPoints = options.showScenarios !== false;
   const showScenarioLines = options.showScenarioLines !== false;
   const scenarioOpacity = options.scenarioOpacity ?? 0.42;
+  const scenarioLineOpacity = options.scenarioLineOpacity ?? 0.12;
+  const scenarioPointOpacity = options.scenarioPointOpacity ?? (showScenarioLines ? scenarioLineOpacity : scenarioOpacity);
   const summaryStatistic = options.summaryStatistic === "mean" ? "mean" : "median";
   const summaryFunction = summaryStatistic === "mean" ? mean : median;
   const groupBy = options.groupBy || "category";
@@ -126,7 +130,7 @@ function createRadarTraces(rows, dimensions, options = {}) {
         r: [...r, r[0]],
         theta: closedTheta,
         line: { color: groupColor(groupBy, groupValue(row, groupBy)), width: options.scenarioLineWidth || 0.8 },
-        opacity: options.scenarioLineOpacity ?? 0.12,
+        opacity: scenarioLineOpacity,
         hoverinfo: "skip",
         showlegend: false,
       });
@@ -157,7 +161,7 @@ function createRadarTraces(rows, dimensions, options = {}) {
         marker: {
           color: group.color,
           size: options.pointSize || 6,
-          opacity: scenarioOpacity,
+          opacity: scenarioPointOpacity,
           line: { color: "#ffffff", width: 0.45 },
         },
         name: `${group.label} scenarios (${groupRows.length})`,
@@ -198,6 +202,7 @@ function radarLayout(title = "", options = {}) {
     title: title ? { text: title, font: { size: 14 } } : undefined,
     paper_bgcolor: "rgba(0,0,0,0)",
     plot_bgcolor: "rgba(0,0,0,0)",
+    dragmode: false,
     margin: { t: title ? 48 : 24, r: 64, b: options.showLegend === false ? 28 : 58, l: 64 },
     showlegend: options.showLegend !== false,
     legend: { orientation: "h", y: -0.08, x: 0, font: { size: 11 } },
@@ -206,6 +211,7 @@ function radarLayout(title = "", options = {}) {
       radialaxis: {
         visible: true,
         range: [0, 1],
+        fixedrange: true,
         tickvals: [0, 0.25, 0.5, 0.75, 1],
         tickfont: { size: 10, color: "#5d6776" },
         gridcolor: "#d6ddd9",
@@ -214,6 +220,7 @@ function radarLayout(title = "", options = {}) {
       angularaxis: {
         gridcolor: "#d6ddd9",
         linecolor: "#a9b5af",
+        fixedrange: true,
         tickfont: { size: 11, color: "#1c2430" },
       },
     },
@@ -239,6 +246,7 @@ function renderEmptyPlot(id, message) {
       ],
       xaxis: { visible: false },
       yaxis: { visible: false },
+      dragmode: false,
       paper_bgcolor: "rgba(0,0,0,0)",
       plot_bgcolor: "rgba(0,0,0,0)",
     },
@@ -303,7 +311,7 @@ function renderAboutRadar() {
   renderRadar("aboutRadar", DATA.globalScores, DATA.metadata.dimensionsGlobal, {
     summaryStatistic: state.aboutSummaryStatistic,
     scenarioOpacity: 0.68,
-    scenarioLineOpacity: 0.15,
+    scenarioLineOpacity: 0.32,
     pointSize: 5.8,
     medianWidth: 2.2,
     markerSize: 5,
@@ -474,7 +482,7 @@ function renderTradeoffPlots() {
   renderRadar("tradeoffRadar", after, dimensions, {
     groupBy: state.tradeoffGroupBy,
     scenarioOpacity: 0.24,
-    scenarioLineOpacity: 0.22,
+    scenarioLineOpacity: 0.24,
     medianWidth: 1.8,
     markerSize: 5.2,
     fillMedians: false,
@@ -537,7 +545,12 @@ function renderStackPlot(id, group, selectedRows, region, unitSelector, axisRows
 
   const axisSeries = stackedMedianSeries(group, axisRows, region).series;
   const axisMax = Math.max(stackedMax(axisSeries), stackedMax(series));
-  const yAxis = { gridcolor: "#d6ddd9", rangemode: "tozero", title: rows.find((row) => row.unit)?.unit || "" };
+  const yAxis = {
+    gridcolor: "#d6ddd9",
+    rangemode: "tozero",
+    fixedrange: true,
+    title: rows.find((row) => row.unit)?.unit || "",
+  };
   if (axisMax > 0) {
     yAxis.range = [0, axisMax * 1.04];
   }
@@ -574,7 +587,8 @@ function renderStackPlot(id, group, selectedRows, region, unitSelector, axisRows
         itemsizing: "constant",
         itemwidth: 30,
       },
-      xaxis: { gridcolor: "#d6ddd9", zeroline: false },
+      dragmode: false,
+      xaxis: { gridcolor: "#d6ddd9", zeroline: false, fixedrange: true },
       yaxis: yAxis,
       font: { family: "Inter, system-ui, sans-serif", color: "#1c2430" },
     },
