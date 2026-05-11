@@ -5,6 +5,7 @@
 !.gitignore
 
 !requirements.txt
+!SCI_IMPLEMENTATION_NOTES.md
 !src
 !data/
 !database/
@@ -28,12 +29,14 @@
 !src/analysis.py
 !src/constants.py
 !src/data_sources.md
+!src/download_sci_r10.py
 
 !data/inputs/*
 !data/outputs/*
 !data/processed/*
 !src/utils/*
 !database/meta_data.csv
+!database/SCI_GW2_GW3_GW4_vetted_R10*.csv
 !dashboard/index.html
 !dashboard/styles.css
 !dashboard/app.js
