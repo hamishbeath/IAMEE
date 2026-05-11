@@ -156,7 +156,7 @@ def final_energy_demand(pyam_df, scenario_model_list, end_year, categories, regi
                         year=range(2020, end_year+1),
                         scenario=scenario_model_list['scenario'], 
                         model=scenario_model_list['model'])
-    gdp = pyam_df.filter(variable='GDP|MER')
+    gdp = df.filter(variable='GDP|MER')
     df = df.filter(variable='Final Energy')
     
     final_energy_demand = []
