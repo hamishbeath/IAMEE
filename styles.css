@@ -557,6 +557,27 @@ select {
   color: var(--ink);
 }
 
+input[type="search"] {
+  width: min(260px, 100%);
+  min-height: 38px;
+  padding: 8px 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--ink);
+}
+
+.data-control-strip {
+  grid-template-columns: minmax(220px, 320px) minmax(180px, 220px);
+  align-items: start;
+  justify-content: start;
+}
+
+.data-control-strip label,
+.data-control-strip fieldset {
+  align-self: start;
+}
+
 .chip-group {
   display: flex;
   align-items: flex-start;
@@ -612,9 +633,158 @@ select {
   color: var(--muted);
 }
 
+.panel-heading .score-note {
+  color: var(--accent-dark);
+}
+
+.plot-hint {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 650;
+}
+
 .plot {
   width: 100%;
   min-height: 380px;
+}
+
+.data-indicator-plot {
+  display: grid;
+  gap: 14px;
+  min-height: 0;
+}
+
+.data-axis-section {
+  display: grid;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.data-axis-section:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.axis-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.axis-heading strong {
+  color: var(--ink);
+  font-size: 13px;
+}
+
+.data-axis-plot {
+  min-height: 250px;
+}
+
+.indicator-notes {
+  display: grid;
+  gap: 0;
+  margin-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.indicator-note {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.35fr) minmax(260px, 1fr);
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.indicator-note strong,
+.indicator-note span {
+  display: block;
+}
+
+.indicator-note strong {
+  color: var(--ink);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.indicator-note span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.indicator-note p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.data-table-panel {
+  margin-top: 16px;
+}
+
+.table-search-label {
+  justify-items: end;
+}
+
+.score-table-wrap {
+  max-height: 620px;
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.table-status {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  margin: 0;
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--line);
+  background: #f8faf8;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 720;
+}
+
+.score-table-wrap table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.score-table-wrap th,
+.score-table-wrap td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+
+.score-table-wrap th {
+  position: sticky;
+  top: 36px;
+  z-index: 1;
+  background: #eef4f2;
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 780;
+  white-space: nowrap;
+}
+
+.score-table-wrap td {
+  color: var(--ink);
+}
+
+.score-table-wrap .numeric {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .radar-plot {
@@ -736,6 +906,15 @@ select {
   .control-strip,
   .dimension-list {
     grid-template-columns: 1fr;
+  }
+
+  .indicator-note {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .table-search-label {
+    justify-items: stretch;
   }
 
   .radar-plot {
