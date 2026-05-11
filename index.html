@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>IAM Scenario Exploration &amp; Evaluation Framework</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <a class="brand" href="#about" data-screen-link="about">IAM Scenario Exploration &amp; Evaluation Framework</a>
+      <nav class="top-nav" aria-label="Dashboard screens">
+        <button class="nav-button is-active" type="button" data-screen-link="about">About</button>
+        <button class="nav-button" type="button" data-screen-link="explore">Explore</button>
+      </nav>
+    </header>
+
+    <main>
+      <section id="about" class="screen is-active" aria-labelledby="about-title">
+        <div class="about-band">
+          <div class="about-copy">
+            <span class="eyebrow">About</span>
+            <p id="about-title" class="about-lede"><strong>Paris-aligned SCI scenarios compared by relative feasibility and desirability.</strong></p>
+            <p>
+              This dashboard presents the IAMEE framework applied to vetted GW2, GW3, and GW4 scenarios from the
+              <a href="https://scenariocompass.org/" target="_blank" rel="noopener noreferrer">Scenario Compass Initiative</a>.
+              It compares global and R10 regional feasibility and desirability scores across the framework dimensions.
+            </p>
+            <p>
+              The SCI run uses the available R10 data, applies documented variable substitutions, and excludes the dietary-change and electricity-price indicators where SCI coverage was insufficient.
+            </p>
+            <div class="link-row">
+              <a href="https://iopscience.iop.org/article/10.1088/1748-9326/addd35?utm_source=researchgate.net&utm_medium=article#erladdd35s2" target="_blank" rel="noopener noreferrer">Read the IAMEE paper</a>
+              <a href="https://scenariocompass.org/" target="_blank" rel="noopener noreferrer">Scenario Compass</a>
+            </div>
+          </div>
+
+          <div class="radar-panel">
+            <div class="framework-toolbar">
+              <div>
+                <span class="eyebrow">SCI scenario view</span>
+                <h2>Scenario scores</h2>
+              </div>
+              <div class="framework-meta">
+                <div id="aboutSummarySwitch" class="segmented-control" role="group" aria-label="Temperature category summary statistic">
+                  <button type="button" data-summary-stat="median">Median</button>
+                  <button type="button" data-summary-stat="mean">Mean</button>
+                </div>
+                <div id="aboutCategoryLegend" class="category-pills"></div>
+                <span id="aboutScenarioCount" class="status-pill">Loading</span>
+              </div>
+            </div>
+            <p class="score-note">Higher scores = higher relative challenges.</p>
+            <div id="aboutRadar" class="plot about-plot" aria-label="Scenario radar plot"></div>
+          </div>
+
+          <div class="dimension-panel">
+            <div class="panel-heading compact">
+              <div>
+                <span class="eyebrow">Framework dimensions</span>
+                <h2>Click a dimension to inspect the active SCI indicators.</h2>
+              </div>
+            </div>
+            <div id="dimensionButtons" class="dimension-list" aria-label="Framework dimensions"></div>
+            <aside id="dimensionInfo" class="dimension-info" aria-live="polite"></aside>
+          </div>
+        </div>
+      </section>
+
+      <section id="explore" class="screen" aria-labelledby="explore-title">
+        <div class="section-heading">
+          <span class="eyebrow">Explore</span>
+          <h2 id="explore-title">Filter scenarios, explore tradeoffs, and compare regions.</h2>
+        </div>
+
+        <div class="control-strip">
+          <label>
+            Region
+            <select id="tradeoffRegion"></select>
+          </label>
+          <label>
+            Regional scores
+            <select id="tradeoffNormalisation"></select>
+          </label>
+          <fieldset>
+            <legend>Display by</legend>
+            <div id="tradeoffGroupBy" class="segmented-control compact-segmented" role="group" aria-label="Display and colour scenarios by">
+              <button type="button" data-group-by="category">Temperature</button>
+              <button type="button" data-group-by="modelFamily">Model family</button>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Temperature category</legend>
+            <div id="tradeoffCategories" class="chip-group"></div>
+          </fieldset>
+          <fieldset>
+            <legend>Model family</legend>
+            <div id="tradeoffFamilies" class="chip-group"></div>
+          </fieldset>
+        </div>
+
+        <div class="tradeoff-grid">
+          <div class="plot-panel">
+            <div class="panel-heading">
+              <div>
+                <h3>Dimension Tradeoffs</h3>
+                <p id="tradeoffSummary">Loading</p>
+              </div>
+              <button id="resetThresholds" class="secondary-button" type="button">Reset limits</button>
+            </div>
+            <div id="tradeoffRadar" class="plot radar-plot"></div>
+          </div>
+          <aside class="threshold-panel">
+            <h3>Challenge limits</h3>
+            <p>Scenarios above a selected score are excluded from the radar medians and stackplots.</p>
+            <div id="thresholdControls" class="threshold-list"></div>
+          </aside>
+        </div>
+
+        <div class="stack-grid">
+          <div class="plot-panel">
+            <div class="panel-heading compact">
+              <h3>Median Primary Energy</h3>
+              <span id="energyUnit" class="muted"></span>
+            </div>
+            <div id="energyStack" class="plot stack-plot"></div>
+          </div>
+          <div class="plot-panel">
+            <div class="panel-heading compact">
+              <h3>Median Carbon Dioxide Removal</h3>
+              <span id="cdrUnit" class="muted"></span>
+            </div>
+            <div id="cdrStack" class="plot stack-plot"></div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <div id="loadError" class="load-error" hidden></div>
+    <noscript>This dashboard requires JavaScript to load the interactive plots.</noscript>
+
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
