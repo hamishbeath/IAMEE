@@ -15,6 +15,15 @@ function numberOrZero(value) {
   return Number.isFinite(value) ? value : 0;
 }
 
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 function median(values) {
   const clean = values.filter((value) => Number.isFinite(value)).sort((a, b) => a - b);
   if (!clean.length) return null;
@@ -31,6 +40,34 @@ function mean(values) {
 
 function formatScore(value) {
   return Number.isFinite(value) ? value.toFixed(2) : "n/a";
+}
+
+function formatRawValue(value) {
+  if (!Number.isFinite(value)) return "n/a";
+  const abs = Math.abs(value);
+  if (abs !== 0 && (abs >= 10000 || abs < 0.01)) return value.toExponential(2);
+  if (abs >= 100) return value.toFixed(1);
+  if (abs >= 10) return value.toFixed(2);
+  return value.toFixed(3).replace(/0+$/, "").replace(/\.$/, "");
+}
+
+function wrapLabel(label, maxChars) {
+  if (String(label).includes("<br>")) return String(label);
+  const words = String(label).split(" ");
+  const lines = [];
+  let line = "";
+  words.forEach((word) => {
+    if (!line) {
+      line = word;
+    } else if ((line + " " + word).length <= maxChars) {
+      line += ` ${word}`;
+    } else {
+      lines.push(line);
+      line = word;
+    }
+  });
+  if (line) lines.push(line);
+  return lines.join("<br>");
 }
 
 function regionLabel(region) {
@@ -596,6 +633,371 @@ function renderStackPlot(id, group, selectedRows, region, unitSelector, axisRows
   );
 }
 
+function dataDimensions() {
+  return DATA.dataTab?.dimensions || [];
+}
+
+function selectedDataDimension() {
+  return dataDimensions().find((dimension) => dimension.id === state.dataDimension) || dataDimensions()[0];
+}
+
+function stableJitter(seed) {
+  let hash = 0;
+  for (let index = 0; index < seed.length; index += 1) {
+    hash = (hash * 31 + seed.charCodeAt(index)) % 1000003;
+  }
+  return ((hash % 1000) / 1000 - 0.5) * 0.36;
+}
+
+function indicatorAxisGroups(indicators) {
+  const groups = [];
+  const lookup = new Map();
+  indicators.forEach((indicator) => {
+    const key = indicator.axisLabel ?? indicator.unit ?? indicator.id;
+    if (!lookup.has(key)) {
+      lookup.set(key, {
+        id: (key || indicator.unit || indicator.id).replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "").toLowerCase() || "axis",
+        label: key,
+        unit: indicator.unit || "not specified",
+        indicators: [],
+      });
+      groups.push(lookup.get(key));
+    }
+    lookup.get(key).indicators.push(indicator);
+  });
+  return groups;
+}
+
+function renderBinaryFlagPlot(plotId, indicators, showLegend) {
+  const indicator = indicators[0];
+  const groups = rowsByGroup(indicator.values, state.dataGroupBy).filter(({ rows }) => rows.length);
+  const yLabels = groups.map(({ group }) => group.label);
+  const noCounts = groups.map(({ rows }) => rows.filter((row) => row.value < 0.5).length);
+  const yesCounts = groups.map(({ rows }) => rows.filter((row) => row.value >= 0.5).length);
+  const totals = groups.map(({ rows }) => rows.length);
+  const noText = noCounts.map((count, index) => `${count} (${Math.round((count / totals[index]) * 100)}%)`);
+  const yesText = yesCounts.map((count, index) => `${count} (${Math.round((count / totals[index]) * 100)}%)`);
+  const commonTrace = {
+    type: "bar",
+    orientation: "h",
+    y: yLabels,
+    textposition: "inside",
+    insidetextanchor: "middle",
+    hoverinfo: "text",
+  };
+
+  Plotly.newPlot(
+    plotId,
+    [
+      {
+        ...commonTrace,
+        name: "No",
+        x: noCounts,
+        text: noText,
+        marker: { color: "#d6ddd9", line: { color: "#ffffff", width: 1 } },
+        hovertext: groups.map(({ group }, index) => `${group.label}<br>No: ${noText[index]} scenarios`),
+      },
+      {
+        ...commonTrace,
+        name: "Yes",
+        x: yesCounts,
+        text: yesText,
+        marker: { color: "rgba(68, 96, 250, 0.56)", line: { color: "#ffffff", width: 1 } },
+        hovertext: groups.map(({ group }, index) => `${group.label}<br>Yes: ${yesText[index]} scenarios`),
+      },
+    ],
+    {
+      height: Math.max(250, groups.length * 46 + 132),
+      margin: { t: showLegend ? 46 : 10, r: 28, b: 48, l: 150 },
+      barmode: "stack",
+      paper_bgcolor: "rgba(0,0,0,0)",
+      plot_bgcolor: "rgba(0,0,0,0)",
+      dragmode: false,
+      showlegend: showLegend,
+      legend: {
+        orientation: "h",
+        traceorder: "normal",
+        y: 1.12,
+        x: 0,
+        yanchor: "bottom",
+        font: { size: 11 },
+      },
+      xaxis: {
+        title: "Number of scenarios",
+        gridcolor: "#d6ddd9",
+        rangemode: "tozero",
+        fixedrange: true,
+      },
+      yaxis: {
+        automargin: true,
+        fixedrange: true,
+      },
+      font: { family: "Inter, system-ui, sans-serif", color: "#1c2430" },
+    },
+    plotConfig
+  );
+}
+
+function renderDataGroupBySwitch() {
+  document.querySelectorAll("#dataGroupBy [data-data-group-by]").forEach((button) => {
+    const active = button.dataset.dataGroupBy === state.dataGroupBy;
+    button.classList.toggle("is-active", active);
+    button.setAttribute("aria-pressed", active ? "true" : "false");
+    button.onclick = () => {
+      state.dataGroupBy = button.dataset.dataGroupBy;
+      renderDataGroupBySwitch();
+      renderDataIndicatorPlot();
+    };
+  });
+}
+
+function renderDataControls() {
+  const dimensions = dataDimensions();
+  if (!dimensions.length) return;
+  if (!dimensions.some((dimension) => dimension.id === state.dataDimension)) {
+    state.dataDimension = dimensions[0].id;
+  }
+  populateSelect($("#dataDimension"), dimensions, state.dataDimension, (value) => {
+    state.dataDimension = value;
+    renderDataIndicatorPlot();
+  });
+  renderDataGroupBySwitch();
+}
+
+function renderDataAxisPlot(plotId, indicators, unit, showLegend) {
+  if (indicators.length === 1 && indicators[0].visual === "binaryFlag") {
+    renderBinaryFlagPlot(plotId, indicators, showLegend);
+    return;
+  }
+
+  const narrowPlot = window.matchMedia("(max-width: 640px)").matches;
+  const tickValues = indicators.map((_, index) => indicators.length - index - 1);
+  const tickText = indicators.map((indicator) => wrapLabel(indicator.plotLabel || indicator.label, narrowPlot ? 20 : 34));
+  const traces = indicators.map((indicator, index) => {
+    const yValue = indicators.length - index - 1;
+    return {
+      type: "box",
+      orientation: "h",
+      x: indicator.values.map((row) => row.value),
+      y: indicator.values.map(() => yValue),
+      name: indicator.label,
+      boxpoints: false,
+      fillcolor: "rgba(214, 221, 217, 0.52)",
+      line: { color: "#75827a", width: 1.2 },
+      marker: { color: "#75827a" },
+      width: 0.46,
+      hoverinfo: "skip",
+      showlegend: false,
+    };
+  });
+
+  rowsByGroup(DATA.globalScores, state.dataGroupBy).forEach(({ group }) => {
+    const x = [];
+    const y = [];
+    const text = [];
+    indicators.forEach((indicator, index) => {
+      const yValue = indicators.length - index - 1;
+      indicator.values
+        .filter((row) => groupValue(row, state.dataGroupBy) === group.id)
+        .forEach((row) => {
+          x.push(row.value);
+          y.push(yValue + stableJitter(`${row.id}|${indicator.id}`));
+          text.push(
+            `<b>${escapeHtml(row.model)}</b><br>${escapeHtml(row.scenario)}<br>` +
+              `${escapeHtml(indicator.label)}: ${formatRawValue(row.value)} ${escapeHtml(indicator.unit || "")}<br>` +
+              `Temperature: ${escapeHtml(row.category || "n/a")}<br>Model family: ${escapeHtml(row.modelFamily || "n/a")}`
+          );
+        });
+    });
+    if (!x.length) return;
+    traces.push({
+      type: "scatter",
+      mode: "markers",
+      x,
+      y,
+      name: `${group.label} scenarios`,
+      marker: {
+        color: group.color,
+        size: narrowPlot ? 6 : 7,
+        opacity: 0.62,
+        line: { color: "#ffffff", width: 0.45 },
+      },
+      hoverinfo: "text",
+      text,
+      cliponaxis: false,
+      showlegend: showLegend,
+    });
+  });
+
+  Plotly.newPlot(
+    plotId,
+    traces,
+    {
+      height: Math.max(narrowPlot ? 320 : 250, indicators.length * (narrowPlot ? 86 : 62) + (showLegend ? 190 : 135)),
+      margin: narrowPlot
+        ? { t: showLegend ? 46 : 10, r: 12, b: 54, l: 150 }
+        : { t: showLegend ? 46 : 10, r: 28, b: 54, l: 235 },
+      paper_bgcolor: "rgba(0,0,0,0)",
+      plot_bgcolor: "rgba(0,0,0,0)",
+      dragmode: false,
+      hovermode: "closest",
+      showlegend: showLegend,
+      legend: {
+        orientation: "h",
+        y: 1.12,
+        x: 0,
+        yanchor: "bottom",
+        font: { size: 11 },
+        itemsizing: "constant",
+      },
+      xaxis: {
+        title: unit === "not specified" ? "Raw indicator value" : `Raw indicator value (${unit})`,
+        gridcolor: "#d6ddd9",
+        zerolinecolor: "#a9b5af",
+        fixedrange: true,
+      },
+      yaxis: {
+        tickmode: "array",
+        tickvals: tickValues,
+        ticktext: tickText,
+        range: [-0.75, indicators.length - 0.25],
+        fixedrange: true,
+        gridcolor: "#eef2ef",
+        automargin: true,
+      },
+      font: { family: "Inter, system-ui, sans-serif", color: "#1c2430" },
+    },
+    plotConfig
+  );
+}
+
+function renderDataIndicatorPlot() {
+  const dimension = selectedDataDimension();
+  if (!dimension) {
+    renderEmptyPlot("dataIndicatorPlot", "No raw indicator data are available");
+    $("#dataIndicatorNotes").innerHTML = "";
+    return;
+  }
+
+  const indicators = dimension.indicators.filter((indicator) => indicator.values?.length);
+  $("#dataDimensionTitle").textContent = `${dimension.label} Raw Indicators`;
+  $("#dataDimensionSummary").textContent = dimension.description;
+  $("#dataIndicatorCount").textContent = `${indicators.length} indicator${indicators.length === 1 ? "" : "s"}`;
+
+  if (!indicators.length) {
+    renderEmptyPlot("dataIndicatorPlot", "No raw indicator values are available for this dimension");
+    $("#dataIndicatorNotes").innerHTML = "";
+    return;
+  }
+
+  const plotContainer = $("#dataIndicatorPlot");
+  Plotly.purge(plotContainer);
+  plotContainer.innerHTML = "";
+  indicatorAxisGroups(indicators).forEach((axisGroup, index) => {
+    const plotId = `data-axis-${dimension.id}-${axisGroup.id}-${index}`;
+    const isBinaryFlag = axisGroup.indicators.length === 1 && axisGroup.indicators[0].visual === "binaryFlag";
+    const heading = axisGroup.label || "";
+    const section = document.createElement("section");
+    section.className = "data-axis-section";
+    section.innerHTML = `
+      ${
+        heading
+          ? `<div class="axis-heading">
+              <strong>${escapeHtml(heading)}</strong>
+              <span>${axisGroup.indicators.length} indicator${axisGroup.indicators.length === 1 ? "" : "s"}</span>
+            </div>`
+          : ""
+      }
+      <div id="${plotId}" class="plot data-axis-plot"></div>
+    `;
+    plotContainer.appendChild(section);
+    renderDataAxisPlot(plotId, axisGroup.indicators, axisGroup.unit, index === 0 || isBinaryFlag);
+  });
+
+  const noteItems = Array.from(
+    indicators.reduce((notes, indicator) => {
+      const title = indicator.noteLabel || indicator.label;
+      const key = `${title}|${indicator.unit || ""}|${indicator.description}`;
+      if (!notes.has(key)) {
+        notes.set(key, {
+          title,
+          unit: indicator.unit,
+          description: indicator.description,
+        });
+      }
+      return notes;
+    }, new Map()).values()
+  );
+
+  $("#dataIndicatorNotes").innerHTML = noteItems
+    .map(
+      (note) => `
+        <article class="indicator-note">
+          <div>
+            <strong>${escapeHtml(note.title)}</strong>
+            <span>Unit: ${escapeHtml(note.unit || "not specified")}</span>
+          </div>
+          <p>${escapeHtml(note.description)}</p>
+        </article>
+      `
+    )
+    .join("");
+}
+
+function renderScoreTable() {
+  const rows = DATA.dataTab?.normalisedScores || [];
+  const query = state.dataSearch.trim().toLowerCase();
+  const filteredRows = rows.filter((row) => {
+    if (!query) return true;
+    return [row.model, row.scenario, row.category, row.modelFamily, row.sspFamily]
+      .filter(Boolean)
+      .some((value) => value.toLowerCase().includes(query));
+  });
+  const dimensions = DATA.metadata.dimensionsGlobal;
+  const headerCells = [
+    "Model",
+    "Scenario",
+    "Temperature",
+    "Model family",
+    ...dimensions.map((dimension) => dimension.shortLabel),
+  ];
+  const bodyRows = filteredRows
+    .map(
+      (row) => `
+        <tr>
+          <td>${escapeHtml(row.model)}</td>
+          <td>${escapeHtml(row.scenario)}</td>
+          <td>${escapeHtml(row.category || "n/a")}</td>
+          <td>${escapeHtml(row.modelFamily || "n/a")}</td>
+          ${dimensions.map((dimension) => `<td class="numeric">${formatScore(row.scores?.[dimension.id])}</td>`).join("")}
+        </tr>
+      `
+    )
+    .join("");
+
+  $("#scoreTable").innerHTML = `
+    <p class="table-status">${filteredRows.length} of ${rows.length} scenarios shown.</p>
+    <table>
+      <thead>
+        <tr>${headerCells.map((cell) => `<th>${escapeHtml(cell)}</th>`).join("")}</tr>
+      </thead>
+      <tbody>${bodyRows || `<tr><td colspan="${headerCells.length}">No scenarios match the search.</td></tr>`}</tbody>
+    </table>
+  `;
+}
+
+function renderData() {
+  renderDataControls();
+  const search = $("#scoreTableSearch");
+  search.value = state.dataSearch;
+  search.oninput = () => {
+    state.dataSearch = search.value;
+    renderScoreTable();
+  };
+  renderDataIndicatorPlot();
+  renderScoreTable();
+}
+
 function renderRegionalControls() {
   populateSelect($("#regionalNormalisation"), DATA.metadata.normalisations, state.regionalNormalisation, (value) => {
     state.regionalNormalisation = value;
@@ -661,6 +1063,9 @@ function setActiveScreen(screenId) {
   if (window.location.hash !== `#${screenId}`) {
     history.replaceState(null, "", `#${screenId}`);
   }
+  if (screenId === "data" && DATA && state) {
+    renderData();
+  }
   setTimeout(() => {
     window.dispatchEvent(new Event("resize"));
   }, 0);
@@ -676,7 +1081,7 @@ function bindNavigation() {
   const initial = window.location.hash.replace("#", "");
   if (initial === "tradeoffs") {
     setActiveScreen("explore");
-  } else if (["about", "explore"].includes(initial)) {
+  } else if (["about", "explore", "data"].includes(initial)) {
     setActiveScreen(initial);
   } else if (initial === "regional") {
     setActiveScreen("about");
@@ -696,6 +1101,9 @@ function initState() {
     regionalCategories: new Set(DATA.metadata.categories.map((category) => category.id)),
     regionalFamilies: new Set(DATA.metadata.modelFamilies),
     selectedRegions: new Set(DATA.metadata.regions.map((region) => region.id)),
+    dataDimension: DATA.dataTab?.dimensions?.[0]?.id || "",
+    dataGroupBy: "category",
+    dataSearch: "",
   };
 }
 
@@ -726,5 +1134,6 @@ fetch("data/dashboard-data.json", { cache: "no-store" })
     bindActions();
     renderAbout();
     renderTradeoffs();
+    renderData();
   })
   .catch(showLoadError);

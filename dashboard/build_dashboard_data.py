@@ -19,6 +19,19 @@ GLOBAL_SCORES = ROOT / "data" / "outputs" / f"normalised_scores{CATEGORY_SUFFIX}
 RESOURCE_SCORES = ROOT / "data" / "outputs" / f"resource_scores{CATEGORY_SUFFIX}.csv"
 REGIONAL_WITHIN = ROOT / "data" / "outputs" / f"regional_normalised_dimension_scores{CATEGORY_SUFFIX}.csv"
 REGIONAL_ACROSS = ROOT / "data" / "outputs" / f"regional_normalised_dimension_scores_cross_regional_normalisation{CATEGORY_SUFFIX}.csv"
+ENERGY_INVESTMENT = ROOT / "data" / "outputs" / f"energy_supply_investment_score{CATEGORY_SUFFIX}.csv"
+ENVIRONMENTAL_METRICS = ROOT / "data" / "outputs" / f"environmental_metrics{CATEGORY_SUFFIX}.csv"
+MATERIAL_USE_RATIOS = ROOT / "data" / "outputs" / f"material_use_ratios{CATEGORY_SUFFIX}.csv"
+FINAL_ENERGY_DEMAND = ROOT / "data" / "outputs" / f"final_energy_demand{CATEGORY_SUFFIX}.csv"
+ENERGY_DIVERSITY = ROOT / "data" / "outputs" / f"shannon_diversity_index{CATEGORY_SUFFIX}.csv"
+GINI_COEFFICIENT = ROOT / "data" / "outputs" / f"gini_coefficient{CATEGORY_SUFFIX}.csv"
+FLEXIBILITY_SCORES = ROOT / "data" / "outputs" / f"flexibility_scores{CATEGORY_SUFFIX}.csv"
+LOW_CARBON_DIVERSITY = ROOT / "data" / "outputs" / f"low_carbon_shannon_diversity_index{CATEGORY_SUFFIX}.csv"
+CARBON_BUDGET_SHARES = ROOT / "data" / "outputs" / f"carbon_budget_shares{CATEGORY_SUFFIX}.csv"
+TOTAL_CDR = ROOT / "data" / "outputs" / f"total_CDR{CATEGORY_SUFFIX}.csv"
+BETWEEN_REGION_GINI = ROOT / "data" / "outputs" / f"between_region_gini{CATEGORY_SUFFIX}.csv"
+CARBON_BUDGET_FAIRNESS = ROOT / "data" / "outputs" / f"carbon_budget_fairness{CATEGORY_SUFFIX}.csv"
+TRANSITION_SPEED_METRICS = ROOT / "data" / "outputs" / f"transition_speed_metrics{CATEGORY_SUFFIX}.csv"
 METADATA = ROOT / "database" / "SCI_GW2_GW3_GW4_vetted_R10_no_food_price_meta_data.csv"
 FRAMEWORK_DATA = ROOT / "data" / "processed" / f"Framework_pyam{CATEGORY_SUFFIX}.csv"
 MODEL_FAMILIES = ROOT / "data" / "inputs" / "model_family.csv"
@@ -47,7 +60,7 @@ DIMENSIONS_GLOBAL = [
         "regionalScore": "economic_dimension_score",
         "label": "Economic Feasibility",
         "shortLabel": "Economic",
-        "description": "Relative scale of investment and macroeconomic effort associated with the transition pathway.",
+        "description": "Mean modelled ratio of energy-supply investment as a share of GDP, compared with recent historical investment shares.",
         "indicators": [
             {
                 "name": "Energy supply investment",
@@ -61,7 +74,7 @@ DIMENSIONS_GLOBAL = [
         "regionalScore": "environmental_dimension_score",
         "label": "Environmental Sustainability",
         "shortLabel": "Environment",
-        "description": "Non-climate environmental pressures that accompany the pathway.",
+        "description": "Non-climate environmental pressures across mitigation scenarios.",
         "indicators": [
             {
                 "name": "Bioenergy sustainability threshold",
@@ -95,7 +108,7 @@ DIMENSIONS_GLOBAL = [
         "regionalScore": "resilience_dimension_score",
         "label": "Societal Resilience",
         "shortLabel": "Resilience",
-        "description": "Potential stress placed on energy systems and society by the pathway.",
+        "description": "Mitigation pathways may make societies less resilient to shocks.",
         "indicators": [
             {
                 "name": "Final energy demand",
@@ -153,7 +166,7 @@ DIMENSIONS_GLOBAL = [
         "regionalScore": None,
         "label": "Interregional Fairness",
         "shortLabel": "Fairness",
-        "description": "Distributional outcomes across regions in emissions and mitigation burden.",
+        "description": "Distributional outcomes across regions.",
         "indicators": [
             {
                 "name": "Between-region gini",
@@ -173,7 +186,7 @@ DIMENSIONS_GLOBAL = [
         "regionalScore": "transition_speed_dimension_score",
         "label": "Societal Transition Rate",
         "shortLabel": "Transition",
-        "description": "How rapidly societies and energy systems need to change in the pathway.",
+        "description": "How rapidly societies and energy systems need to change.",
         "indicators": [
             {
                 "name": "Final energy per capita reduction",
@@ -250,6 +263,305 @@ CDR_VARIABLES = [
         "id": "Carbon Sequestration|Direct Air Capture",
         "label": "Direct air capture",
         "color": "#ff0000",
+    },
+]
+
+MATERIAL_DEMAND_AXIS = "Material demand ratios"
+MATERIAL_DEMAND_DESCRIPTION = (
+    "These indicators show the ratio of historical use of each material in solar and wind technologies "
+    "compared to the maximum five-year mean projected use up to 2050. Lower values indicate lower material "
+    "pressure; higher values indicate larger projected use relative to historical solar and wind use."
+)
+
+RAW_INDICATOR_SPECS = [
+    {
+        "id": "economic",
+        "source": ENERGY_INVESTMENT,
+        "indicators": [
+            {
+                "id": "investment_ratio_2020_2100",
+                "column": "mean_value",
+                "label": "Mean energy-supply investment ratio (2020-2100)",
+                "unit": "ratio",
+                "axisLabel": "",
+                "description": "This is the mean modelled ratio of energy-supply investment as a share of GDP compared with recent historical values across 2020-2100. Lower values are closer to recent historical investment shares; higher values indicate a larger investment effort relative to GDP.",
+            },
+            {
+                "id": "investment_ratio_2020_2050",
+                "column": "mean_value_2050",
+                "label": "Mean energy-supply investment ratio (2020-2050)",
+                "unit": "ratio",
+                "axisLabel": "",
+                "description": "This is the mean modelled ratio of energy-supply investment as a share of GDP compared with recent historical values across 2020-2050. Lower values indicate less near-term deviation from recent historical investment shares; higher values indicate a larger near-term investment effort relative to GDP.",
+            },
+        ],
+    },
+    {
+        "id": "environmental",
+        "source": ENVIRONMENTAL_METRICS,
+        "indicators": [
+            {
+                "id": "forest_change_2050",
+                "column": "forest_change_2050",
+                "label": "Natural forest change by 2050",
+                "unit": "fractional change",
+                "axisLabel": "Forest cover change",
+                "description": "This is the absolute percentage-point change in natural forest cover as a share of total land cover; for example, 0.08 means 8% more of the earth's surface is forest. Lower values indicate less forest gain or greater forest pressure by 2050; higher values indicate larger natural forest expansion.",
+            },
+            {
+                "id": "forest_change_2100",
+                "column": "forest_change_2100",
+                "label": "Natural forest change by 2100",
+                "unit": "fractional change",
+                "axisLabel": "Forest cover change",
+                "description": "This is the absolute percentage-point change in natural forest cover as a share of total land cover; for example, 0.08 means 8% more of the earth's surface is forest. Lower values indicate less forest gain or greater long-term forest pressure by 2100; higher values indicate larger natural forest expansion.",
+            },
+            {
+                "id": "bioenergy_threshold_breached",
+                "column": "bioenergy_threshold_breached",
+                "label": "Bioenergy sustainability threshold breached",
+                "unit": "0/1 flag",
+                "axisLabel": "Bioenergy sustainability threshold",
+                "visual": "binaryFlag",
+                "description": "A value of 0 means the bioenergy threshold is not breached; a value of 1 means the scenario exceeds the threshold. Threshold based on Creutzig et al. (2015).",
+            },
+        ],
+    },
+    {
+        "id": "resource",
+        "source": MATERIAL_USE_RATIOS,
+        "indicators": [
+            {
+                "id": "material_nd",
+                "column": "Nd",
+                "label": "Neodymium demand ratio",
+                "unit": "ratio",
+                "axisLabel": MATERIAL_DEMAND_AXIS,
+                "noteLabel": MATERIAL_DEMAND_AXIS,
+                "description": MATERIAL_DEMAND_DESCRIPTION,
+            },
+            {
+                "id": "material_dy",
+                "column": "Dy",
+                "label": "Dysprosium demand ratio",
+                "unit": "ratio",
+                "axisLabel": MATERIAL_DEMAND_AXIS,
+                "noteLabel": MATERIAL_DEMAND_AXIS,
+                "description": MATERIAL_DEMAND_DESCRIPTION,
+            },
+            {
+                "id": "material_ni",
+                "column": "Ni",
+                "label": "Nickel demand ratio",
+                "unit": "ratio",
+                "axisLabel": MATERIAL_DEMAND_AXIS,
+                "noteLabel": MATERIAL_DEMAND_AXIS,
+                "description": MATERIAL_DEMAND_DESCRIPTION,
+            },
+            {
+                "id": "material_mn",
+                "column": "Mn",
+                "label": "Manganese demand ratio",
+                "unit": "ratio",
+                "axisLabel": MATERIAL_DEMAND_AXIS,
+                "noteLabel": MATERIAL_DEMAND_AXIS,
+                "description": MATERIAL_DEMAND_DESCRIPTION,
+            },
+            {
+                "id": "material_ag",
+                "column": "Ag",
+                "label": "Silver demand ratio",
+                "unit": "ratio",
+                "axisLabel": MATERIAL_DEMAND_AXIS,
+                "noteLabel": MATERIAL_DEMAND_AXIS,
+                "description": MATERIAL_DEMAND_DESCRIPTION,
+            },
+            {
+                "id": "material_cd",
+                "column": "Cd",
+                "label": "Cadmium demand ratio",
+                "unit": "ratio",
+                "axisLabel": MATERIAL_DEMAND_AXIS,
+                "noteLabel": MATERIAL_DEMAND_AXIS,
+                "description": MATERIAL_DEMAND_DESCRIPTION,
+            },
+            {
+                "id": "material_te",
+                "column": "Te",
+                "label": "Tellurium demand ratio",
+                "unit": "ratio",
+                "axisLabel": MATERIAL_DEMAND_AXIS,
+                "noteLabel": MATERIAL_DEMAND_AXIS,
+                "description": MATERIAL_DEMAND_DESCRIPTION,
+            },
+            {
+                "id": "material_se",
+                "column": "Se",
+                "label": "Selenium demand ratio",
+                "unit": "ratio",
+                "axisLabel": MATERIAL_DEMAND_AXIS,
+                "noteLabel": MATERIAL_DEMAND_AXIS,
+                "description": MATERIAL_DEMAND_DESCRIPTION,
+            },
+            {
+                "id": "material_in",
+                "column": "In",
+                "label": "Indium demand ratio",
+                "unit": "ratio",
+                "axisLabel": MATERIAL_DEMAND_AXIS,
+                "noteLabel": MATERIAL_DEMAND_AXIS,
+                "description": MATERIAL_DEMAND_DESCRIPTION,
+            },
+        ],
+    },
+    {
+        "id": "resilience",
+        "source": FINAL_ENERGY_DEMAND,
+        "indicators": [
+            {
+                "id": "final_energy_demand",
+                "column": "final_energy_demand",
+                "label": "Cumulative final energy demand (2020-2100)",
+                "unit": "EJ",
+                "axisLabel": "Final energy demand",
+                "description": "Cumulative final-energy demand across 2020-2100. Lower values indicate lower cumulative final-energy demand; higher values indicate greater energy-service demand to satisfy through the transition.",
+            },
+        ],
+    },
+    {
+        "id": "resilience",
+        "source": ENERGY_DIVERSITY,
+        "indicators": [
+            {
+                "id": "energy_diversity",
+                "column": "shannon_index",
+                "label": "Primary energy diversity",
+                "unit": "Shannon index",
+                "axisLabel": "Energy system diversity",
+                "description": "Lower values indicate a more concentrated energy mix; higher values indicate a more diverse primary energy mix.",
+            },
+        ],
+    },
+    {
+        "id": "resilience",
+        "source": GINI_COEFFICIENT,
+        "indicators": [
+            {
+                "id": "ssp_gini_coefficient",
+                "column": "ssp_gini_coefficient",
+                "label": "SSP gini coefficient",
+                "unit": "Gini index",
+                "axisLabel": "Between country inequality",
+                "description": "Lower values indicate lower socioeconomic inequality assumptions; higher values indicate greater inequality context. Because all scenarios in this subset are SSP2, this indicator is uniform across the scenario set.",
+            },
+        ],
+    },
+    {
+        "id": "robustness",
+        "source": FLEXIBILITY_SCORES,
+        "indicators": [
+            {
+                "id": "flexibility_score",
+                "column": "flexibility_score",
+                "label": "Energy-system flexibility score",
+                "unit": "score",
+                "axisLabel": "Energy system flexibility",
+                "description": "Lower values indicate lower flexibility stress; higher values indicate greater flexibility requirements.",
+            },
+        ],
+    },
+    {
+        "id": "robustness",
+        "source": LOW_CARBON_DIVERSITY,
+        "indicators": [
+            {
+                "id": "low_carbon_diversity",
+                "column": "shannon_index",
+                "label": "Low-carbon supply diversity",
+                "unit": "Shannon index",
+                "axisLabel": "Low-carbon energy system diversity",
+                "description": "Lower values indicate a more concentrated low-carbon supply mix; higher values indicate a more diverse low-carbon supply mix.",
+            },
+        ],
+    },
+    {
+        "id": "robustness",
+        "source": CARBON_BUDGET_SHARES,
+        "indicators": [
+            {
+                "id": "carbon_budget_share",
+                "column": "carbon_budget_share",
+                "label": "Carbon budget share used by 2030",
+                "unit": "share",
+                "axisLabel": "Near-term Carbon budget share used",
+                "description": "Lower values indicate less near-term carbon-budget pressure; higher values indicate a larger share of the budget is used by 2030.",
+            },
+        ],
+    },
+    {
+        "id": "robustness",
+        "source": TOTAL_CDR,
+        "indicators": [
+            {
+                "id": "total_cdr",
+                "column": "total_CDR",
+                "label": "Cumulative CDR to 2050",
+                "unit": "Mt CO2",
+                "axisLabel": "Carbon dioxide removal",
+                "description": "Lower values indicate less reliance on early carbon dioxide removal; higher values indicate greater cumulative CDR deployment by 2050.",
+            },
+        ],
+    },
+    {
+        "id": "fairness",
+        "source": BETWEEN_REGION_GINI,
+        "indicators": [
+            {
+                "id": "between_region_gini",
+                "column": "between_region_gini",
+                "label": "Between-region gini coefficient",
+                "unit": "Gini index",
+                "axisLabel": "Between R10 region inequality",
+                "description": "Lower values indicate more even regional outcomes; higher values indicate greater inequality across regions.",
+            },
+        ],
+    },
+    {
+        "id": "fairness",
+        "source": CARBON_BUDGET_FAIRNESS,
+        "indicators": [
+            {
+                "id": "carbon_budget_fairness",
+                "column": "carbon_budget_fairness",
+                "label": "Carbon budget fairness ratio",
+                "unit": "ratio",
+                "axisLabel": "Mitigation burden fairness",
+                "description": "Lower values indicate a lower north-south carbon-budget imbalance; higher values indicate greater distributional imbalance.",
+            },
+        ],
+    },
+    {
+        "id": "transition_speed",
+        "source": TRANSITION_SPEED_METRICS,
+        "indicators": [
+            {
+                "id": "final_energy_per_capita_reduction",
+                "column": "Final energy per cap reductions",
+                "label": "Maximum decadal final-energy per-capita reduction",
+                "plotLabel": "Maximum decadal final-energy<br>per-capita reduction",
+                "unit": "fraction per decade",
+                "axisLabel": "Energy demand reduction",
+                "description": "Lower values indicate smaller or slower reductions in per-capita final energy; higher-magnitude negative values indicate faster demand reduction.",
+            },
+            {
+                "id": "electrification_rate",
+                "column": "Share of final energy from electricity",
+                "label": "Maximum decadal electrification increase",
+                "unit": "share",
+                "axisLabel": "Electrification Rate",
+                "description": "Lower values indicate slower electrification; higher values indicate faster growth in electricity's share of final energy.",
+            },
+        ],
     },
 ]
 
@@ -401,6 +713,20 @@ def decorate_score_row(
     return item
 
 
+def decorate_scenario_row(model: str, scenario: str, metadata: dict[tuple[str, str], dict[str, str]]) -> dict:
+    meta = metadata.get((model, scenario), {})
+    return {
+        "id": scenario_key(model, scenario),
+        "model": model,
+        "scenario": scenario,
+        "category": meta.get("category", ""),
+        "categoryName": meta.get("categoryName", ""),
+        "categorySubset": meta.get("categorySubset", ""),
+        "modelFamily": meta.get("modelFamily", infer_model_family(model)),
+        "sspFamily": meta.get("sspFamily", ""),
+    }
+
+
 def load_scores(metadata: dict[tuple[str, str], dict[str, str]]) -> tuple[list[dict], dict[str, list[dict]]]:
     resource_overrides = load_resource_score_overrides()
     global_scores = [decorate_score_row(row, metadata, resource_overrides) for row in read_csv(GLOBAL_SCORES)]
@@ -409,6 +735,79 @@ def load_scores(metadata: dict[tuple[str, str], dict[str, str]]) -> tuple[list[d
         "across": [decorate_score_row(row, metadata, resource_overrides, regional=True) for row in read_csv(REGIONAL_ACROSS)],
     }
     return global_scores, regional_scores
+
+
+def load_raw_indicator_dimensions(
+    metadata: dict[tuple[str, str], dict[str, str]],
+    selected_scenarios: set[tuple[str, str]],
+) -> list[dict]:
+    dimensions = {
+        dimension["id"]: {
+            "id": dimension["id"],
+            "label": dimension["label"],
+            "shortLabel": dimension["shortLabel"],
+            "description": dimension["description"],
+            "indicators": [],
+        }
+        for dimension in DIMENSIONS_GLOBAL
+    }
+    indicator_lookup: dict[str, dict] = {}
+
+    for spec in RAW_INDICATOR_SPECS:
+        dimension = dimensions[spec["id"]]
+        source_rows = read_csv(spec["source"])
+        for indicator in spec["indicators"]:
+            indicator_item = {
+                "id": indicator["id"],
+                "label": indicator["label"],
+                "plotLabel": indicator.get("plotLabel", indicator["label"]),
+                "noteLabel": indicator.get("noteLabel", indicator["label"]),
+                "unit": indicator["unit"],
+                "axisLabel": indicator.get("axisLabel", indicator["unit"]),
+                "visual": indicator.get("visual", "boxplot"),
+                "description": indicator["description"],
+                "values": [],
+            }
+            dimension["indicators"].append(indicator_item)
+            indicator_lookup[indicator["id"]] = indicator_item
+
+        for row in source_rows:
+            model = row.get("model")
+            scenario = row.get("scenario")
+            if not model or not scenario or (model, scenario) not in selected_scenarios:
+                continue
+            scenario_item = decorate_scenario_row(model, scenario, metadata)
+            for indicator in spec["indicators"]:
+                value = parse_float(row.get(indicator["column"]))
+                if value is None:
+                    continue
+                indicator_lookup[indicator["id"]]["values"].append(
+                    {
+                        **scenario_item,
+                        "value": value,
+                    }
+                )
+
+    return [dimension for dimension in dimensions.values() if dimension["indicators"]]
+
+
+def load_normalised_score_table(
+    metadata: dict[tuple[str, str], dict[str, str]],
+    resource_overrides: dict[tuple[str, str], float],
+) -> list[dict]:
+    rows = []
+    for row in read_csv(GLOBAL_SCORES):
+        model = row["model"]
+        scenario = row["scenario"]
+        item = decorate_scenario_row(model, scenario, metadata)
+        item["scores"] = {}
+        for dimension in DIMENSIONS_GLOBAL:
+            if dimension["id"] == "resource" and (model, scenario) in resource_overrides:
+                item["scores"][dimension["id"]] = resource_overrides[(model, scenario)]
+            else:
+                item["scores"][dimension["id"]] = parse_float(row.get(dimension["score"]))
+        rows.append(item)
+    return rows
 
 
 def load_timeseries(metadata: dict[tuple[str, str], dict[str, str]], years: list[str]) -> list[dict]:
@@ -444,6 +843,10 @@ def build_payload() -> dict:
     global_scores, regional_scores = load_scores(metadata)
     years = framework_years()
     timeseries = load_timeseries(metadata, years)
+    selected_scenarios = {(row["model"], row["scenario"]) for row in global_scores}
+    resource_overrides = load_resource_score_overrides()
+    raw_indicator_dimensions = load_raw_indicator_dimensions(metadata, selected_scenarios)
+    normalised_score_table = load_normalised_score_table(metadata, resource_overrides)
 
     categories = sorted({row["category"] for row in global_scores if row["category"]})
     model_families = sorted({row["modelFamily"] for row in global_scores if row["modelFamily"]})
@@ -467,6 +870,8 @@ def build_payload() -> dict:
             "scenarioCount": len(global_scores),
             "regionalRowCount": len(regional_scores["within"]),
             "timeseriesRowCount": len(timeseries),
+            "rawIndicatorCount": sum(len(dimension["indicators"]) for dimension in raw_indicator_dimensions),
+            "normalisedScoreRowCount": len(normalised_score_table),
             "categories": [
                 {"id": category, "label": category, "color": CATEGORY_COLORS.get(category, "#777777")}
                 for category in categories
@@ -509,6 +914,10 @@ def build_payload() -> dict:
         "globalScores": global_scores,
         "regionalScores": regional_scores,
         "timeseries": timeseries,
+        "dataTab": {
+            "dimensions": raw_indicator_dimensions,
+            "normalisedScores": normalised_score_table,
+        },
     }
 
 
@@ -520,6 +929,7 @@ def main() -> None:
     print(f"Global scenarios: {payload['metadata']['scenarioCount']}")
     print(f"Regional rows: {payload['metadata']['regionalRowCount']}")
     print(f"Timeseries rows: {payload['metadata']['timeseriesRowCount']}")
+    print(f"Raw indicators: {payload['metadata']['rawIndicatorCount']}")
 
 
 if __name__ == "__main__":

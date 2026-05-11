@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>IAM Scenario Exploration &amp; Evaluation Framework</title>
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=data-tab-resource-20260511" />
   </head>
   <body>
     <header class="app-header">
@@ -12,6 +12,7 @@
       <nav class="top-nav" aria-label="Dashboard screens">
         <button class="nav-button is-active" type="button" data-screen-link="about">About</button>
         <button class="nav-button" type="button" data-screen-link="explore">Explore</button>
+        <button class="nav-button" type="button" data-screen-link="data">Data</button>
       </nav>
     </header>
 
@@ -107,6 +108,7 @@
               </div>
               <button id="resetThresholds" class="secondary-button" type="button">Reset limits</button>
             </div>
+            <p class="plot-hint">Click legend items to show or hide scenario points and median lines.</p>
             <div id="tradeoffRadar" class="plot radar-plot"></div>
           </div>
           <aside class="threshold-panel">
@@ -134,12 +136,60 @@
         </div>
       </section>
 
+      <section id="data" class="screen" aria-labelledby="data-title">
+        <div class="section-heading">
+          <span class="eyebrow">Data</span>
+          <h2 id="data-title">Inspect raw indicator values and normalised scenario scores.</h2>
+        </div>
+
+        <div class="control-strip data-control-strip">
+          <label>
+            Dimension
+            <select id="dataDimension"></select>
+          </label>
+          <fieldset>
+            <legend>Display by</legend>
+            <div id="dataGroupBy" class="segmented-control compact-segmented" role="group" aria-label="Display and colour raw indicator points by">
+              <button type="button" data-data-group-by="category">Temperature</button>
+              <button type="button" data-data-group-by="modelFamily">Model family</button>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="plot-panel data-plot-panel">
+          <div class="panel-heading compact">
+            <div>
+              <h3 id="dataDimensionTitle">Raw Indicator Values</h3>
+              <p id="dataDimensionSummary">Global raw indicator values for the selected dimension.</p>
+            </div>
+            <span id="dataIndicatorCount" class="status-pill">Loading</span>
+          </div>
+          <p class="plot-hint">Boxplots show the distribution for each raw indicator; points are individual scenarios and can be hovered.</p>
+          <div id="dataIndicatorPlot" class="plot data-indicator-plot"></div>
+          <div id="dataIndicatorNotes" class="indicator-notes" aria-label="Indicator interpretation notes"></div>
+        </div>
+
+        <div class="plot-panel data-table-panel">
+          <div class="panel-heading">
+            <div>
+              <h3>Normalised Scenario Scores</h3>
+              <p>Global dimension scores for the 95 SCI scenarios.</p>
+            </div>
+            <label class="table-search-label">
+              Search
+              <input id="scoreTableSearch" type="search" placeholder="Model or scenario" />
+            </label>
+          </div>
+          <div id="scoreTable" class="score-table-wrap" aria-live="polite"></div>
+        </div>
+      </section>
+
     </main>
 
     <div id="loadError" class="load-error" hidden></div>
     <noscript>This dashboard requires JavaScript to load the interactive plots.</noscript>
 
     <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
-    <script src="app.js"></script>
+    <script src="app.js?v=data-tab-resource-20260511"></script>
   </body>
 </html>
