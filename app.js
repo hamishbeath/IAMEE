@@ -258,7 +258,7 @@ function radarLayout(title = "", options = {}) {
         gridcolor: "#d6ddd9",
         linecolor: "#a9b5af",
         fixedrange: true,
-        tickfont: { size: 11, color: "#1c2430" },
+        tickfont: { size: 14, color: "#1c2430" },
       },
     },
     font: { family: "Inter, system-ui, sans-serif", color: "#1c2430" },
