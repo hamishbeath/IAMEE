@@ -40,7 +40,7 @@ OUTPUT_JSON = DATA_DIR / "dashboard-data.json"
 CATEGORY_COLORS = {
     "GW2": "#a1d99b",
     "GW3": "#4460fa",
-    "GW4": "#7666DA",
+    "GW4": "#DC267F",
 }
 
 MODEL_FAMILY_COLORS = {
